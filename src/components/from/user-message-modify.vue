@@ -1,0 +1,277 @@
+<template>
+	<div class="userModify">
+		<v-header></v-header>
+		<div style="width: 1250px;margin: 0 auto;">
+			<div style="padding: 30px 0;">
+				<el-breadcrumb separator="/">
+					<el-breadcrumb-item :to="{ path: '/userCenter' }">用户中心</el-breadcrumb-item>
+					<el-breadcrumb-item :to="{ path: '/userCenter' }">用户管理</el-breadcrumb-item>
+					<el-breadcrumb-item><span style="color: #74b8fa;">用户修改</span></el-breadcrumb-item>
+				</el-breadcrumb>
+				<div style="overflow: hidden;margin-top: 20px;">
+					<div style="padding: 22px 35px;border-bottom: 1px solid gainsboro;margin-bottom: 20px;">
+						<h4>账号信息</h4>
+					</div>
+					<el-form :model="userMessage" :rules="rules" ref="userMessage" label-width="100px" class="demo-ruleForm">
+						<el-form-item label="手机号" prop="mobile">
+							<el-input v-model="userMessage.mobile" style="width: 400px;" :disabled=true></el-input>
+						</el-form-item>
+						<el-form-item label="用户名" prop="memberName">
+							<el-input v-model="userMessage.memberName" style="width: 400px;" :disabled=true></el-input>
+						</el-form-item>
+						<el-form-item label="用户类型">
+							<el-radio-group v-model="userMessage.memberType" :disabled=true>
+							    <el-radio label= '0'>互联网</el-radio>
+							    <el-radio label= '1'>系统应用</el-radio>
+							</el-radio-group>
+						</el-form-item>
+					</el-form>
+				</div>
+				<div style="overflow: hidden;padding: 20px 0;padding-left:35px ;">
+					<el-button type="info" v-on:click="open=true">修改信息</el-button>
+					<el-button type="info" v-on:click="open=false">修改密码</el-button>
+				</div>
+				<div class="userModify-message" v-if="open" style="position: relative;">
+					<div style="padding: 22px 35px;border-bottom: 1px solid gainsboro;margin-bottom: 20px;">
+						<h4>修改信息</h4>
+					</div>
+					<el-form :model="modifyMessage" :rules="rules" ref="modifyMessage" label-width="100px" class="demo-ruleForm">
+						<el-form-item label="昵称" style="margin: 30px 0;">
+							<el-input v-model="modifyMessage.nickname" style="width: 400px;" :disabled="disabled"></el-input>
+						</el-form-item>
+						<el-form-item label="生日" style="margin: 30px 0;">
+							<el-date-picker type="date" placeholder="选择日期" v-model="modifyMessage.birthday" style="width: 400px;" :disabled=true></el-date-picker>
+						</el-form-item>
+						<el-form-item label="性别" style="margin: 30px 0;">
+							<el-radio-group v-model="modifyMessage.gender" :disabled="disabled">
+							    <el-radio label="0">男</el-radio>
+							    <el-radio label="1">女</el-radio>
+							    <el-radio label="2">保密</el-radio>
+							</el-radio-group>
+						</el-form-item>
+						<div style="overflow: hidden;margin: 20px 0;">
+							<div style="display: inline-block;">
+								<el-form-item label="职业">
+									<el-input v-model="modifyMessage.career" style="width: 400px;" :disabled="disabled"></el-input>
+								</el-form-item>
+							</div>
+							<div style="display: inline-block;">
+							    <el-form-item label="公司">
+									<el-input v-model="modifyMessage.company" style="width: 400px;" :disabled="disabled"></el-input>
+								</el-form-item>
+							</div>
+						</div>
+						<div style="overflow: hidden;margin: 20px 0;">
+							<div style="display: inline-block;">
+								<el-form-item label="所在地">
+									<el-input v-model="modifyMessage.location" style="width: 400px;" :disabled="disabled"></el-input>
+								</el-form-item>
+							</div>
+							<div style="display: inline-block;">
+								<el-form-item label="家乡">
+									<el-input v-model="modifyMessage.hometown" style="width: 400px;" :disabled="disabled"></el-input>
+								</el-form-item>
+							</div>
+						</div>
+						<el-form-item label="邮箱" style="margin: 20px 0;">
+							<el-input v-model="modifyMessage.email" style="width: 400px;" :disabled="disabled"></el-input>
+						</el-form-item>
+						<el-form-item label="个人说明" style="margin-top: 30px;">
+							<el-input type="textarea" v-model="modifyMessage.personalSignature" placeholder="应用描述" :disabled="disabled" style="width: 600px;"></el-input>
+						</el-form-item>
+					</el-form>
+					<div style="position: absolute;top: 85px;right: 410px;width: 235px;">
+					  		<el-upload
+							  class="avatar-uploader"
+							  action="https://jsonplaceholder.typicode.com/posts/"
+							  :show-file-list="false"
+							  :on-success="handleAvatarSuccess"
+							  :before-upload="beforeAvatarUpload">
+							  <img v-if="imageUrl" :src="imageUrl" class="avatar">
+							  <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+							</el-upload>
+							<p style="font-size: 12px;color: gainsboro;">平台图为非必上传，点击可完成上传，只支持PNG，JPG格式，文件不能超过2M</p>
+					</div>
+					<div style="height: 50px;position: relative;">
+						<el-button type="primary" style="position: absolute;right: 100px;" v-on:click="modify()">确认修改</el-button>
+					</div>
+				</div>
+				<div class="pass-message" v-if="!open">
+					<div style="padding: 22px 35px;border-bottom: 1px solid gainsboro;margin-bottom: 20px;">
+						<h4>修改密码</h4>
+					</div>
+					<el-form :model="passMessage" :rules="rules" :ref="passMessage" label-width="100px" class="demo-ruleForm">
+						<el-form-item label="当前密码">
+						    <el-input type="password" v-model="passMessage.currentMemberPassword" auto-complete="off" style="width: 400px;" :disabled="disabled"></el-input>
+						</el-form-item>
+						<el-form-item label="新密码" prop="password">
+						    <el-input type="password" v-model="passMessage.newPassword" auto-complete="off" style="width: 400px;" :disabled="disabled"></el-input>
+						</el-form-item>
+						<el-form-item label="确认密码" prop="passwordConfirm">
+						    <el-input type="password" v-model="passMessage.passwordConfirm" auto-complete="off" style="width: 400px;" :disabled="disabled"></el-input>
+						</el-form-item>
+					</el-form>
+				</div>
+			</div>
+		</div>
+	</div>
+</template>
+
+<script>
+	import vHeader from '../home/header.vue'
+	export default {
+	    components:{
+           vHeader
+        },
+        data(){
+//        		     		密码验证
+       		var validatePass = (rule, value, callback) => {
+		        if (value === '') {
+		          callback(new Error('请输入密码'));
+		        } else {
+		          if (this.passMessage.newPasswordConfirm !== '') {
+		            this.$refs.passMessage.validateField('passwordConfirm');
+		          }
+		          callback();
+		        }
+		      };
+//		     确认密码验证
+		    var validatePass2 = (rule, value, callback) => {
+		        if (value === '') {
+		          callback(new Error('请再次输入密码'));
+		        } else if (value !== this.passMessage.newPassword) {
+		          callback(new Error('两次输入密码不一致!'));
+		        } else {
+		          callback();
+		        }
+		      };
+        	return{
+        		imageUrl: '',
+			    htmlId:'',
+			    userId:'',
+			    disabled:false,
+			    open:true,
+			    userMessage:{
+			    	mobile:'',
+			    	memberName:'',
+			    	memberType:''
+			    },
+        		modifyMessage:{
+        			
+        		},
+        		passMessage:{
+        			currentMemberPassword:'',
+        			newPassword:'',
+        			newPasswordConfirm:''
+        		},
+        		rules: {
+			        password: [
+		            	{ validator: validatePass, trigger: 'blur',required: true}
+		            ],
+		            passwordConfirm: [
+		            	{ validator: validatePass2, trigger: 'blur',required: true}
+		            ],
+		            nickname: [
+		            	{ min: 2, max: 10, message: '2-20位', trigger: 'blur' }
+		            ],
+			    }
+        	}
+        },
+        created(){
+    		this.htmlId = this.$route.params.id;
+    		var _url = window.location.href;
+    		var theRequest = new Object(); 
+    		var index = _url.indexOf('?')+1
+    		var str = _url.substr(index); 
+    		var strs = str.split("&"); 
+    		for(var i = 0; i < strs.length; i ++) { 
+			theRequest[strs[i].split("=")[0]]=unescape(strs[i].split("=")[1]); 
+			} 
+//			通过url查询id
+			this.userId = theRequest.id;
+			this.getUserMessage()
+    	},
+        methods: {
+		    handleAvatarSuccess(res, file) {
+		        this.imageUrl = URL.createObjectURL(file.raw);
+		        console.log("ok");
+		    },
+		    beforeAvatarUpload(file) {
+		        const isJPG = file.type === 'image/jpeg';
+		        const isPNG = file.type === 'image/png';
+		        const isLt2M = file.size / 1024 / 1024 < 2;
+		
+		        if (!isJPG && !isPNG) {
+		          this.$message.error('上传头像图片只能是 JPG或PNG格式!');
+		        }
+		        if (!isLt2M) {
+		          this.$message.error('上传头像图片大小不能超过 2MB!');
+		        }
+		        return isJPG && isLt2M;
+		    },
+	      	getUserMessage(){
+				this.$axios.get('api/ucenter/admin/member/'+this.userId+'/detail',this.getMyWeb.axios.aAjaxConfig).then((res)=>{
+					var data = res.data.data;
+					data.memberType = String(data.memberType);
+			        data.memberRole = String(data.memberRole);
+					this.userMessage = data;
+					console.log(data);
+		      	}).catch(function(err){
+		                    this.$message.error('接口请求出错');
+		                    console.error(err);
+		        })
+			},
+	        modify(){
+//		    	 this.$refs[formName].validate((valid) => {
+//			          if (valid) {
+			            	var content = this.modifyMessage;
+					    	   content.memberId = this.userId;
+					    	var send = "?"+this.Qs.stringify(content);
+					    	console.log(content);
+					    	this.$axios.put('api/ucenter/admin/member/'+send,this.getMyWeb.axios.aAjaxConfig).then((res)=>{
+								this.ruleForm = res.data.data;
+								console.log(res);
+								this.$router.go(-1)
+					      	}).catch(function(err){
+					                    this.$message.error('接口请求出错');
+					                    console.error(err);
+					        })
+//			          } else {
+//			             this.$message.error('表单填写格式不对，请重新填写');
+//			            return false;
+//			          }
+//			       });
+		    },
+	    }
+	}
+</script>
+
+<style>
+	.userModify-content-box{
+		width: 1250px;
+		margin: 0 auto;
+	}
+	.avatar-uploader .el-upload {
+    border: 1px dashed #d9d9d9;
+    border-radius: 6px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+   }
+   .avatar-uploader .el-upload:hover {
+    border-color: #409EFF;
+   }
+   .avatar-uploader-icon {
+    font-size: 28px;
+    color: #8c939d;
+    width: 235px;
+    height: 145px;
+    line-height: 145px;
+    text-align: center;
+   }
+   .avatar {
+    width: 235px;
+    height: 145px;
+    display: block;
+   }
+</style>
