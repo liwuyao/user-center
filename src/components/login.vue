@@ -1,22 +1,26 @@
 <template>
 	<div class="login-box">
-		<h1 style="text-align: center;color: white;padding-top:100px;">用户中心后台管理系统</h1>
 		<div class="login-form">
-			<el-form :model="ruleForm2" status-icon :rules="rules2" ref="ruleForm2" class="demo-ruleForm" style="width: 300px;">
-			  <el-form-item  prop="pass">
-			    <el-input type="text" v-model="ruleForm2.username"  placeholder="请输入账号" ></el-input>
-			  </el-form-item>
-			  <el-form-item prop="checkPass">
-			    <el-input type="password" v-model="ruleForm2.password" placeholder="请输入密码"></el-input>
-			  </el-form-item>
-			  <el-form-item prop="checkPass" style="position: relative;">
-			    <el-input type="password" v-model="ruleForm2.checkPass" placeholder="请输入验证码" style="width: 100px;"></el-input>
-			    <img :src="code" v-on:click="getCode()" style="width: 60px;position: absolute;right: 90px;top: -3px;"/>
-			  </el-form-item>
-			  <el-form-item>
-			    <el-button type="primary" @click="login()" style="width: 100%;">提交</el-button>
-			  </el-form-item>
-			</el-form>
+			<div style="position: relative;">
+				<div style="position: absolute;top: -100px;z-index: 2;display: inline-block;width: 107%;left: 50%;transform: translate(-50%,0);">
+					<h1 style="text-align: center;color: white;">用户中心后台管理系统</h1>
+				</div>
+				<el-form :model="ruleForm2" status-icon :rules="rules2" ref="ruleForm2" class="demo-ruleForm" style="width: 300px;">
+				  <el-form-item  prop="pass">
+				    <el-input type="text" v-model="ruleForm2.username"  placeholder="请输入账号" ></el-input>
+				  </el-form-item>
+				  <el-form-item prop="checkPass">
+				    <el-input type="password" v-model="ruleForm2.password" placeholder="请输入密码"></el-input>
+				  </el-form-item>
+				  <el-form-item prop="checkPass" style="position: relative;">
+				    <el-input type="password" v-model="ruleForm2.checkPass" placeholder="请输入验证码" style="width: 100px;"></el-input>
+				    <img :src="code" v-on:click="getCode()" style="width: 60px;position: absolute;right: 90px;top: -3px;"/>
+				  </el-form-item>
+				  <el-form-item>
+				    <el-button type="primary" @click="login()" style="width: 100%;">提交</el-button>
+				  </el-form-item>
+				</el-form>
+			</div>
 		</div>
 	</div>
 </template>

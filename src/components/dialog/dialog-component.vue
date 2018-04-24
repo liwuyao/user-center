@@ -23,7 +23,11 @@
 		  :visible.sync="dialogDelete"
 		  width="30%"
 		  >
-		  <span>确定删除所选么？</span>
+		  <p>确定删除下列选项么？</p>
+		  <p v-if="id">{{chooseOne[config.name]}}</p>
+		  <p style="width: 100%;overflow: hidden;word-wrap:break-word;word-break:break-all;" v-else>
+		  	<span v-for="item in tableSelect">{{item[config.name]+';'}}</span>
+		  </p>
 		  <span slot="footer" class="dialog-footer">
 		    <el-button @click="dialogDelete = false">取 消</el-button>
 		    <el-button type="primary" @click="deleteMessage">确 定</el-button>
@@ -35,19 +39,25 @@
 		  :visible.sync="dialogDisable"
 		  width="30%"
 		  >
-		  <span>确定禁用所选么</span>
+		  <p>确定禁用下列选项么？</p>
+		  <p style="width: 100%;overflow: hidden;word-wrap:break-word;word-break:break-all;">
+		  	<span v-for="item in tableSelect">{{item[config.name]+';'}}</span>
+		  </p>
 		  <span slot="footer" class="dialog-footer">
 		    <el-button @click="dialogDisable = false">取 消</el-button>
 		    <el-button type="primary" @click="disableMessage()">确 定</el-button>
 		  </span>
-<!--		  启用弹框-->
 		</el-dialog>
-			<el-dialog
+		<!--		  启用弹框-->
+		<el-dialog
 		  title="启用"
 		  :visible.sync="dialogAble"
 		  width="30%"
 		  >
-		  <span>确定启用所选么</span>
+		  <p>确定启用下列选项么？</p>
+		  <p style="width: 100%;overflow: hidden;word-wrap:break-word;word-break:break-all;">
+		  	<span v-for="item in tableSelect">{{item[config.name]+';'}}</span>
+		  </p>
 		  <span slot="footer" class="dialog-footer">
 		    <el-button @click="dialogAble = false">取 消</el-button>
 		    <el-button type="primary" @click="ableMessage()">确 定</el-button>
@@ -59,7 +69,7 @@
 <script>
 	export default {
 //	  name: 'formComponent',
-	    props: ['id','config','tableSelect'],
+	    props: ['id','config','tableSelect','chooseOne'],
 	    data() {
 	      return {
 	        dialogDelete: false,
@@ -67,6 +77,7 @@
 	        dialogAble:false,
 	        dialogAddUser: false,
 	        open:true,
+	        ids:[],
 	        form: {
 	          name: '',
 	          region: '',
@@ -80,12 +91,6 @@
 	        formLabelWidth: '120px'
 	      };
 	    },
-//	    updated(){
-//	    	if(this.message.type === "add" && this.open){
-//	    		this.dialogFormVisible=true;
-//	    		this.open = false
-//	    	}
-//	    }
 		created(){
 			
 		},
@@ -94,6 +99,16 @@
 				if(!this.id && this.tableSelect.length == 0){
 					this.$message.error('请选择要操作对象') 
 				}else{
+					var ids = [];
+			        for(let i = 0 ;i<this.tableSelect.length;i++){
+			        	for(let index in this.tableSelect[i]){
+			        		if(index == this.config.idName){
+			        			ids.push(this.tableSelect[i][index]);
+			        		}
+			        	}
+			        }
+			        this.ids = ids;
+			        console.log(this.ids);
 					if(this.config.type === "add"){
 					this.dialogFormVisible = true;
 					}
@@ -112,9 +127,9 @@
 			deleteMessage(){
 				var content;
 				if(this.id){
-						content  = '?'+this.config.idName+'=' + this.id
+						content  = '?'+this.config.urlSearch+'=' + this.id
 				}else{
-					content  = '?'+this.config.idName+'=' + this.tableSelect.join()
+					content  = '?'+this.config.urlSearch+'=' + this.ids.join()
 				}
 				var _url = this.config.src + content;
 				this.$axios.delete(_url,this.getMyWeb.axios.aAjaxConfig).then((res)=>{
@@ -131,9 +146,8 @@
 			},
 //			禁用
 			disableMessage(){
-				var content = '?'+this.config.idName+'=' + this.tableSelect.join();
+				var content = '?'+this.config.urlSearch+'=' + this.ids.join();
 				var _url = this.config.src+content;
-				console.log(_url)
 				this.$axios.put(_url,this.getMyWeb.axios.aAjaxConfig).then((res)=>{
 					 this.returnMessage('禁用成功');
 					 this.dialogDisable = false;
@@ -148,7 +162,7 @@
 			},
 //			启用
 			ableMessage(){
-				var content = '?'+this.config.idName+'=' + this.tableSelect.join();
+				var content = '?'+this.config.urlSearch+'=' + this.ids.join();
 				var _url = this.config.src+content;
 				console.log(_url)
 				this.$axios.put(_url,this.getMyWeb.axios.aAjaxConfig).then((res)=>{

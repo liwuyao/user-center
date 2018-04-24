@@ -26,6 +26,10 @@ axios.interceptors.response.use(
     	if(response.headers.token){
     		localStorage.token = response.headers.token
     	};
+    	if(response.data.state == '000010'){
+    		var _http = window.location.protocol + '//'+window.location.host+'/#/login'
+    		window.location.href = _http;
+    	}
         return response;
     },
     error => {
@@ -42,7 +46,7 @@ axios.interceptors.response.use(
         }
         return Promise.reject(error.response.data)   // 返回接口返回的错误信息
     });
-
+//拦截请求
 axios.interceptors.request.use(
 config => {
     // 这里写死一个token，你需要在这里取到你设置好的token的值
@@ -53,6 +57,21 @@ config => {
 error => {
     return Promise.reject(error)
 });
+//formate
+Date.prototype.format = function (format) {
+    var o = {
+        "M+": this.getMonth() + 1, //month
+        "d+": this.getDate(), //day
+        "h+": this.getHours(), //hour
+        "m+": this.getMinutes(), //minute
+        "s+": this.getSeconds(), //second
+        "q+": Math.floor((this.getMonth() + 3) / 3), //quarter
+        "S": this.getMilliseconds() //millisecond
+    }
+    if (/(y+)/.test(format)) format = format.replace(RegExp.$1,(this.getFullYear() + "").substr(4 - RegExp.$1.length));
+    for (var k in o) if (new RegExp("(" + k + ")").test(format))format = format.replace(RegExp.$1,RegExp.$1.length == 1 ? o[k] :("00" + o[k]).substr(("" + o[k]).length));
+    return format;
+}
 /* eslint-disable no-new */
 new Vue({
   el: '#app',

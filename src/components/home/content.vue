@@ -4,8 +4,8 @@
 			<div  class="side-bar-content">
 		    <v-bar :message ="routerMessage"></v-bar>
 			</div>
-			<div  style="height: 100%;flex: 1;overflow: auto;">
-				<div id="routerBox" style="overflow: hidden;">
+			<div  style="height: 100%;overflow: auto;">
+				<div  id="routerBox">
 					<router-view style="overflow: hidden;"></router-view>
 				</div>
 			</div>
@@ -26,36 +26,41 @@
 				contentLeft:1,
 				contentRight:23,
 				routerMessage:[
-						{
-							icon:'iconfont icon-el-icon-karakal-yingyong slide-bar2-icon',
-							name:'应用管理',
-							index:'',
-							child:[
-								{
-									title:'应用中心',
-									index:'/home'
-								},
-								{
-									title:'测试demo',
-									className:'right-select1',
-									list:[
-										{
-											name:'无极剑圣',
-											index:'/slide'
-										}
-									]
-								},
-								{
-									title:'测试demo',
-									className:'right-select5',
-									list:[
-										{
-											name:'应用中心',
-											index:'/slide'
-										}
-									]
-								}
-							]
+//						{
+//							icon:'iconfont icon-el-icon-karakal-yingyong slide-bar2-icon',
+//							name:'应用管理',
+//							index:'',
+//							child:[
+//								{
+//									title:'应用中心',
+//									index:'/home'
+//								},
+//								{
+//									title:'测试demo',
+//									className:'right-select1',
+//									list:[
+//										{
+//											name:'无极剑圣',
+//											index:'/slide'
+//										}
+//									]
+//								},
+//								{
+//									title:'测试demo',
+//									className:'right-select5',
+//									list:[
+//										{
+//											name:'应用中心',
+//											index:'/slide'
+//										}
+//									]
+//								}
+//							]
+//						},
+						{   icon:'iconfont icon-el-icon-karakal-yingyong slide-bar2-icon',
+							name:'应用中心',
+							blank:true,
+							index:'/home'
 						},
 						{
 							icon:'el-icon-location slide-bar2-icon',
@@ -68,11 +73,12 @@
 		},
 		created(){
 			setTimeout(()=>{
-				var elm = document.getElementById('routerBox')
-				var width = elm.offsetWidth;
-					elm.style.width = width+'px';
-					
-			},200)
+				var elm = document.querySelector('.content');
+				var elm2 = document.getElementById('routerBox');
+				var width = window.screen.width+'px';
+					elm.style.width = width;
+					elm2.style.width = window.screen.width-60-17 +'px';
+			},100)
 		},
 		 computed:{
             onRoutes(){

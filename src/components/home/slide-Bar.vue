@@ -80,7 +80,6 @@
 						}
 				   	},
 				onlyLink(){
-					console.log(this.message.blank);
 					if(!this.message.blank){
 						if(this.rightStatu === true){
 							this.$emit('send', {rightStatu:false,message:''});

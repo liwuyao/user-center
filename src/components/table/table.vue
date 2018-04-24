@@ -26,14 +26,28 @@
 		      show-overflow-tooltip>
 		      <template slot-scope="props">
 		        <span v-if="item.prop == 'state'">
-		        	<span v-if="props.row[item.prop] == 0 ">启用</span>
-		        	<span v-else>禁用</span>
+		        	<span v-if="props.row[item.prop] == 0 " style="color: #1888f7;">启用</span>
+		        	<span v-else style="color: red;">禁用</span>
 		        </span>
 		        <span v-else-if="item.prop == 'status'">
-		        	<span v-if="props.row[item.prop] == 0 ">启用</span>
-		        	<span v-else>禁用</span>
+		        	<span v-if="props.row[item.prop] == 0 " style="color: #1888f7;">启用</span>
+		        	<span v-else style="color: red;">禁用</span>
 		        </span>
-		        <span v-else="item.prop != 'state'">{{ props.row[item.prop] }}</span>
+		        <span v-else-if="item.prop == 'gender'">
+		        	<span v-if="props.row[item.prop] == 0 ">男</span>
+		        	<span v-else-if="props.row[item.prop] == 1 ">女</span>
+		        	<span v-else>保密</span>
+		        </span>
+		        <span v-else-if="!props.row[item.prop]">
+		        	/
+		        </span>
+		        <span v-else-if="item.prop =='registerTime'">
+		        	{{transformationTime(props.row[item.prop])}}
+		        </span>
+		        <span v-else-if="item.prop =='createTime'">
+		        	{{transformationTime(props.row[item.prop])}}
+		        </span>
+		        <span v-else>{{ props.row[item.prop] }}</span>
 		      </template>
 		    </el-table-column>
 		     <el-table-column label="操作" v-if="message.listBtnConfig">
@@ -45,14 +59,19 @@
 		      	</div>
 		      	<div style="display: inline-block;" v-if="message.listBtnConfig.dialog">
 		      		 <v-dialog v-for="(item, index) in message.listBtnConfig.dialog" :key="index"
-		      		 	:config="item" :id='scope.row[message.listBtnConfig.pageMessage.idName]' v-on:send="dialogMessage" style="margin:0 5px;" ></v-dialog>
+		      		 	:config="item" :id='scope.row[message.listBtnConfig.pageMessage.idName]' :chooseOne='scope.row' v-on:send="dialogMessage" style="margin:0 5px;" ></v-dialog>
 		      	</div>
 		      </template>
     		</el-table-column>
 		  </el-table>
-		  <div style="margin-top: 30px">
-		    <v-pagination v-on:pageChange="pagination"></v-pagination>
-		</div>
+		  <div style="position: relative;">
+		  	 <div style="position: absolute;left: 50%;transform: translate(-50%,0);">
+		  	 	 <div style="margin-top: 30px;position: relative;height: 50px;width: 1000px;">
+				    <v-pagination v-on:pageChange="pagination"></v-pagination>
+				    <span style="cursor: pointer;position: absolute;right: 130px;top: -11px;color: #1888f7;" v-on:click="refresh()">刷新</span>
+				  </div>
+		  	 </div>
+		  </div>
 		</template>
 	</div>
 </template>
@@ -101,15 +120,15 @@
 		        },
 		    handleSelectionChange(val) {
 		        this.multipleSelection = val;
-		        var ids = [];
-		        for(let i = 0 ;i<this.multipleSelection.length;i++){
-		        	for(let index in this.multipleSelection[i]){
-		        		if(index == this.message.listBtnConfig.pageMessage.idName){
-		        			ids.push(this.multipleSelection[i][index]);
-		        		}
-		        	}
-		        }
-		        this.$emit('tableRes',ids);
+//		        var ids = [];
+//		        for(let i = 0 ;i<this.multipleSelection.length;i++){
+//		        	for(let index in this.multipleSelection[i]){
+//		        		if(index == this.message.listBtnConfig.pageMessage.idName){
+//		        			ids.push(this.multipleSelection[i][index]);
+//		        		}
+//		        	}
+//		        }
+		        this.$emit('tableRes',this.multipleSelection);
 		        },
 		    tableRowClassName({row, rowIndex}) {
 		     if(rowIndex%2 != 0){
@@ -123,14 +142,6 @@
 				var content=this.pageMessage;
 				this.$axios.get(src, {params:content},this.getMyWeb.axios.aAjaxConfig).then((res)=>{
 					var data = res.data.data.list;
-					for(let i = 0;i<data.length;i++){
-						for(let j in data[i]){
-							if(j == 'createTime'){
-								var time = new Date(data[i][j])
-									data[i][j]= time.toLocaleString();
-							}
-						}
-					}
 					this.listData =  data;
 		      	}).catch((err)=>{
 		                    this.$message.error('接口请求出错');
@@ -169,7 +180,15 @@
        		pagination(data){
        			this.pageMessage = data;
        			this.getList(this.message.listUrl)
-       		}
+       		},
+//     		转换时间格式
+			transformationTime(date){
+                return (new Date(date)).format("yyyy-MM-dd hh:mm");
+			},
+//			刷新
+			refresh(){
+				this.getList(this.message.listUrl);
+			}
 	    },
 	}
 </script>

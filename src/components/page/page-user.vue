@@ -12,13 +12,27 @@
 					<v-dialog :config="btnMessage.delete.formConfig" class="page-dialog" :tableSelect='tableSelect' v-on:send="dialogRes"></v-dialog>
 				</div>
 				<div class="btn-box">
+					<el-button class="btn-elm-box" :disabled='btnMessage.disable.disable'>
+					<i :class="btnMessage.disable.icon"></i>
+					禁止
+					</el-button>
+					<v-dialog :config="btnMessage.disable.formConfig" class="page-dialog" :tableSelect='tableSelect' v-on:send="dialogRes" v-if="!btnMessage.disable.disable"></v-dialog>
+				</div>
+				<div class="btn-box">
+					<el-button class="btn-elm-box" :disabled='btnMessage.able.disable'>
+					<i :class="btnMessage.able.icon"></i>
+					启用
+					</el-button>
+					<v-dialog :config="btnMessage.able.formConfig" class="page-dialog" :tableSelect='tableSelect' v-on:send="dialogRes" v-if="!btnMessage.able.disable"></v-dialog>
+				</div>
+				<!--<div class="btn-box">
 					<v-button :message="btnMessage.disable"></v-button>
 					<v-dialog :config="btnMessage.disable.formConfig" class="page-dialog" :tableSelect='tableSelect' v-on:send="dialogRes"></v-dialog>
 				</div>
 				<div class="btn-box">
 					<v-button :message="btnMessage.able"></v-button>
 					<v-dialog :config="btnMessage.able.formConfig" class="page-dialog" :tableSelect='tableSelect' v-on:send="dialogRes"></v-dialog>
-				</div>
+				</div>-->
 			</div>
 			<div style="width: 100%;overflow: hidden;background: #eff4f7;padding-bottom: 10px;">
 				<select-button :message="selectMessage" :placeholder="'待定'" class="page-user-select"></select-button>
@@ -65,6 +79,16 @@
        					prop:'nickname'
        				},
        				{
+       					lable:'性别',
+       					width:'120',
+       					prop:'gender'
+       				},
+       				{
+       					lable:'注册时间',
+       					width:'200',
+       					prop:'registerTime'
+       				},
+       				{
        					lable:'状态',
        					width:'120',
        					prop:'status'
@@ -88,7 +112,7 @@
        				],
        				dialog:[
 				       	{
-				       		name:"删除",
+				       		name:"mobile",
 				       		type:"delete",
 				       		idName:'memberIds',
 				       		src:"api/ucenter/admin/member",
@@ -116,9 +140,10 @@
 		       		type:"delete",
 		       		icon:"button-icon iconfont icon-el-icon-karakal-iconfontshanchu5",
 		       		formConfig:{
-		       			idName:'memberIds',
-		       			src:"api/ucenter/admin/member",
-		       			name:"删除",
+		       			idNames:'clientId',
+		       			urlSearch:'clientIds',
+		       			src:"api/ucenter/admin/client",
+		       			name:"clientName",
 		       			type:"delete",
 		       			classType:'',
 		       			style:''
@@ -127,11 +152,13 @@
        			disable:{
        				name:"禁用",
 		       		type:"disable",
+		       		disable:true,
 		       		icon:"button-icon iconfont icon-el-icon-karakal-jinyong",
 		       		formConfig:{
-		       			idName:'memberIds',
-		       			src:"api/ucenter/admin/member/disable",
-		       			name:"禁用",
+		       			idName:'clientId',
+		       			urlSearch:'clientIds',
+		       			src:"api/ucenter/admin/client/disable",
+		       			name:"clientName",
 		       			type:"disable",
 		       			classType:'',
 		       			style:''
@@ -140,11 +167,13 @@
        			able:{
        				name:"启用",
 		       		type:"able",
+		       		disable:true,
 		       		icon:"button-icon iconfont icon-el-icon-karakal-qiyong",
 		       		formConfig:{
-		       			idName:'memberIds',
-		       			src:"api/ucenter/admin/member/enable",
-		       			name:"启用",
+		       			idName:'clientId',
+		       			urlSearch:'clientIds',
+		       			src:"api/ucenter/admin/client/enable",
+		       			name:"clientName",
 		       			type:"able",
 		       			classType:'',
 		       			style:''
@@ -165,6 +194,32 @@
 //		列表信息返回
  		tableRes(data){
  			this.tableSelect = data;
+ 			var able = [];
+ 			var disable = [];
+ 			if(data.length == 0){
+ 				this.btnMessage.disable.disable = true;
+ 				this.btnMessage.able.disable = true;
+ 			}
+	 			for(let i = 0;i<data.length;i++){
+	 			for(let index in data[i]){
+	   					if(data[i].status == 0){
+	   						disable.push(data[i]);
+	   					}
+	   					if(disable.length != 0){
+	   							this.btnMessage.disable.disable = false;
+	   						}else{
+	   							this.btnMessage.disable.disable = true;
+	   					}
+	   					if(data[i].status == 1){
+	   						able.push(data[i]);
+	   					}
+	   					if(able.length != 0){
+	   							this.btnMessage.able.disable = false;
+	   						}else{
+	   							this.btnMessage.able.disable = true;
+	   						}
+	   				}
+	 			}
  		},
 // 		弹框信息返回
  		dialogRes(data){
@@ -200,6 +255,27 @@
 		margin-right: 10px;
 		position: relative;
 	}
+	.btn-elm-box{
+		margin-right: 10px;
+		border: none;
+		outline: none;
+		padding: 9px 30px;
+		border-radius: 5px;
+		background: white;
+		box-shadow: 0px 2px 10px -8px #888888;
+		position: relative;
+	}
+	.btn-elm-box i{
+		color: #0199fe;
+		margin-right: 10px;
+	}
+	.btn-elm-box:hover{
+				background: #1888f7 !important;
+				color: white;
+			}
+	.btn-elm-box:hover i{
+				color: white;
+			}
 	.btn-box:nth-child(1){
 		margin-left: 16px;
 	}
