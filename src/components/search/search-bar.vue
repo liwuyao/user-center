@@ -2,7 +2,7 @@
 	<div class="search-bar">
 		<div class="search-bar-elm">
 			<input v-model="inputMessage" :placeholder="placeholder"></input>
-			<button class="search-btn" v-on:click="searchBtn()">
+			<button class="search-btn" v-on:click="searchBtn()" style="cursor: pointer;">
 				<i class="iconfont icon-el-icon-karakal-search"></i>
 				查询
 			</button>
@@ -22,11 +22,12 @@
 	  methods:{
 	  	searchBtn(){
 	  		  var content = {};
-	  		  	  if(this.name && this.inputMessage){
-	  		  	  	content[this.name] = this.inputMessage;
-	  		  	  	 this.$emit('search',content);
-	  		  	 	 this.inputMessage = "";
-	  		  	  }else{
+	  		  	  if(this.name){
+	  		  	  	if(this.inputMessage){
+	  		  	  		content[this.name] = this.inputMessage;
+	  		  	  	}else{
+	  		  	  		content[this.name] = null;
+	  		  	  	}
 	  		  	  	 this.$emit('search',content);
 	  		  	  }
 	  	}

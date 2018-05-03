@@ -4,7 +4,7 @@
 			<div style="overflow: hidden;display: inline-block;height: 45px;position: absolute;right: 50px;top: 50%;transform: translate(0,-50%);">
 			<img src="../../assets/head.jpg" style="width: 45px;height: 45px;border-radius:50% ;float: left;"/>
 			<div style="display: inline-block;height: 100%;line-height: 45px;float: left;">
-				<span style="margin: 0 15px;">Admin</span>
+				<span style="margin: 0 15px;">{{userName}}</span>
 				<span style="cursor: pointer;">退出</span>
 			</div>
 			</div>
@@ -14,7 +14,16 @@
 
 <script>
 	export default {
-		name: 'vheader'
+		name: 'vheader',
+		data(){
+			return{
+				userName:''
+			}
+		},
+		created(){
+			this.userName = localStorage.letingUserName;
+			console.log(localStorage.letingUserName)
+		}
 	}
 </script>
 <style scoped>

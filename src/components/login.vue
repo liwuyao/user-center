@@ -5,19 +5,15 @@
 				<div style="position: absolute;top: -100px;z-index: 2;display: inline-block;width: 107%;left: 50%;transform: translate(-50%,0);">
 					<h1 style="text-align: center;color: white;">用户中心后台管理系统</h1>
 				</div>
-				<el-form :model="ruleForm2" status-icon :rules="rules2" ref="ruleForm2" class="demo-ruleForm" style="width: 300px;">
-				  <el-form-item  prop="pass">
-				    <el-input type="text" v-model="ruleForm2.username"  placeholder="请输入账号" ></el-input>
+				<el-form :model="ruleForm2" status-icon :rules="rules" ref="ruleForm2" class="demo-ruleForm" style="width: 300px;padding-top:20px">
+				  <el-form-item  prop="username">
+				    <el-input type="text" v-model="ruleForm2.username"  placeholder="请输入手机号或用户名" ></el-input>
 				  </el-form-item>
-				  <el-form-item prop="checkPass">
+				  <el-form-item prop="password">
 				    <el-input type="password" v-model="ruleForm2.password" placeholder="请输入密码"></el-input>
 				  </el-form-item>
-				  <el-form-item prop="checkPass" style="position: relative;">
-				    <el-input type="password" v-model="ruleForm2.checkPass" placeholder="请输入验证码" style="width: 100px;"></el-input>
-				    <img :src="code" v-on:click="getCode()" style="width: 60px;position: absolute;right: 90px;top: -3px;"/>
-				  </el-form-item>
-				  <el-form-item>
-				    <el-button type="primary" @click="login()" style="width: 100%;">提交</el-button>
+				  <el-form-item style="margin-top: 50px;">
+				    <el-button type="primary" @click="login('ruleForm2')" style="width: 100%;">登录</el-button>
 				  </el-form-item>
 				</el-form>
 			</div>
@@ -28,59 +24,42 @@
 <script>
 	export default {
 	  name: 'login',
-	  data () {
-	      var checkAge = (rule, value, callback) => {
-        if (!value) {
-          return callback(new Error('年龄不能为空'));
-        }
-        setTimeout(() => {
-          if (!Number.isInteger(value)) {
-            callback(new Error('请输入数字值'));
-          } else {
-            if (value < 18) {
-              callback(new Error('必须年满18岁'));
-            } else {
-              callback();
-            }
-          }
-        }, 1000);
-      };
-      var validatePass = (rule, value, callback) => {
-        if (value === '') {
-          callback(new Error('请输入密码'));
-        } else {
-          if (this.ruleForm2.checkPass !== '') {
-            this.$refs.ruleForm2.validateField('checkPass');
-          }
-          callback();
-        }
-      };
-      var validatePass2 = (rule, value, callback) => {
-        if (value === '') {
-          callback(new Error('请再次输入密码'));
-        } else if (value !== this.ruleForm2.pass) {
-          callback(new Error('两次输入密码不一致!'));
-        } else {
-          callback();
-        }
-      };
+	  data(){
+//	         		密码验证
+       		var validatePass = (rule, value, callback) => {
+		        if (value === '') {
+		          callback(new Error('请输入密码'));
+		        }else{
+		        	callback();
+		        }
+		      };
+//			    手机号验证
+			var moblie = (rule, value, callback) =>{
+				var reg = new RegExp(/^[1][3,4,5,7,8][0-9]{9}$/);
+			        if (value === '') {
+			          	callback(new Error('请输入手机号或用户名'));
+			        } else if(!reg.test(value)){
+			          	callback(new Error('请输入正确的手机号或用户名'));
+			        }else{
+			            callback();
+			        }
+			}
       return {
       	code:'',
         ruleForm2: {
           username: '',
           password: ''
         },
-        rules2: {
-          pass: [
-            { validator: validatePass, trigger: 'blur' }
-          ],
-          checkPass: [
-            { validator: validatePass2, trigger: 'blur' }
-          ],
-          age: [
-            { validator: checkAge, trigger: 'blur' }
-          ]
-        }
+         rules: {
+		        username: [
+		         	{validator: moblie, trigger: 'blur',required: true},
+		            { required: true, message: '请输入用户名', trigger: 'blur' },
+		            { min: 2, max: 20, message: '2-20位', trigger: 'blur' }
+		        ],
+		        password: [
+	            	{ validator: validatePass, trigger: 'blur',required: true}
+	            ]
+		    }
       };
 	},
 	 created(){
@@ -110,15 +89,26 @@
                     console.error(err);
           })
       },
-      login(){
-      	let content = this.ruleForm2;
-		    	   var send = this.Qs.stringify(content);
-					this.$axios.post('api/ucenter/admin/login',send,this.getMyWeb.axios.aAjaxConfig).then((res)=>{
+      login(formName){
+      	this.$refs[formName].validate((valid) => {
+          if (valid) {
+				    let content = this.ruleForm2;
+		    	var send = this.Qs.stringify(content);
+					this.$axios.post('/ucenter/admin/login',send,this.getMyWeb.axios.aAjaxConfig).then((res)=>{
+							var data = res.data.data;
+//							this.headerName = data.memberName;
+							console.log(data.memberName);
+							localStorage.letingUserName = data.memberName;
 							this.$router.push('home');
-			      	}).catch(function(err){
+			      	}).catch((err)=>{
 			                    this.$message.error('接口请求出错');
 			                    console.error(err);
-			       })
+			    })
+          } else {
+            console.log('error submit!!');
+            return false;
+          }
+        });
       }
     }
 }

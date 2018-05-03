@@ -11,14 +11,14 @@
 					<v-button :message="btnMessage.delete"></v-button>
 					<v-dialog :config="btnMessage.delete.formConfig" class="page-dialog" :tableSelect='tableSelect' v-on:send="dialogRes"></v-dialog>
 				</div>
-				<div class="btn-box">
+				<div class="btn-box-default" :class="{btnActive:!btnMessage.disable.disable}">
 					<el-button class="btn-elm-box" :disabled='btnMessage.disable.disable'>
 					<i :class="btnMessage.disable.icon"></i>
 					禁止
 					</el-button>
 					<v-dialog :config="btnMessage.disable.formConfig" class="page-dialog" :tableSelect='tableSelect' v-on:send="dialogRes" v-if="!btnMessage.disable.disable"></v-dialog>
 				</div>
-				<div class="btn-box">
+				<div class="btn-box-default" :class="{btnActive:!btnMessage.able.disable}">
 					<el-button class="btn-elm-box" :disabled='btnMessage.able.disable'>
 					<i :class="btnMessage.able.icon"></i>
 					启用
@@ -35,9 +35,8 @@
 				</div>-->
 			</div>
 			<div style="width: 100%;overflow: hidden;background: #eff4f7;padding-bottom: 10px;">
-				<select-button :message="selectMessage" :placeholder="'待定'" class="page-user-select"></select-button>
-				<select-button :message="selectMessage" :placeholder="'待定'" class="page-user-select"></select-button>
-				<div style="display:inline-block;margin-left:220px;">
+				<select-button :message="selectMessage" :placeholder="'用户状态'" class="page-user-select" v-on:select="selectRes"></select-button>
+				<div style="display:inline-block;margin-left:420px;">
 					<search-bar :name="'name'" v-on:search="searchRes" :placeholder="'输入手机号查询'"></search-bar>
 				</div>
 			</div>
@@ -66,16 +65,28 @@
        		tableData:{
        			update:[],
        			searchMessage:{},
-       			listUrl:'api/ucenter/admin/member',
+       			selectMessage:{},
+       			urlMessage:{
+       				name:null,
+        			status:'',
+	   				pageIndex:'1',
+	   				pageSize:'20'
+       			},
+       			listUrl:'/ucenter/admin/member',
        			listConfig:[
        				{
-       					lable:'用户名',
-       					width:'120',
+       					lable:'手机号码',
+       					width:'200',
        					prop:'mobile'
        				},
        				{
+       					lable:'用户名',
+       					width:'200',
+       					prop:'memberName'
+       				},
+       				{
        					lable:'昵称',
-       					width:'120',
+       					width:'200',
        					prop:'nickname'
        				},
        				{
@@ -85,7 +96,7 @@
        				},
        				{
        					lable:'注册时间',
-       					width:'200',
+       					width:'250',
        					prop:'registerTime'
        				},
        				{
@@ -101,7 +112,7 @@
        				linkTo:[
 	       				{
 	       					name:'查看',
-	       					src:'/user/look',
+	       					src:'/lookUser',
 	       					iconClass:'table-icon iconfont icon-el-icon-karakal-chakan'
 	       				},
 	       				{
@@ -114,8 +125,10 @@
 				       	{
 				       		name:"mobile",
 				       		type:"delete",
-				       		idName:'memberIds',
-				       		src:"api/ucenter/admin/member",
+				       		title:'删除',
+				       		idName:'memberId',
+				       		urlSearch:'memberIds',
+				       		src:"/ucenter/admin/member",
 				       		classType:'danger',
 				       		style:'icon',
 				       		iconClass:'table-icon iconfont icon-el-icon-karakal-iconfontshanchu5'
@@ -140,10 +153,10 @@
 		       		type:"delete",
 		       		icon:"button-icon iconfont icon-el-icon-karakal-iconfontshanchu5",
 		       		formConfig:{
-		       			idNames:'clientId',
-		       			urlSearch:'clientIds',
-		       			src:"api/ucenter/admin/client",
-		       			name:"clientName",
+		       			idNames:'memberId',
+		       			urlSearch:'memberIds',
+		       			src:"/ucenter/admin/member",
+		       			name:"mobile",
 		       			type:"delete",
 		       			classType:'',
 		       			style:''
@@ -155,10 +168,10 @@
 		       		disable:true,
 		       		icon:"button-icon iconfont icon-el-icon-karakal-jinyong",
 		       		formConfig:{
-		       			idName:'clientId',
-		       			urlSearch:'clientIds',
-		       			src:"api/ucenter/admin/client/disable",
-		       			name:"clientName",
+		       			idName:'memberId',
+		       			urlSearch:'memberIds',
+		       			src:"/ucenter/admin/member/disable",
+		       			name:"mobile",
 		       			type:"disable",
 		       			classType:'',
 		       			style:''
@@ -170,20 +183,27 @@
 		       		disable:true,
 		       		icon:"button-icon iconfont icon-el-icon-karakal-qiyong",
 		       		formConfig:{
-		       			idName:'clientId',
-		       			urlSearch:'clientIds',
-		       			src:"api/ucenter/admin/client/enable",
-		       			name:"clientName",
+		       			idName:'memberId',
+		       			urlSearch:'memberIds',
+		       			src:"/ucenter/admin/member/enable",
+		       			name:"mobile",
 		       			type:"able",
 		       			classType:'',
 		       			style:''
 		       		}
        			}
        		},
-       		selectMessage:[{
-	          value: '选项1',
-	          label: '待定'
-	        }],
+       		selectMessage:[
+		        { value: '-1',
+		          label: '全部'
+		        },
+		        { value: '0',
+		          label: '启用'
+		        },
+		        { value: '1',
+		          label: '禁用'
+		        },
+       		],
 	        isActive:false
        	}
        },
@@ -235,7 +255,20 @@
  					this.tableData.searchMessage = {};
  				},500)
  			}
- 		}
+ 		},
+ 		// 		选择信息
+		selectRes(data){
+				if(data){
+					console.log(data);
+					this.tableData.selectMessage={
+						status:data
+					};
+					console.log(this.tableData.selectMessage);
+					setTimeout(()=>{
+	 					this.tableData.selectMessage = {};
+	 				},0)
+				}
+			}
 	 	}
 	 }
 </script>
@@ -269,11 +302,16 @@
 		color: #0199fe;
 		margin-right: 10px;
 	}
-	.btn-elm-box:hover{
+	.btn-box-default{
+		display: inline-block;
+		margin-right: 10px;
+		position: relative;
+	}
+	.btnActive:hover .btn-elm-box{
 				background: #1888f7 !important;
 				color: white;
 			}
-	.btn-elm-box:hover i{
+	.btnActive:hover .btn-elm-box i{
 				color: white;
 			}
 	.btn-box:nth-child(1){

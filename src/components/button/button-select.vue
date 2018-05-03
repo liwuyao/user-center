@@ -29,7 +29,7 @@
 	    },
 	  methods:{
 	    	changes(){
-	    		console.log(this.value)
+	    		this.$emit('select',this.value);
 	    	}
 	    }
 	  }

@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
-    <title>vue-manange3</title>
+    <title>乐听用户管理中心</title>
     <style>
     	*{
     		margin: 0;
@@ -19,20 +19,26 @@
     		height: 100%;
     		overflow: auto;
     	}
-    	/*@media screen and (max-width: 1330px) {
-            .content{
-                width: 1366px !important;
-            }
-      }*/
     	.el-submenu__title i{
     		color: white !important;
     	}
     	.slide-bar .el-submenu__icon-arrown {
 				color: white !important;
 			}
-			.slide-nav-hover:hover{
-				background: #0e60b0;
+			.slide-bar2-left .slide-nav-hover:hover{
+				background: #70b6fb;
 				cursor: pointer;
+			}
+			.slide-bar2-left .slide-nav-hover:hover{
+				background: #70b6fb;
+				cursor: pointer;
+			}
+			.slide-bar2-right .slide-nav-hover:hover{
+				background: #70b6fb;
+				cursor: pointer;
+			}
+			.slide-bar2-right .slide-nav-hover:hover a{
+				color: white !important; 
 			}
 			.page-dialog{
 				position: absolute;
@@ -41,8 +47,35 @@
 				top: 0;
 				left: 0;
 			}
+/*			上传头像*/
+.avatar-uploader .el-upload {
+    border: 1px dashed #d9d9d9;
+    border-radius: 6px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+   }
+   .avatar-uploader .el-upload:hover {
+    border-color: #409EFF;
+   }
+   .avatar-uploader .el-upload:hover {
+    border-color: #409EFF;
+   }
+   .avatar-uploader-icon {
+    font-size: 28px;
+    color: #8c939d;
+    width: 235px;
+    height: 145px;
+    line-height: 145px !important;
+    text-align: center;
+   }
+   .avatar {
+    width: 235px;
+    height: 145px;
+    display: block;
+   }
     </style>
-    <link rel="stylesheet" href="//at.alicdn.com/t/font_613692_094anz1yr1thuxr.css"/>
+    <link rel="stylesheet" href="//at.alicdn.com/t/font_613692_6b3laknsq13gzaor.css"/>
 <!--    <link href="https://at.alicdn.com/t/font_488841_btgcb0z3yx6iggb9.css" rel="stylesheet">-->
   </head>
   <body>

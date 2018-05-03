@@ -1,9 +1,11 @@
 <template>
 	<div class="from-component">
 		<el-button size="mini" v-on:click="open2()" :type="config.classType" v-if="config.style == 'button'">{{message.name}}</el-button>
-		<i v-else-if="config.style == 'icon'" :class="config.iconClass" :title="config.name" v-on:click="open2()" ></i>
+		<div v-else-if="config.style == 'icon'" v-on:click="open2()" style="cursor: pointer;">
+			<i :class="config.iconClass" :title="config.title"></i>
+		</div>
 		<div v-on:click="open2()" style="position: absolute;width: 100%;height: 100%;" v-else></div>
-		<el-dialog title="增加" :visible.sync="dialogAddUser">
+		<!--<el-dialog title="增加" :visible.sync="dialogAddUser">
 			<el-form :model="form">
 			    <el-form-item label="用户名称" :label-width="formLabelWidth">
 			      <el-input v-model="form.name" auto-complete="off"></el-input>
@@ -16,18 +18,24 @@
 			    <el-button @click="dialogFormVisible = false">取 消</el-button>
 			    <el-button type="primary">确 定</el-button>
 			</div>
-		</el-dialog>
+		</el-dialog>-->
 <!--		删除-->
 		<el-dialog
-		  title="删除"
+		  title="删除提示"
 		  :visible.sync="dialogDelete"
 		  width="30%"
 		  >
-		  <p>确定删除下列选项么？</p>
-		  <p v-if="id">{{chooseOne[config.name]}}</p>
-		  <p style="width: 100%;overflow: hidden;word-wrap:break-word;word-break:break-all;" v-else>
-		  	<span v-for="item in tableSelect">{{item[config.name]+';'}}</span>
-		  </p>
+		  <div style="display: flex;flex-direction: row;">
+		  	<i class="el-icon-warning" style="color: #f7ba2a;font-size: 30px;margin-top: -5px;"></i>
+			<div style="flex: 1;margin-left: 10px;">
+			  	你正在删除【
+				<span v-if="id" style="line-height: 20px;">{{chooseOne[config.name]}}</span>
+				<span style="width: 100%;overflow: hidden;word-wrap:break-word;word-break:break-all;padding: 5px 0;line-height: 20px;" v-else>
+				  <span v-for="item in tableSelect">&nbsp;{{item[config.name]}}&nbsp;</span>
+				</span>
+				 】是否继续？
+			</div>
+		  </div>
 		  <span slot="footer" class="dialog-footer">
 		    <el-button @click="dialogDelete = false">取 消</el-button>
 		    <el-button type="primary" @click="deleteMessage">确 定</el-button>
@@ -35,14 +43,21 @@
 		</el-dialog>
 		<!--禁用-->
 		<el-dialog
-		  title="禁用"
+		  title="禁用提示"
 		  :visible.sync="dialogDisable"
 		  width="30%"
 		  >
-		  <p>确定禁用下列选项么？</p>
-		  <p style="width: 100%;overflow: hidden;word-wrap:break-word;word-break:break-all;">
-		  	<span v-for="item in tableSelect">{{item[config.name]+';'}}</span>
-		  </p>
+		  <div style="display: flex;flex-direction: row;">
+		  	<i class="el-icon-warning" style="color: #f7ba2a;font-size: 30px;margin-top: -5px;"></i>
+			<div style="flex: 1;margin-left: 10px;">
+			  	你正在禁用【
+				<span v-if="id" style="line-height: 20px;">{{chooseOne[config.name]}}</span>
+				<span style="width: 100%;overflow: hidden;word-wrap:break-word;word-break:break-all;padding: 5px 0;line-height: 20px;" v-else>
+				  <span v-for="item in tableSelect">&nbsp;{{item[config.name]}}&nbsp;</span>
+				</span>
+				 】是否继续？
+			</div>
+		  </div>
 		  <span slot="footer" class="dialog-footer">
 		    <el-button @click="dialogDisable = false">取 消</el-button>
 		    <el-button type="primary" @click="disableMessage()">确 定</el-button>
@@ -50,14 +65,21 @@
 		</el-dialog>
 		<!--		  启用弹框-->
 		<el-dialog
-		  title="启用"
+		  title="启用提示"
 		  :visible.sync="dialogAble"
 		  width="30%"
 		  >
-		  <p>确定启用下列选项么？</p>
-		  <p style="width: 100%;overflow: hidden;word-wrap:break-word;word-break:break-all;">
-		  	<span v-for="item in tableSelect">{{item[config.name]+';'}}</span>
-		  </p>
+		  <div style="display: flex;flex-direction: row;">
+		  	<i class="el-icon-warning" style="color: #f7ba2a;font-size: 30px;margin-top: -5px;"></i>
+			<div style="flex: 1;margin-left: 10px;">
+			  	你正在启用【
+				<span v-if="id" style="line-height: 20px;">{{chooseOne[config.name]}}</span>
+				<span style="width: 100%;overflow: hidden;word-wrap:break-word;word-break:break-all;padding: 5px 0;line-height: 20px;" v-else>
+				  <span v-for="item in tableSelect">&nbsp;{{item[config.name]}}&nbsp;</span>
+				</span>
+				】是否继续？
+			</div>
+		  </div>
 		  <span slot="footer" class="dialog-footer">
 		    <el-button @click="dialogAble = false">取 消</el-button>
 		    <el-button type="primary" @click="ableMessage()">确 定</el-button>
@@ -78,16 +100,6 @@
 	        dialogAddUser: false,
 	        open:true,
 	        ids:[],
-	        form: {
-	          name: '',
-	          region: '',
-	          date1: '',
-	          date2: '',
-	          delivery: false,
-	          type: [],
-	          resource: '',
-	          desc: ''
-	        },
 	        formLabelWidth: '120px'
 	      };
 	    },
@@ -98,7 +110,7 @@
 			open2(){
 				if(!this.id && this.tableSelect.length == 0){
 					this.$message.error('请选择要操作对象') 
-				}else{
+				}else if(!this.id && this.tableSelect.length != 0){
 					var ids = [];
 			        for(let i = 0 ;i<this.tableSelect.length;i++){
 			        	for(let index in this.tableSelect[i]){
@@ -108,10 +120,6 @@
 			        	}
 			        }
 			        this.ids = ids;
-			        console.log(this.ids);
-					if(this.config.type === "add"){
-					this.dialogFormVisible = true;
-					}
 					if(this.config.type === "delete"){
 						this.dialogDelete = true;
 					}
@@ -120,6 +128,11 @@
 					}
 					if(this.config.type === "able"){
 						this.dialogAble = true;
+					}
+				}
+				if(this.id){
+					if(this.config.type === "delete"){
+						this.dialogDelete = true;
 					}
 				}
 			},
@@ -132,11 +145,12 @@
 					content  = '?'+this.config.urlSearch+'=' + this.ids.join()
 				}
 				var _url = this.config.src + content;
+				console.log(_url);
 				this.$axios.delete(_url,this.getMyWeb.axios.aAjaxConfig).then((res)=>{
 					 this.returnMessage('删除成功');
 					 this.dialogDelete = false;
 					 this.$message({
-				          message: '删除成功',
+				          message: res.data.data,
 				          type: 'success'
 				        });
 				}).catch((err)=>{
@@ -149,10 +163,11 @@
 				var content = '?'+this.config.urlSearch+'=' + this.ids.join();
 				var _url = this.config.src+content;
 				this.$axios.put(_url,this.getMyWeb.axios.aAjaxConfig).then((res)=>{
+					console.log(res);
 					 this.returnMessage('禁用成功');
 					 this.dialogDisable = false;
 					 this.$message({
-				          message: '禁用成功',
+				          message: res.data.data,
 				          type: 'success'
 				        });
 				}).catch((err)=>{
@@ -169,7 +184,7 @@
 					 this.returnMessage('启用成功');
 					 this.dialogAble = false;
 					 this.$message({
-				          message: '启用成功',
+				          message: res.data.data,
 				          type: 'success'
 				        });
 				}).catch((err)=>{

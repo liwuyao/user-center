@@ -14,16 +14,16 @@
 								<h4>账号信息</h4>
 							</div>
 							<el-form-item label="手机号" prop="mobile">
-							    <el-input v-model="ruleForm.mobile" style="width: 400px;" :disabled="disabled"></el-input>
+							    <el-input v-model="ruleForm.mobile" style="width: 400px;" :disabled="disabled" placeholder="请输入手机号"></el-input>
 							</el-form-item>
 							<el-form-item label="用户名" prop="memberName">
-							    <el-input v-model="ruleForm.memberName" style="width: 400px;" :disabled="disabled"></el-input>
+							    <el-input v-model="ruleForm.memberName" style="width: 400px;" :disabled="disabled" placeholder="请输入用户名（2-20位）"></el-input>
 							</el-form-item>
 							<el-form-item label="密码" prop="password">
-						    	<el-input type="password" v-model="ruleForm.password" auto-complete="off" style="width: 400px;" :disabled="disabled"></el-input>
+						    	<el-input type="password" v-model="ruleForm.password" auto-complete="off" style="width: 400px;" :disabled="disabled" placeholder="请输入密码至少6位数"></el-input>
 						    </el-form-item>
 						    <el-form-item label="确认密码" prop="passwordConfirm">
-						        <el-input type="password" v-model="ruleForm.passwordConfirm" auto-complete="off" style="width: 400px;" :disabled="disabled"></el-input>
+						        <el-input type="password" v-model="ruleForm.passwordConfirm" auto-complete="off" style="width: 400px;" :disabled="disabled"  placeholder="两次密码要一致"></el-input>
 						    </el-form-item>
 							<el-form-item label="用户类型">
 							    <el-radio-group v-model="ruleForm.memberType" :disabled="disabled">
@@ -41,7 +41,7 @@
 								<h4>详细信息</h4>
 							</div>
 							<el-form-item label="昵称" prop="nickname">
-							    <el-input v-model="ruleForm.nickname" style="width: 400px;" :disabled="disabled"></el-input>
+							    <el-input v-model="ruleForm.nickname" style="width: 400px;" :disabled="disabled" placeholder="请填写昵称（可以不填）"></el-input>
 							</el-form-item>
 							<el-form-item label="生日" prop="nickname">
 							    <el-date-picker type="date" placeholder="选择日期" v-model="ruleForm.birthday" style="width: 400px;" :disabled="disabled"></el-date-picker>
@@ -56,37 +56,37 @@
 							<div style="overflow: hidden;">
 								<div style="display: inline-block;">
 									<el-form-item label="职业">
-									    <el-input v-model="ruleForm.career" style="width: 400px;" :disabled="disabled"></el-input>
+									    <el-input v-model="ruleForm.career" style="width: 400px;" :disabled="disabled" placeholder="请填写职业（可以不填）"></el-input>
 									</el-form-item>
 								</div>
 								<div style="display: inline-block;">
 									<el-form-item label="公司">
-									    <el-input v-model="ruleForm.company" style="width: 400px;" :disabled="disabled"></el-input>
+									    <el-input v-model="ruleForm.company" style="width: 400px;" :disabled="disabled" placeholder="请填写公司（可以不填）"></el-input>
 									</el-form-item>
 								</div>
 							</div>
 							<div style="overflow: hidden;">
 								<div style="display: inline-block;">
 									<el-form-item label="所在地">
-									    <el-input v-model="ruleForm.location" style="width: 400px;" :disabled="disabled"></el-input>
+									    <el-input v-model="ruleForm.location" style="width: 400px;" :disabled="disabled"  placeholder="请填写所在地（可以不填）"></el-input>
 									</el-form-item>
 								</div>
 								<div style="display: inline-block;">
 									<el-form-item label="家乡">
-									    <el-input v-model="ruleForm.hometown" style="width: 400px;" :disabled="disabled"></el-input>
+									    <el-input v-model="ruleForm.hometown" style="width: 400px;" :disabled="disabled"  placeholder="请填写家乡（可以不填）"></el-input>
 									</el-form-item>
 								</div>
 							</div>
-							<el-form-item label="邮箱">
-							    <el-input v-model="ruleForm.email" style="width: 400px;" :disabled="disabled"></el-input>
+							<el-form-item label="邮箱" prop="email">
+							    <el-input v-model="ruleForm.email" style="width: 400px;" :disabled="disabled"  placeholder="请填写邮箱（可以不填）"></el-input>
 							</el-form-item>
 							<el-form-item label="个人说明" style="margin-top: 30px;">
-							    <el-input type="textarea" v-model="ruleForm.personalSignature" placeholder="应用描述" :disabled="disabled" style="width: 600px;"></el-input>
+							    <el-input type="textarea" v-model="ruleForm.personalSignature" placeholder="输入个人描述（可以不填）" :disabled="disabled" style="width: 600px;"></el-input>
 							</el-form-item>
 							<div style="position: absolute;top: 85px;right: 120px;width: 235px;">
 						  		<el-upload
 								  class="avatar-uploader"
-								  action="https://jsonplaceholder.typicode.com/posts/"
+								  action="/ucenter/upload/common/{.jpg}"
 								  :show-file-list="false"
 								  :on-success="handleAvatarSuccess"
 								  :before-upload="beforeAvatarUpload">
@@ -117,7 +117,9 @@
        		var validatePass = (rule, value, callback) => {
 		        if (value === '') {
 		          callback(new Error('请输入密码'));
-		        } else {
+		        } else if (value.length < 6){
+		          callback(new Error('密码至少6位数'));
+		        }else {
 		          if (this.ruleForm.passwordConfirm !== '') {
 		            this.$refs.ruleForm.validateField('passwordConfirm');
 		          }
@@ -130,13 +132,13 @@
 		          callback(new Error('请再次输入密码'));
 		        } else if (value !== this.ruleForm.password) {
 		          callback(new Error('两次输入密码不一致!'));
-		        } else {
+		        }else {
 		          callback();
 		        }
 		      };
 //			    手机号验证
 		    var validateMobile = (rule, value, callback) => {
-		 	   	var reg = new RegExp(/^1[3|4|5|8][0-9]\d{4,8}$/);
+		 	   	var reg = new RegExp(/^[1][3,4,5,7,8][0-9]{9}$/);
 			        if (value === '') {
 			          callback(new Error('请输入手机号'));
 			        } else if(!reg.test(value)){
@@ -154,8 +156,8 @@
        		ruleForm: {
 		          mobile: '',
 		          memberName: '',
-		          memberType:'0',
-				  memberRole:'0',
+		          memberType:'',
+				  memberRole:'',
 				  password:'',
 				  passwordConfirm:'',
 				  nickname:'',
@@ -185,6 +187,9 @@
 	            nickname: [
 	            	{ min: 2, max: 10, message: '2-20位', trigger: 'blur' }
 	            ],
+	            email:[
+					{ type: 'email', message: '请输入正确的邮箱地址', trigger: ['blur', 'change'] }
+				]
 		    }
        	}
        	},
@@ -231,7 +236,7 @@
 	      
 //	      	获取数据
 	        getUserMessage(){
-				this.$axios.get('api/ucenter/admin/member/'+this.userId+'/detail',this.getMyWeb.axios.aAjaxConfig).then((res)=>{
+				this.$axios.get('/ucenter/admin/member/'+this.userId+'/detail',this.getMyWeb.axios.aAjaxConfig).then((res)=>{
 					var data = res.data.data;
 					data.memberType = String(data.memberType);
 			        data.memberRole = String(data.memberRole);
@@ -247,15 +252,16 @@
 	       		 this.$refs[formName].validate((valid) => {
 			          if (valid) {
 			            	let content = this.ruleForm;
+			            	console.log(this.ruleForm);
 			            	content.memberType = Number(content.memberType);
 			            	content.memberRole = Number(content.memberRole);
 			            	console.log(content);
 					    	var send = this.Qs.stringify(content)
 					    	console.log(send);
-						    this.$axios.post('api/ucenter/admin/member',send,this.getMyWeb.axios.aAjaxConfig).then((res)=>{
+						    this.$axios.post('/ucenter/admin/member',send,this.getMyWeb.axios.aAjaxConfig).then((res)=>{
 									console.log(res);
 									this.$router.go(-1)
-						      	}).catch(function(err){
+						      	}).catch((err)=>{
 						                    this.$message.error('接口请求出错');
 						                    console.error(err);
 						       })
@@ -273,11 +279,11 @@
 					    	    content.memberType = Number(content.memberType);
 			            		content.memberRole = Number(content.memberRole);
 					    	var send = "?"+this.Qs.stringify(content);
-					    	this.$axios.put('api/ucenter/admin/member/'+send,this.getMyWeb.axios.aAjaxConfig).then((res)=>{
+					    	this.$axios.put('/ucenter/admin/member/'+send,this.getMyWeb.axios.aAjaxConfig).then((res)=>{
 								this.ruleForm = res.data.data;
 								console.log(res);
 								this.$router.go(-1)
-					      	}).catch(function(err){
+					      	}).catch((err)=>{
 					                    this.$message.error('接口请求出错');
 					                    console.error(err);
 					        })

@@ -12,7 +12,7 @@ import Qs from 'qs'
 Vue.use(Qs);
 Vue.prototype.Qs = Qs;
 
-Vue.prototype.$axios = axios
+Vue.prototype.$axios = axios;
 
 //axios.defaults.baseURL = '/api'
 

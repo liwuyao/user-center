@@ -8,6 +8,8 @@ import User from '@/components/page/page-user.vue'
 import applicationMessage from '@/components/from/application-message.vue'
 import userMessage from '@/components/from/user-message.vue'
 import userMessageModify from '@/components/from/user-message-modify.vue'
+import lookUpClinet from '@/components/look-up/look-up-client-message.vue'
+import lookUpUser from '@/components/look-up/look-up-user-message.vue'
 //import Silde from '@/components/home/slide-bar.vue'
 
 Vue.use(Router)
@@ -33,6 +35,14 @@ export default new Router({
     {
       path: '/user/:id',
       component: userMessage
+    },
+    {
+      path: '/lookClient',
+      component: lookUpClinet
+    },
+    {
+      path: '/lookUser',
+      component: lookUpUser
     },
     {
       path: '/userModify',

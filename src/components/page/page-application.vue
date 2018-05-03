@@ -11,14 +11,14 @@
 					<v-button :message="btnMessage.delete"></v-button>
 					<v-dialog :config="btnMessage.delete.formConfig" class="page-dialog" :tableSelect='tableSelect' v-on:send="dialogRes"></v-dialog>
 				</div>
-				<div class="btn-box">
+				<div class="btn-box-default" :class="{btnActive:!btnMessage.disable.disable}">
 					<el-button class="btn-elm-box" :disabled='btnMessage.disable.disable'>
 					<i :class="btnMessage.disable.icon"></i>
 					禁止
 					</el-button>
 					<v-dialog :config="btnMessage.disable.formConfig" class="page-dialog" :tableSelect='tableSelect' v-on:send="dialogRes" v-if="!btnMessage.disable.disable"></v-dialog>
 				</div>
-				<div class="btn-box">
+				<div class="btn-box-default" :class="{btnActive:!btnMessage.able.disable}">
 					<el-button class="btn-elm-box" :disabled='btnMessage.able.disable'>
 					<i :class="btnMessage.able.icon"></i>
 					启用
@@ -35,14 +35,13 @@
 				</div>-->
 			</div>
 			<div style="width: 100%;overflow: hidden;background: #eff4f7;padding-bottom: 10px;">
-				<select-button :message="selectMessage" :placeholder="'待定'" class="application-select"></select-button>
-				<select-button :message="selectMessage" :placeholder="'待定'" class="application-select"></select-button>
-				<div style="display:inline-block;margin-left:220px;">
+				<select-button :message="selectMessage" :placeholder="'应用状态'" class="application-select" v-on:select="selectRes"></select-button>
+				<div style="display:inline-block;margin-left:420px;">
 					<search-bar :name="'condition'" v-on:search="searchRes" :placeholder="'输入clientkey查询'"></search-bar>
 				</div>
 			</div>
 			<div style="padding-bottom:50px ;overflow: hidden;">
-				<v-table :message='tableData' v-on:tableRes="tableRes" :update="tableData.update"></v-table>
+				<v-table :message='tableData' v-on:tableRes="tableRes"></v-table>
 			</div>
 		</div>
 	</div>
@@ -66,7 +65,14 @@
        		tableData:{
        			update:[],
        			searchMessage:{},
-       			listUrl:'api/ucenter/admin/client',
+       			selectMessage:{},
+       			urlMessage:{
+       				condition:null,
+        			state:'',
+	   				pageIndex:'1',
+	   				pageSize:'20'
+       			},
+       			listUrl:'/ucenter/admin/client',
        			listConfig:[
        				{
        					lable:'应用名称',
@@ -101,7 +107,7 @@
        				linkTo:[
 	       				{
 	       					name:'查看',
-	       					src:'/client/look',
+	       					src:'/lookClient',
 	       					iconClass:'table-icon iconfont icon-el-icon-karakal-chakan'
 	       				},
 	       				{
@@ -113,9 +119,11 @@
        				dialog:[
 				       	{
 				       		name:"clientName",
+				       		title:'删除',
 				       		idName:'clientId',
+				       		urlSearch:'clientIds',
 				       		type:"delete",
-				       		src:"api/ucenter/admin/client",
+				       		src:"/ucenter/admin/client",
 				       		classType:'danger',
 				       		style:'icon',
 				       		iconClass:'table-icon iconfont icon-el-icon-karakal-iconfontshanchu5'
@@ -142,7 +150,7 @@
 		       		formConfig:{
 		       			idNames:'clientId',
 		       			urlSearch:'clientIds',
-		       			src:"api/ucenter/admin/client",
+		       			src:"/ucenter/admin/client",
 		       			name:"clientName",
 		       			type:"delete",
 		       			classType:'',
@@ -157,7 +165,7 @@
 		       		formConfig:{
 		       			idName:'clientId',
 		       			urlSearch:'clientIds',
-		       			src:"api/ucenter/admin/client/disable",
+		       			src:"/ucenter/admin/client/disable",
 		       			name:"clientName",
 		       			type:"disable",
 		       			classType:'',
@@ -172,7 +180,7 @@
 		       		formConfig:{
 		       			idName:'clientId',
 		       			urlSearch:'clientIds',
-		       			src:"api/ucenter/admin/client/enable",
+		       			src:"/ucenter/admin/client/enable",
 		       			name:"clientName",
 		       			type:"able",
 		       			classType:'',
@@ -180,10 +188,17 @@
 		       		}
        			}
        		},
-       		selectMessage:[{
-	          value: '选项1',
-	          label: '待定'
-	        }],
+       		selectMessage:[
+		        { value: '-1',
+		          label: '全部'
+		        },
+		        { value: '0',
+		          label: '启用'
+		        },
+		        { value: '1',
+		          label: '禁用'
+		        },
+       		],
 	        isActive:false
        	}
        },
@@ -225,7 +240,6 @@
  		},
 // 		弹框信息返回
  		dialogRes(data){
- 			console.log(data);
  			this.tableData.update = this.tableSelect;
  		},
 // 		搜索信息
@@ -234,9 +248,20 @@
  				this.tableData.searchMessage = data;
  				setTimeout(()=>{
  					this.tableData.searchMessage = {};
- 				},500)
+ 				},0)
  			}
- 		}
+ 		},
+// 		选择信息
+		selectRes(data){
+				if(data){
+					this.tableData.selectMessage={
+						state:data
+					};
+					setTimeout(()=>{
+	 					this.tableData.selectMessage = {};
+	 				},0)
+				}
+			}
 	 	}
     }
 </script>
@@ -256,6 +281,11 @@
 		margin-right: 10px;
 		position: relative;
 	}
+	.btn-box-default{
+		display: inline-block;
+		margin-right: 10px;
+		position: relative;
+	}
 	.btn-elm-box{
 		margin-right: 10px;
 		border: none;
@@ -270,11 +300,11 @@
 		color: #0199fe;
 		margin-right: 10px;
 	}
-	.btn-elm-box:hover{
+	.btnActive:hover .btn-elm-box{
 				background: #1888f7 !important;
 				color: white;
 			}
-	.btn-elm-box:hover i{
+	.btnActive:hover .btn-elm-box i{
 				color: white;
 			}
 	.btn-box:nth-child(1){

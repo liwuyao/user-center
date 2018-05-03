@@ -1,6 +1,6 @@
 <template>
 	<div class="table" :data="message.update">
-	<div :data="message.searchMessage"></div>
+	<div :data="message.searchMessage + message.selectMessage"></div>
 	<template style="overflow: hidden;">
 		  <el-table
 		    ref="multipleTable"
@@ -22,15 +22,14 @@
 		    </el-table-column>
 		    <el-table-column v-for="(item, index) in message.listConfig" :key="index" 
 		      :label="item.lable"
-		      :width ="item.width"
 		      show-overflow-tooltip>
 		      <template slot-scope="props">
 		        <span v-if="item.prop == 'state'">
-		        	<span v-if="props.row[item.prop] == 0 " style="color: #1888f7;">启用</span>
+		        	<span v-if="props.row[item.prop] == 0 " style="color: green;">启用</span>
 		        	<span v-else style="color: red;">禁用</span>
 		        </span>
 		        <span v-else-if="item.prop == 'status'">
-		        	<span v-if="props.row[item.prop] == 0 " style="color: #1888f7;">启用</span>
+		        	<span v-if="props.row[item.prop] == 0 " style="color: green;">启用</span>
 		        	<span v-else style="color: red;">禁用</span>
 		        </span>
 		        <span v-else-if="item.prop == 'gender'">
@@ -39,7 +38,7 @@
 		        	<span v-else>保密</span>
 		        </span>
 		        <span v-else-if="!props.row[item.prop]">
-		        	/
+		        	————
 		        </span>
 		        <span v-else-if="item.prop =='registerTime'">
 		        	{{transformationTime(props.row[item.prop])}}
@@ -67,8 +66,8 @@
 		  <div style="position: relative;">
 		  	 <div style="position: absolute;left: 50%;transform: translate(-50%,0);">
 		  	 	 <div style="margin-top: 30px;position: relative;height: 50px;width: 1000px;">
-				    <v-pagination v-on:pageChange="pagination"></v-pagination>
-				    <span style="cursor: pointer;position: absolute;right: 130px;top: -11px;color: #1888f7;" v-on:click="refresh()">刷新</span>
+				    <v-pagination v-on:pageChange="pagination" :message="pageinationMessage"></v-pagination>
+				   <!-- <span style="cursor: pointer;position: absolute;right: 130px;top: -11px;color: #1888f7;" v-on:click="refresh()">刷新</span>-->
 				  </div>
 		  	 </div>
 		  </div>
@@ -87,16 +86,22 @@
 	  },
 	  data() {
       return {
+      	closeUp:'',
        	listData:[],
         multipleSelection: [],
         update:[],
-        pageMessage:{
-	   				pageIndex:'1',
-	   				pageSize:'20'
-	   			}
+        pageinationMessage:{
+        	pageNum:1,
+        	pageSize:20,
+        	pages:2,
+        	size:20,
+        	total:26
+        },
+        pageMessage:{}
         }
      },
      created(){
+     	 this.pageMessage= this.message.urlMessage;
 		 this.getList(this.message.listUrl)
     	},
      updated(){
@@ -105,7 +110,14 @@
      		this.getList(this.message.listUrl)
      	}
      	if(Object.keys(this.message.searchMessage).length != 0){
+     		if(this.closeUp == this.message.searchMessage) return;
 			this.search(this.message.listUrl);
+			this.closeUp = this.message.searchMessage
+     	}
+     	if(Object.keys(this.message.selectMessage).length != 0){
+     		if(this.closeUp == this.message.selectMessage) return;
+			this.select(this.message.listUrl);
+			this.closeUp = this.message.selectMessage;
      	}
      },
 	 methods: {
@@ -139,10 +151,15 @@
 	           },
 //	        获取列表数据
 			getList(src){
+//				this.pageMessage.condition= this.message.searchMessage.condition;
+//				this.pageMessage.state = 
 				var content=this.pageMessage;
 				this.$axios.get(src, {params:content},this.getMyWeb.axios.aAjaxConfig).then((res)=>{
 					var data = res.data.data.list;
 					this.listData =  data;
+					this.pageinationMessage.total = res.data.data.total;
+					this.pageinationMessage.pageSize = res.data.data.pageSize;
+					this.pageinationMessage.pageNum = res.data.data.pageNum;
 		      	}).catch((err)=>{
 		                    this.$message.error('接口请求出错');
 		                    console.error(err);
@@ -150,22 +167,25 @@
 			},
 //			搜索
 			search(src){
-				var content=this.message.searchMessage;
-				this.$axios.get(src, {params:content},this.getMyWeb.axios.aAjaxConfig).then((res)=>{
-					var data = res.data.data.list;
-					for(let i = 0;i<data.length;i++){
-						for(let j in data[i]){
-							if(j == 'createTime'){
-								var time = new Date(data[i][j])
-									data[i][j]= time.toLocaleString();
-							}
+				for(let i in this.pageMessage){
+					for(let j in this.message.searchMessage){
+						if(i == j){
+							this.pageMessage[i]= this.message.searchMessage[j];
 						}
 					}
-					this.listData =  data;
-		      	}).catch((err)=>{
-		                    this.$message.error('接口请求出错');
-		                    console.error(err);
-		        })
+				}
+				this.getList(src);
+			},
+//			按类查询
+			select(src){
+				for(let i in this.pageMessage){
+					for(let j in this.message.selectMessage){
+						if(i == j){
+							this.pageMessage[i]= this.message.selectMessage[j];
+						}
+					}
+				}
+				this.getList(src);
 			},
 	        dialogMessage(a){
        				console.log(a.b)
@@ -178,7 +198,8 @@
        		},
 //     		按页查询
        		pagination(data){
-       			this.pageMessage = data;
+       			this.pageMessage.pageIndex = data.pageIndex;
+       			this.pageMessage.pageSize = data.pageSize;
        			this.getList(this.message.listUrl)
        		},
 //     		转换时间格式

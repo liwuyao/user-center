@@ -3,11 +3,11 @@
 		<div class="slide-bar2-box" v-bind:class="{ openActive: isOpenActive }">
 			<div style="float: left;" class="slide-bar2-left">
 				<div v-on:click="sideBarOpen()" style="text-align: center;padding: 20px 0;">
-					<i class="iconfont icon-el-icon-karakal-oppen"></i>
+					<i class="iconfont icon-el-icon-karakal-slideBar-open"></i>
 				</div>
 				<div>
-					<div v-for="item in data" class='slide-nav-hover'>
-						<first-nav :message="item" :open='open' :rightStatu='slideRight' :currentNav='currentNav' v-on:send="sendMessae" :promptElemStatu='promptElemStatu'></first-nav>
+					<div v-for="item in data" v-on:click="choose(item)">
+						<first-nav :message="item" :open='open' :rightStatu='slideRight' :currentNav='currentNav' v-on:send="sendMessae" :promptElemStatu='promptElemStatu' :choose = 'chooseNav'></first-nav>
 					</div>
 				</div>
 			</div>
@@ -18,7 +18,7 @@
 						<select-list :message='item'></select-list>
 					</div>
 					<div v-else  class='slide-nav-hover'>
-						<router-link :to='item.index' style="padding: 20px 0 20px 30px;display: block;">
+						<router-link :to='item.index' style="padding: 15px 0 15px 30px;display: block;">
 						  	<span>{{item.title}}</span>
 						</router-link>
 					</div>
@@ -34,9 +34,9 @@
 		var firstNav = {
 		  template:`
 		  <div>
-		  	<div v-if="message.index" v-on:click="onlyLink()" style="padding: 10px 0;">
+		  	<div v-if="message.index" v-on:click="onlyLink()" :class="{ chooseFirstNav: message == choose }">
 				<el-tooltip class="item" effect="dark" :content="message.name" placement="right" :disabled="promptElemStatu">
-			      	<router-link :to="message.index">
+			      	<router-link :to="message.index"  style="padding: 15px 0;display: block;">
 			  			<div style='width:60px;text-align: center;display:inline-block'>
 				  			<i :class="message.icon"></i>
 				  		</div>
@@ -44,7 +44,7 @@
 					</router-link>
 			    </el-tooltip>
 		  	</div>
-		  	<div v-else v-on:click="sendMessage()" style="padding: 10px 0;">
+		  	<div v-else v-on:click="sendMessage()" style="padding: 15px 0;" :class="{ chooseFirstNav: message == choose }" class='slide-nav-hover'>
 		  	<el-tooltip class="item" effect="dark" :content="message.name" placement="right" :disabled="promptElemStatu">
 		  		<div>
 		  			<div style='width:60px;text-align: center;display:inline-block'>
@@ -56,7 +56,7 @@
 		  	</div>
 		  </div>
 		  `,
-		  props: ['message','open','rightStatu','currentNav','promptElemStatu'],
+		  props: ['message','open','rightStatu','currentNav','promptElemStatu','choose'],
 		  data(){
 		  	return{
 		  		test:{},
@@ -94,7 +94,7 @@
 			template:`
 				<div class="select-list">
 					<div style="overflow:hiden;">
-						<div @click="rightSelect(message.className)" style="padding: 20px 0 20px 30px;cursor: pointer;">
+						<div @click="rightSelect(message.className)" style="padding: 15px 0 15px 30px;cursor: pointer;">
 							<span>{{message.title}}</span>
 							<div style="display:inline-block" class="select-animation">
 								<i class="iconfont icon-el-icon-karakal-xiala"></i>
@@ -103,7 +103,7 @@
 						<div class="right-select" :class="message.className">
 							<div v-if='rightNav'>
 								<div v-for='item in message.list' class='slide-nav-hover'>
-									<router-link :to='item.index'  style="padding: 20px 0 20px 30px;display:block;">
+									<router-link :to='item.index'  style="padding: 15px 0 15px 30px;display:block;">
 									  	<span>{{item.name}}</span>
 									</router-link>
 								</div>
@@ -161,29 +161,29 @@
 					var elm=document.querySelector(className);
 					var child =elm.previousElementSibling.children[1];
 					var num = this.message.list.length;
-					var height = 61;
+					var height = 60;
 					var maxHeight = num*height;
 					this.oldMessage = this.message;
 					if(!this.rightNav){
 							icon1(child);
 							var timer = setInterval(()=>{
-							this.selectHeight +=10;
+							this.selectHeight +=4;
 							elm.style.height= this.selectHeight  +'px';
 							if(this.selectHeight >= maxHeight){
 								clearInterval(timer);
 								this.rightNav=true;
 							}
-						},10)
+						},1)
 					}else{
 						var timer = setInterval(()=>{
 							icon2(child);
-							this.selectHeight -=10;
+							this.selectHeight -=4;
 							elm.style.height= this.selectHeight  +'px';
 							if(this.selectHeight <= 0){
 								clearInterval(timer);
 								this.rightNav =false;
 							}
-						},10)
+						},1)
 					}
 					function icon1(elm){
 						var deg = 0;
@@ -232,7 +232,8 @@
 				test:'a',
 				currentNav:'',
 				data:[],
-				rightData:{}
+				rightData:{},
+				chooseNav:''
 			}
 		},
 		created(){
@@ -245,7 +246,7 @@
 					var timer = setInterval(()=>{
 						this.oldWidth += 10
 						elm.style.width= this.oldWidth +'px'
-						if(this.oldWidth >= 160){
+						if(this.oldWidth >= 150){
 							clearInterval(timer);
 							this.open= !this.open;
 							this.promptElemStatu = true;
@@ -265,7 +266,7 @@
 					},10)
 				}
 			},
-//			发送信息
+//			发送信息 加右侧滑块代码
 			sendMessae(data){
 				if(data.rightStatu){
 					this.slideRight = true;
@@ -273,16 +274,16 @@
 					this.promptElemStatu = true;
 					this.rightData = data.message;
 					this.currentNav = data.message;
-					if(this.rightWidth >= 180) return;
+					if(this.rightWidth >= 160) return;
 					setTimeout(()=>{
 						let elm = document.querySelector('.slide-bar2-right');
 						var timer = setInterval(()=>{
-							this.rightWidth += 20;
+							this.rightWidth += 10;
 							elm.style.width= this.rightWidth +'px';
-							if(this.rightWidth >= 180){
+							if(this.rightWidth >= 160){
 								clearInterval(timer)
 							}
-						},10)
+						},5)
 					})
 				}else{
 					this.slideRightChild = false;
@@ -321,6 +322,10 @@
 						},10)
 					})
 				}
+			},
+//			选择一级导航
+			choose(item){
+				this.chooseNav = item;
 			}
 		}
 		
@@ -331,6 +336,7 @@
 <style >
 	.slide-bar2{
 		height: 100%;
+		font-size: 15px;
 	}
 	.slide-bar2-box{
 		display: flex;
@@ -360,10 +366,19 @@
 	}
 	.slide-bar2 .router-link-active{
 		text-decoration: none;
-		color: orange !important;
+		color: white !important;
+		background: #0e60b0;
 	}
 	.slide-bar2 .router-link-active i{
-		color: orange !important;
+		color: white !important;
+	}
+	.slide-bar2 .slide-bar2-right .router-link-active{
+		text-decoration: none;
+		color: #1888f7 !important;
+		background: none;
+	}
+	.slide-bar2 .slide-bar2-right .router-link-active i{
+		color: #1888f7 !important;
 	}
 	.slide-bar2 .right-select{
 		background: #f6f6f6;
@@ -375,5 +390,8 @@
 	}
 	.select-animation{
 		margin-left: 30px;
+	}
+	.chooseFirstNav{
+		background: #0e60b0;
 	}
 </style>

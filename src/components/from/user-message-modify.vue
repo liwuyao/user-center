@@ -12,15 +12,15 @@
 					<div style="padding: 22px 35px;border-bottom: 1px solid gainsboro;margin-bottom: 20px;">
 						<h4>账号信息</h4>
 					</div>
-					<el-form :model="userMessage" :rules="rules" ref="userMessage" label-width="100px" class="demo-ruleForm">
+					<el-form :model="modifyMessage" :rules="rules" ref="modifyMessage" label-width="100px" class="demo-ruleForm">
 						<el-form-item label="手机号" prop="mobile">
-							<el-input v-model="userMessage.mobile" style="width: 400px;" :disabled=true></el-input>
+							<el-input v-model="modifyMessage.mobile" style="width: 400px;" :disabled=true></el-input>
 						</el-form-item>
 						<el-form-item label="用户名" prop="memberName">
-							<el-input v-model="userMessage.memberName" style="width: 400px;" :disabled=true></el-input>
+							<el-input v-model="modifyMessage.memberName" style="width: 400px;" :disabled=true></el-input>
 						</el-form-item>
 						<el-form-item label="用户类型">
-							<el-radio-group v-model="userMessage.memberType" :disabled=true>
+							<el-radio-group v-model="modifyMessage.memberType" :disabled=true>
 							    <el-radio label= '0'>互联网</el-radio>
 							    <el-radio label= '1'>系统应用</el-radio>
 							</el-radio-group>
@@ -37,7 +37,7 @@
 					</div>
 					<el-form :model="modifyMessage" :rules="rules" ref="modifyMessage" label-width="100px" class="demo-ruleForm">
 						<el-form-item label="昵称" style="margin: 30px 0;">
-							<el-input v-model="modifyMessage.nickname" style="width: 400px;" :disabled="disabled"></el-input>
+							<el-input v-model="modifyMessage.nickname" style="width: 400px;" :disabled="disabled" placeholder="请填写昵称（可以不填）"></el-input>
 						</el-form-item>
 						<el-form-item label="生日" style="margin: 30px 0;">
 							<el-date-picker type="date" placeholder="选择日期" v-model="modifyMessage.birthday" style="width: 400px;" :disabled=true></el-date-picker>
@@ -52,32 +52,32 @@
 						<div style="overflow: hidden;margin: 20px 0;">
 							<div style="display: inline-block;">
 								<el-form-item label="职业">
-									<el-input v-model="modifyMessage.career" style="width: 400px;" :disabled="disabled"></el-input>
+									<el-input v-model="modifyMessage.career" style="width: 400px;" :disabled="disabled" placeholder="请填写职业 （可以不填）">></el-input>
 								</el-form-item>
 							</div>
 							<div style="display: inline-block;">
 							    <el-form-item label="公司">
-									<el-input v-model="modifyMessage.company" style="width: 400px;" :disabled="disabled"></el-input>
+									<el-input v-model="modifyMessage.company" style="width: 400px;" :disabled="disabled" placeholder="请填写公司 （可以不填）"></el-input>
 								</el-form-item>
 							</div>
 						</div>
 						<div style="overflow: hidden;margin: 20px 0;">
 							<div style="display: inline-block;">
 								<el-form-item label="所在地">
-									<el-input v-model="modifyMessage.location" style="width: 400px;" :disabled="disabled"></el-input>
+									<el-input v-model="modifyMessage.location" style="width: 400px;" :disabled="disabled" placeholder="请填写所在地 （可以不填）"></el-input>
 								</el-form-item>
 							</div>
 							<div style="display: inline-block;">
 								<el-form-item label="家乡">
-									<el-input v-model="modifyMessage.hometown" style="width: 400px;" :disabled="disabled"></el-input>
+									<el-input v-model="modifyMessage.hometown" style="width: 400px;" :disabled="disabled" placeholder="请填写家乡 （可以不填）"></el-input>
 								</el-form-item>
 							</div>
 						</div>
-						<el-form-item label="邮箱" style="margin: 20px 0;">
-							<el-input v-model="modifyMessage.email" style="width: 400px;" :disabled="disabled"></el-input>
+						<el-form-item label="邮箱" style="margin: 20px 0;" prop="email">
+							<el-input v-model="modifyMessage.email" style="width: 400px;" :disabled="disabled" placeholder="请填写邮箱 （可以不填）"></el-input>
 						</el-form-item>
 						<el-form-item label="个人说明" style="margin-top: 30px;">
-							<el-input type="textarea" v-model="modifyMessage.personalSignature" placeholder="应用描述" :disabled="disabled" style="width: 600px;"></el-input>
+							<el-input type="textarea" v-model="modifyMessage.personalSignature" placeholder="个人说明（可以不填）" :disabled="disabled" style="width: 600px;"></el-input>
 						</el-form-item>
 					</el-form>
 					<div style="position: absolute;top: 85px;right: 410px;width: 235px;">
@@ -100,7 +100,8 @@
 					<div style="padding: 22px 35px;border-bottom: 1px solid gainsboro;margin-bottom: 20px;">
 						<h4>修改密码</h4>
 					</div>
-					<el-form :model="passMessage" :rules="rules" :ref="passMessage" label-width="100px" class="demo-ruleForm">
+					<h1>此功能尚未开放</h1>
+					<!--<el-form :model="passMessage" :rules="rules" :ref="passMessage" label-width="100px" class="demo-ruleForm">
 						<el-form-item label="当前密码">
 						    <el-input type="password" v-model="passMessage.currentMemberPassword" auto-complete="off" style="width: 400px;" :disabled="disabled"></el-input>
 						</el-form-item>
@@ -110,7 +111,7 @@
 						<el-form-item label="确认密码" prop="passwordConfirm">
 						    <el-input type="password" v-model="passMessage.passwordConfirm" auto-complete="off" style="width: 400px;" :disabled="disabled"></el-input>
 						</el-form-item>
-					</el-form>
+					</el-form>-->
 				</div>
 			</div>
 		</div>
@@ -174,6 +175,9 @@
 		            nickname: [
 		            	{ min: 2, max: 10, message: '2-20位', trigger: 'blur' }
 		            ],
+		            email:[
+						{ type: 'email', message: '请输入正确的邮箱地址', trigger: ['blur', 'change'] }
+					]
 			    }
         	}
         },
@@ -210,13 +214,13 @@
 		        return isJPG && isLt2M;
 		    },
 	      	getUserMessage(){
-				this.$axios.get('api/ucenter/admin/member/'+this.userId+'/detail',this.getMyWeb.axios.aAjaxConfig).then((res)=>{
+				this.$axios.get('/ucenter/admin/member/'+this.userId+'/detail',this.getMyWeb.axios.aAjaxConfig).then((res)=>{
 					var data = res.data.data;
 					data.memberType = String(data.memberType);
 			        data.memberRole = String(data.memberRole);
-					this.userMessage = data;
+					this.modifyMessage = data;
 					console.log(data);
-		      	}).catch(function(err){
+		      	}).catch((err)=>{
 		                    this.$message.error('接口请求出错');
 		                    console.error(err);
 		        })
@@ -228,7 +232,7 @@
 					    	   content.memberId = this.userId;
 					    	var send = "?"+this.Qs.stringify(content);
 					    	console.log(content);
-					    	this.$axios.put('api/ucenter/admin/member/'+send,this.getMyWeb.axios.aAjaxConfig).then((res)=>{
+					    	this.$axios.put('/ucenter/admin/member/'+send,this.getMyWeb.axios.aAjaxConfig).then((res)=>{
 								this.ruleForm = res.data.data;
 								console.log(res);
 								this.$router.go(-1)

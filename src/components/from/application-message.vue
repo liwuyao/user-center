@@ -18,21 +18,21 @@
 							<h4>基本信息</h4>
 						</div>
 						<el-form-item label="应用名称" prop="clientName">
-						    <el-input v-model="ruleForm.clientName" style="width: 400px;" :disabled="disabled"></el-input>
+						    <el-input v-model="ruleForm.clientName" style="width: 400px;" :disabled="disabled" placeholder="请输入应用名称（3-50字符）"></el-input>
 						</el-form-item>
 						<el-form-item label="clientKey" prop="clientKey">
-						    <el-input style="width: 400px;"  v-model="ruleForm.clientKey" :disabled="disabled"></el-input>
+						    <el-input style="width: 400px;"  v-model="ruleForm.clientKey" :disabled="disabled" placeholder="请输入clientKey（5-50字符，包含字母和数字）"></el-input>
 						</el-form-item>
 						<el-form-item label="应用类型">
-						    <el-radio-group v-model="ruleForm.clientType" :disabled="disabled">
+						    <el-radio-group v-model="ruleForm.clientType" disabled=true>
 						        <el-radio label="互联网"></el-radio>
 						        <el-radio label="系统应用"></el-radio>
 						    </el-radio-group>
 						</el-form-item>
-						 <el-form-item label="活动形式" prop="clientContent" style="margin-top: 30px;">
-						    <el-input type="textarea" v-model="ruleForm.clientContent" placeholder="应用描述" :disabled="disabled"></el-input>
+						 <el-form-item label="应用描述" prop="clientContent" style="margin-top: 30px;">
+						    <el-input type="textarea" v-model="ruleForm.clientContent" placeholder="请输入应用描述" :disabled="disabled" style="width: 990px;"></el-input>
 						 </el-form-item>
-						 <div style="padding: 22px 35px;border-bottom: 1px solid gainsboro;margin-bottom: 20px;">
+						 <!--<div style="padding: 22px 35px;border-bottom: 1px solid gainsboro;margin-bottom: 20px;">
 							<h4>安全信息</h4>
 						</div>
 						<el-form-item label="授权类型">
@@ -54,12 +54,12 @@
 						    </div>
 						</el-form-item>
 						<el-form-item label="行业选择" >
-						    <el-select v-model="ruleForm.region" placeholder="请选择活动区域">
+						    <el-select v-model="ruleForm.region" placeholder="请选择应用类型">
 						      <el-option label="互联网" value="shanghai"></el-option>
 						      <el-option label="现代物业" value="beijing"></el-option>
 						      <el-option label="电子商务业" value="beijing"></el-option>
 						    </el-select>
-					  	</el-form-item>
+					  	</el-form-item>-->
 					  	<div style="position: absolute;top: 85px;right: 120px;width: 235px;">
 					  		<el-upload
 							  class="avatar-uploader"
@@ -73,8 +73,8 @@
 							<p style="font-size: 12px;color: gainsboro;">平台图为非必上传，点击可完成上传，只支持PNG，JPG格式，文件不能超过2M</p>
 					  	</div>
 					  	<div style="height: 50px;position: relative;">
-					  		<el-button type="primary" style="position: absolute;right: 100px;" v-if="htmlId == 'addClient'" v-on:click="sendClientMessage('ruleForm')">确认增加</el-button>
-					  		<el-button type="primary" style="position: absolute;right: 100px;" v-if="htmlId == 'modify'" v-on:click="modifyMessage('ruleForm')">确认修改</el-button>
+					  		<el-button type="primary" style="position: absolute;right: 70px;" v-if="htmlId == 'addClient'" v-on:click="sendClientMessage('ruleForm')">确认增加</el-button>
+					  		<el-button type="primary" style="position: absolute;right: 70px;" v-if="htmlId == 'modify'" v-on:click="modifyMessage('ruleForm')">确认修改</el-button>
 					  	</div>
 					</el-form>
 				</div>
@@ -93,7 +93,7 @@
 		 	   	var validatePass = (rule, value, callback) => {
 		 	   	var reg = new RegExp(/^(?![^a-zA-Z]+$)(?!\D+$)/);
 			        if (value === '') {
-			          callback(new Error('请输入密码'));
+			          callback(new Error('请输入clientKey'));
 			        } else if(!reg.test(value)){
 			          	callback(new Error('密码为数字和字母组成'));
 
@@ -115,29 +115,15 @@
 		        },
 		        rules: {
 		          clientName: [
-		            { required: true, message: '请输入活动名称', trigger: 'blur' },
+		            { required: true, message: '请输入应用名称', trigger: 'blur' },
 		            { min: 3, max: 50, message: '长度在 3 到 5 个字符', trigger: 'blur' }
 		          ],
 		          clientKey: [
-		            { required: true, message: '请输入钥密', trigger: 'change' },
 		            { min: 5, max: 50, message: '长度在 3 到 5 个字符', trigger: 'blur' },
 		            { validator: validatePass, trigger: 'blur' }
 		          ],
-		          termOfValidity: [
-		            { required: true, message: '请输入活动名称', trigger: 'blur' },
-		            { min: 3, max: 5, message: '长度在 3 到 5 个字符', trigger: 'blur' }
-		          ],
-		          date1: [
-		            { type: 'date', required: true, message: '请选择日期', trigger: 'change' }
-		          ],
-		          date2: [
-		            { type: 'date', required: true, message: '请选择时间', trigger: 'change' }
-		          ],
-		          type: [
-		            { type: 'array', required: true, message: '请至少选择一个活动性质', trigger: 'change' }
-		          ],
 		          clientContent: [
-		            { required: true, message: '请填写活动形式', trigger: 'blur' }
+		            { required: true, message: '请填写应用描述', trigger: 'blur' }
 		          ]
 		        }
 		      }
@@ -185,7 +171,7 @@
 	      
 //	      	获取数据
 	        getUserMessage(){
-				this.$axios.get('api/ucenter/admin/client/'+this.userId,this.getMyWeb.axios.aAjaxConfig).then((res)=>{
+				this.$axios.get('/ucenter/admin/client/'+this.userId,this.getMyWeb.axios.aAjaxConfig).then((res)=>{
 					var data = res.data.data;
 					this.ruleForm = data;
 					console.log(data);
@@ -201,7 +187,7 @@
 			            	let content = this.ruleForm;
 					    	var send = this.Qs.stringify(content)
 					    	console.log(send);
-						    this.$axios.post('api/ucenter/admin/client',send,this.getMyWeb.axios.aAjaxConfig).then((res)=>{
+						    this.$axios.post('/ucenter/admin/client',send,this.getMyWeb.axios.aAjaxConfig).then((res)=>{
 									console.log(res);
 									this.$router.go(-1)
 						      	}).catch(function(err){
@@ -224,7 +210,7 @@
 					    	     content.clientId = this.ruleForm.clientId;
 					    	var send = "?"+this.Qs.stringify(content);
 					    	   	console.log(send);
-					    	this.$axios.put('api/ucenter/admin/client/'+send,this.getMyWeb.axios.aAjaxConfig).then((res)=>{
+					    	this.$axios.put('/ucenter/admin/client/'+send,this.getMyWeb.axios.aAjaxConfig).then((res)=>{
 								this.ruleForm = res.data.data;
 								console.log(res);
 								this.$router.go(-1)

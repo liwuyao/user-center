@@ -4,11 +4,11 @@
 			<el-pagination
 	      @size-change="handleSizeChange"
 	      @current-change="handleCurrentChange"
-	      :current-page='currentpage'
+	      :current-page='message.pageNum'
 	      :page-sizes="[10, 20]"
-	      :page-size="20"
+	      :page-size="message.pageSize"
 	      layout="total, sizes, prev, pager, next, jumper"
-	      :total="400">
+	      :total="message.total">
 	    </el-pagination>
 		</div>
 	</div>
@@ -17,8 +17,15 @@
 <script>
 	export default {
 		name: 'pagination',
+		props: ['message'],
 	    data() {
 	      return {
+	      		config:{
+	      			pageNum:1,
+		        	pageSize:20,
+		        	size:20,
+		        	total:26
+	      		},
 	      		currentpage:1,
 	   			pageMessage:{
 	   				pageIndex:'1',
@@ -26,6 +33,9 @@
 	   			}
 	      };
 	    },
+	    created(){
+	    	this.config = this.message;
+    	},
 	   	methods: {
 	     	handleSizeChange(val) {
 	        this.pageMessage.pageSize =String(val);

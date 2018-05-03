@@ -6,7 +6,7 @@
 			</div>
 			<div  style="height: 100%;overflow: auto;">
 				<div  id="routerBox">
-					<router-view style="overflow: hidden;"></router-view>
+					<router-view style="overflow: hidden;padding-bottom: 50px;"></router-view>
 				</div>
 			</div>
 		</div>
@@ -26,47 +26,20 @@
 				contentLeft:1,
 				contentRight:23,
 				routerMessage:[
-//						{
-//							icon:'iconfont icon-el-icon-karakal-yingyong slide-bar2-icon',
-//							name:'应用管理',
-//							index:'',
-//							child:[
-//								{
-//									title:'应用中心',
-//									index:'/home'
-//								},
-//								{
-//									title:'测试demo',
-//									className:'right-select1',
-//									list:[
-//										{
-//											name:'无极剑圣',
-//											index:'/slide'
-//										}
-//									]
-//								},
-//								{
-//									title:'测试demo',
-//									className:'right-select5',
-//									list:[
-//										{
-//											name:'应用中心',
-//											index:'/slide'
-//										}
-//									]
-//								}
-//							]
-//						},
-						{   icon:'iconfont icon-el-icon-karakal-yingyong slide-bar2-icon',
-							name:'应用中心',
-							blank:true,
-							index:'/home'
-						},
 						{
-							icon:'el-icon-location slide-bar2-icon',
-							name:'用户管理',
-							blank:true,
-							index:'/usercenter'
+							icon:'iconfont icon-el-icon-karakal-yingyong slide-bar2-icon',
+							name:'用户中心',
+							index:'',
+							child:[
+								{
+									title:'应用管理',
+									index:'/home'
+								},
+								{
+									title:'用户管理',
+									index:'/usercenter'
+								},
+							]
 						},
 					]
 			}
