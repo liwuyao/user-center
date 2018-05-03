@@ -8,7 +8,7 @@
 					</router-link>
 				</div>
 				<div class="btn-box">
-					<v-button :message="btnMessage.delete"></v-button>
+					<v-button :message="btnMessage.delete" style="cursor: pointer;"></v-button>
 					<v-dialog :config="btnMessage.delete.formConfig" class="page-dialog" :tableSelect='tableSelect' v-on:send="dialogRes"></v-dialog>
 				</div>
 				<div class="btn-box-default" :class="{btnActive:!btnMessage.disable.disable}">
@@ -280,11 +280,13 @@
 		display: inline-block;
 		margin-right: 10px;
 		position: relative;
+		cursor: pointer !important;
 	}
 	.btn-box-default{
 		display: inline-block;
 		margin-right: 10px;
 		position: relative;
+		cursor: pointer;
 	}
 	.btn-elm-box{
 		margin-right: 10px;

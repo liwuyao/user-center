@@ -19,7 +19,7 @@
 						<span v-if="getData[item.title]">{{getData[item.title]}}</span>
 						<span v-else>暂时无相关信息</span>
 					</div>
-					<img src="http://img3.duitang.com/uploads/item/201505/26/20150526002859_c2yKG.thumb.700_0.jpeg"  style="position: absolute;right: 260px;top: 50px;width: 150px;"/>
+					<img :src="getData.avatar"  style="position: absolute;right: 260px;top: 50px;width: 150px;"/>
 				</div>
 			</div>
 		</div>
@@ -34,6 +34,7 @@
         },
         data(){
         	return{
+        		headerUrl:'',
         		getData:{
         			clientName:'hello',
         			clientKey:'11',
@@ -87,6 +88,10 @@
 					if(this.getData.clientType == 0){
 						this.getData.clientType = "系统应用";
 					}
+					this.$message({
+					          message: res.data.message,
+					          type: 'success'
+					        });
 		      	}).catch(function(err){
 		                    this.$message.error('接口请求出错');
 		                    console.error(err);

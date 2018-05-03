@@ -40,7 +40,7 @@
 							<el-input v-model="modifyMessage.nickname" style="width: 400px;" :disabled="disabled" placeholder="请填写昵称（可以不填）"></el-input>
 						</el-form-item>
 						<el-form-item label="生日" style="margin: 30px 0;">
-							<el-date-picker type="date" placeholder="选择日期" v-model="modifyMessage.birthday" style="width: 400px;" :disabled=true></el-date-picker>
+							<el-date-picker type="date" placeholder="选择日期" v-model="modifyMessage.birthday" style="width: 400px;"></el-date-picker>
 						</el-form-item>
 						<el-form-item label="性别" style="margin: 30px 0;">
 							<el-radio-group v-model="modifyMessage.gender" :disabled="disabled">
@@ -74,7 +74,7 @@
 							</div>
 						</div>
 						<el-form-item label="邮箱" style="margin: 20px 0;" prop="email">
-							<el-input v-model="modifyMessage.email" style="width: 400px;" :disabled="disabled" placeholder="请填写邮箱 （可以不填）"></el-input>
+							<el-input v-model="modifyMessage.email" style="width: 400px;border-color: #c0c4cc !important;" :disabled="disabled" placeholder="请填写邮箱 （可以不填）" ></el-input>
 						</el-form-item>
 						<el-form-item label="个人说明" style="margin-top: 30px;">
 							<el-input type="textarea" v-model="modifyMessage.personalSignature" placeholder="个人说明（可以不填）" :disabled="disabled" style="width: 600px;"></el-input>
@@ -93,7 +93,7 @@
 							<p style="font-size: 12px;color: gainsboro;">平台图为非必上传，点击可完成上传，只支持PNG，JPG格式，文件不能超过2M</p>
 					</div>
 					<div style="height: 50px;position: relative;">
-						<el-button type="primary" style="position: absolute;right: 100px;" v-on:click="modify()">确认修改</el-button>
+						<el-button type="primary" style="position: absolute;right: 100px;" v-on:click="modify('modifyMessage')">确认修改</el-button>
 					</div>
 				</div>
 				<div class="pass-message" v-if="!open">
@@ -215,36 +215,54 @@
 		    },
 	      	getUserMessage(){
 				this.$axios.get('/ucenter/admin/member/'+this.userId+'/detail',this.getMyWeb.axios.aAjaxConfig).then((res)=>{
-					var data = res.data.data;
-					data.memberType = String(data.memberType);
-			        data.memberRole = String(data.memberRole);
-					this.modifyMessage = data;
-					console.log(data);
+					if(res.data.state === '000000'){
+						var data = res.data.data;
+						data.memberType = String(data.memberType);
+				        data.memberRole = String(data.memberRole);
+				 		data.gender = String(data.gender);
+						this.modifyMessage = data;
+					}else{
+						this.$message({
+						          message: res.data.message,
+						          type: 'success'
+						});
+					}
 		      	}).catch((err)=>{
 		                    this.$message.error('接口请求出错');
 		                    console.error(err);
 		        })
 			},
-	        modify(){
-//		    	 this.$refs[formName].validate((valid) => {
-//			          if (valid) {
+	        modify(formName){
+		    	 this.$refs[formName].validate((valid) => {
+			          if (valid) {
+			          	var birthday = new Date(this.modifyMessage.birthday);
+			          		birthday = this.getMyWeb.timestampToTime(birthday);
+			          		this.modifyMessage.birthday = birthday;
+			          		this.modifyMessage.gender = Number(this.modifyMessage.gender);
 			            	var content = this.modifyMessage;
-					    	   content.memberId = this.userId;
+					    	content.memberId = this.userId;
 					    	var send = "?"+this.Qs.stringify(content);
 					    	console.log(content);
 					    	this.$axios.put('/ucenter/admin/member/'+send,this.getMyWeb.axios.aAjaxConfig).then((res)=>{
-								this.ruleForm = res.data.data;
-								console.log(res);
-								this.$router.go(-1)
+					    		if(res.data.state === '000000'){
+					    			this.$message({
+							          message: res.data.message,
+							          type: 'success'
+							       });
+							       this.$router.go(-1)
+					    		}else{
+							        this.$message.error(res.data.message);
+					    		}
+
 					      	}).catch(function(err){
 					                    this.$message.error('接口请求出错');
 					                    console.error(err);
 					        })
-//			          } else {
-//			             this.$message.error('表单填写格式不对，请重新填写');
-//			            return false;
-//			          }
-//			       });
+			          } else {
+			             this.$message.error('表单填写格式不对，请重新填写');
+			            return false;
+			          }
+			       });
 		    },
 	    }
 	}
@@ -254,6 +272,10 @@
 	.userModify-content-box{
 		width: 1250px;
 		margin: 0 auto;
+	}
+	
+	.el-input__inner{
+		border-color: #dcdfe6 !important;
 	}
 	.avatar-uploader .el-upload {
     border: 1px dashed #d9d9d9;

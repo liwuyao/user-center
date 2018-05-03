@@ -8,6 +8,18 @@ import ElementUI from 'element-ui';
 export default {
     install(Vue, options) {
         Vue.prototype.getMyWeb = {//MyWeb所有的配置资源信息（目前包括URL，基本的状态码以及相应文字信息，ajax配置信息）
+        	timestampToTime:(timestamp)=>{
+		        var date = new Date(timestamp);//时间戳为10位需*1000，时间戳为13位的话不需乘1000
+		        var Y = date.getFullYear() + '-';
+		        var M = (date.getMonth()+1 < 10 ? '0'+(date.getMonth()+1) : date.getMonth()+1) + '-';
+		        var D = date.getDate();
+		        if(D<10){
+		        	D = '0'+D;
+		        }else{
+		        	D = D + '';
+		        }
+		        return Y+M+D;
+		    },
             url: {
                 
             },

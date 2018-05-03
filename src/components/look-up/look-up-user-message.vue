@@ -14,7 +14,7 @@
 						<span v-if="getData[item.title]" style="padding-left: 10px;">{{getData[item.title]}}</span>
 						<span v-else style="padding-left: 10px;">暂时无相关信息</span>
 					</div>
-					<img src="http://img3.duitang.com/uploads/item/201505/26/20150526002859_c2yKG.thumb.700_0.jpeg"  style="position: absolute;right: 260px;top: 50px;width: 150px;"/>
+					<img :src="getData.avatar"  style="position: absolute;right: 260px;top: 50px;width: 150px;"/>
 				</div>
 			</div>
 		</div>
@@ -75,6 +75,10 @@
         				title:'location'
         			},
         			{
+        				lable:'个人说明',
+        				title:'personalSignature'
+        			},
+        			{
         				lable:'注册时间',
         				title:'registerTime'
         			}
@@ -110,6 +114,10 @@
 					}
 					this.getData.birthday=this.timestampToTime(this.getData.birthday)
 					this.getData.registerTime = this.transformationTime(this.getData.registerTime);
+					this.$message({
+					          message: res.data.message,
+					          type: 'success'
+					        });
 		      	}).catch((err)=>{
 		                    this.$message.error('接口请求出错');
 		        })
@@ -122,7 +130,12 @@
 		        var date = new Date(timestamp);//时间戳为10位需*1000，时间戳为13位的话不需乘1000
 		        var Y = date.getFullYear() + '-';
 		        var M = (date.getMonth()+1 < 10 ? '0'+(date.getMonth()+1) : date.getMonth()+1) + '-';
-		        var D = date.getDate() + ' ';
+		        var D = date.getDate();
+		        if(D<10){
+		        	D = '0'+D;
+		        }else{
+		        	D = D + ' ';
+		        }
 		        return Y+M+D;
 		    }
 			

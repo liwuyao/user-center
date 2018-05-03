@@ -287,6 +287,7 @@
 		display: inline-block;
 		margin-right: 10px;
 		position: relative;
+		cursor: pointer;
 	}
 	.btn-elm-box{
 		margin-right: 10px;
@@ -297,6 +298,7 @@
 		background: white;
 		box-shadow: 0px 2px 10px -8px #888888;
 		position: relative;
+		cursor: pointer;
 	}
 	.btn-elm-box i{
 		color: #0199fe;

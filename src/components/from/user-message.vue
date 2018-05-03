@@ -251,15 +251,23 @@
 	       sendClientMessage(formName){
 	       		 this.$refs[formName].validate((valid) => {
 			          if (valid) {
+			          		var birthday = new Date(this.ruleForm.birthday);
+			          		    birthday = this.getMyWeb.timestampToTime(birthday);
+			          		    this.ruleForm.birthday = birthday;
 			            	let content = this.ruleForm;
 			            	console.log(this.ruleForm);
 			            	content.memberType = Number(content.memberType);
 			            	content.memberRole = Number(content.memberRole);
+			            	
 			            	console.log(content);
 					    	var send = this.Qs.stringify(content)
 					    	console.log(send);
 						    this.$axios.post('/ucenter/admin/member',send,this.getMyWeb.axios.aAjaxConfig).then((res)=>{
 									console.log(res);
+									this.$message({
+							          message: res.data.message,
+							          type: 'success'
+							        });
 									this.$router.go(-1)
 						      	}).catch((err)=>{
 						                    this.$message.error('接口请求出错');

@@ -3,14 +3,14 @@
 		<div class="login-form">
 			<div style="position: relative;">
 				<div style="position: absolute;top: -100px;z-index: 2;display: inline-block;width: 107%;left: 50%;transform: translate(-50%,0);">
-					<h1 style="text-align: center;color: white;">用户中心后台管理系统</h1>
+					<h1 style="text-align: center;color: white;font-weight: 100;">成都乐听运维中心</h1>
 				</div>
 				<el-form :model="ruleForm2" status-icon :rules="rules" ref="ruleForm2" class="demo-ruleForm" style="width: 300px;padding-top:20px">
 				  <el-form-item  prop="username">
 				    <el-input type="text" v-model="ruleForm2.username"  placeholder="请输入手机号或用户名" ></el-input>
 				  </el-form-item>
 				  <el-form-item prop="password">
-				    <el-input type="password" v-model="ruleForm2.password" placeholder="请输入密码"></el-input>
+				    <el-input type="password" v-model="ruleForm2.password" placeholder="请输入密码" id="keydown"></el-input>
 				  </el-form-item>
 				  <el-form-item style="margin-top: 50px;">
 				    <el-button type="primary" @click="login('ruleForm2')" style="width: 100%;">登录</el-button>
@@ -67,6 +67,17 @@
 ////	 	document.cookie = "token=0ff8f380e010415f83c9892ae7ed2cc8;expires=Thu, 18 Dec 2019 12:00:00 GMT; path=/";
 ////	 	console.log(document.cookie)
 	 },
+	 mounted: function () {
+		  this.$nextTick(() =>{
+		    var elm = document.getElementById('keydown');
+		   		elm.onkeydown=(e)=>{
+		   			var event = event || e;
+		   			if(event.keyCode == 13){
+		   				this.login('ruleForm2');
+		   			}
+		   		}
+		  })
+		},
 	 methods: {
       submitForm(formName) {
         this.$refs[formName].validate((valid) => {
@@ -93,20 +104,23 @@
       	this.$refs[formName].validate((valid) => {
           if (valid) {
 				    let content = this.ruleForm2;
-		    	var send = this.Qs.stringify(content);
+		    		var send = this.Qs.stringify(content);
 					this.$axios.post('/ucenter/admin/login',send,this.getMyWeb.axios.aAjaxConfig).then((res)=>{
-							var data = res.data.data;
-//							this.headerName = data.memberName;
-							console.log(data.memberName);
-							localStorage.letingUserName = data.memberName;
-							this.$router.push('home');
+					        if(res.data.state === '000000'){
+					        	var data = res.data.data;
+								localStorage.letingUserName = data.mobile;
+								localStorage.letingAvatar= data.avatar;
+					        	this.$router.push('home');
+					        }
+					        this.$message({
+						          message: res.data.message,
+						          type: 'success'
+						        });
 			      	}).catch((err)=>{
-			                    this.$message.error('接口请求出错');
-			                    console.error(err);
+			                    this.$message.error('登录失败请重新登录');
 			    })
           } else {
-            console.log('error submit!!');
-            return false;
+            this.$message.error('请填写正确用户名或密码');
           }
         });
       }

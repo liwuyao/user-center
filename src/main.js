@@ -27,8 +27,9 @@ axios.interceptors.response.use(
     		localStorage.token = response.headers.token
     	};
     	if(response.data.state == '000010'){
-    		var _http = window.location.protocol + '//'+window.location.host+'/#/login'
-    		window.location.href = _http;
+//  		var _http = window.location.pathname+'/#/login'
+//  		window.location.href = _http;
+			 router.push('login')
     	}
         return response;
     },

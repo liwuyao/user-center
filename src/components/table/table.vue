@@ -155,11 +155,13 @@
 //				this.pageMessage.state = 
 				var content=this.pageMessage;
 				this.$axios.get(src, {params:content},this.getMyWeb.axios.aAjaxConfig).then((res)=>{
-					var data = res.data.data.list;
-					this.listData =  data;
-					this.pageinationMessage.total = res.data.data.total;
-					this.pageinationMessage.pageSize = res.data.data.pageSize;
-					this.pageinationMessage.pageNum = res.data.data.pageNum;
+					 if(res.data.state === '000000'){
+					 	var data = res.data.data.list;
+						this.listData =  data;
+						this.pageinationMessage.total = res.data.data.total;
+						this.pageinationMessage.pageSize = res.data.data.pageSize;
+						this.pageinationMessage.pageNum = res.data.data.pageNum;
+					 }
 		      	}).catch((err)=>{
 		                    this.$message.error('接口请求出错');
 		                    console.error(err);

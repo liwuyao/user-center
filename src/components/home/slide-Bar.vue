@@ -2,7 +2,7 @@
 	<div class="slide-bar2">
 		<div class="slide-bar2-box" v-bind:class="{ openActive: isOpenActive }">
 			<div style="float: left;" class="slide-bar2-left">
-				<div v-on:click="sideBarOpen()" style="text-align: center;padding: 20px 0;">
+				<div v-on:click="sideBarOpen()" style="text-align: center;padding: 20px 0;cursor: pointer;">
 					<i class="iconfont icon-el-icon-karakal-slideBar-open"></i>
 				</div>
 				<div>

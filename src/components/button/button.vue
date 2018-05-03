@@ -33,6 +33,7 @@
 		border-radius: 5px;
 		background: white;
 		box-shadow: 0px 2px 10px -8px #888888;
+		cursor: pointer;
 	}
 	/*.button-elm-default:active{
 		background: red !important;
