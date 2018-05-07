@@ -8,13 +8,22 @@
 					<el-breadcrumb-item :to="{ path: '/usercenter' }">用户管理</el-breadcrumb-item>
 					<el-breadcrumb-item><span style="color: #74b8fa;">用户查看</span></el-breadcrumb-item>
 				</el-breadcrumb>
-				<div style="height: 500px;margin-top: 30px;">
-					<div style="padding: 7px 0;" v-for="(item, index) in data" :key="index">
-						<span style="font-size: 18px;color: gray;">{{item.lable}}：</span>
-						<span v-if="getData[item.title]" style="padding-left: 10px;">{{getData[item.title]}}</span>
-						<span v-else style="padding-left: 10px;">暂时无相关信息</span>
+				<div style="margin-top: 30px;display: flex;flex-direction: row;">
+					<div style="padding: 50px;">
+						<img :src="getData.avatar"  style="right: 260px;top: 50px;width: 150px;"/>
+						<p style="text-align: center;">
+							<span style="color: rgb(116, 184, 250);">手机号：</span>
+							<span v-if="getData.mobile">{{getData.mobile}}</span>
+							<span v-else>无手机号</span>
+						</p>
 					</div>
-					<img :src="getData.avatar"  style="position: absolute;right: 260px;top: 50px;width: 150px;"/>
+					<div style="flex: 1;padding-left: 30px;border-left:1px solid gainsboro;">
+						<div style="padding: 7px 0;" v-for="(item, index) in data" :key="index">
+							<span style="font-size: 15px;color: rgb(116, 184, 250);">{{item.lable}}：</span>
+							<span v-if="getData[item.title]" style="padding-left: 10px;color: gray;">{{getData[item.title]}}</span>
+							<span v-else style="padding-left: 10px;color: gray;">暂时无相关信息</span>
+						</div>
+					</div>
 				</div>
 			</div>
 		</div>
@@ -43,8 +52,8 @@
         		id:'',
         		data:[
         			{
-        				lable:'手机号',
-        				title:'mobile'
+        				lable:'昵称',
+        				title:'nickname'
         			},
         			{
         				lable:'用户名',
@@ -102,24 +111,25 @@
 //      	获取数据
         	 getUserMessage(){
 				this.$axios.get('/ucenter/admin/member/'+this.id+'/detail',this.getMyWeb.axios.aAjaxConfig).then((res)=>{
-					var data = res.data.data;
-					this.getData = data;
-					if(this.getData.gender == 0){
-						this.getData.gender= "男";
+					if(res.data.state === "000000"){
+						var data = res.data.data;
+						this.getData = data;
+						if(this.getData.gender == 0){
+							this.getData.gender= "男";
+						}
+						if(this.getData.gender == 1){
+							this.getData.gender= "女";
+						}if(this.getData.gender == 2){
+							this.getData.gender= "保密";
+						}
+						this.getData.birthday=this.timestampToTime(this.getData.birthday)
+						this.getData.registerTime = this.transformationTime(this.getData.registerTime);
+					}else{
+						this.$message.error('res.data.message');
 					}
-					if(this.getData.gender == 1){
-						this.getData.gender= "女";
-					}if(this.getData.gender == 2){
-						this.getData.gender= "保密";
-					}
-					this.getData.birthday=this.timestampToTime(this.getData.birthday)
-					this.getData.registerTime = this.transformationTime(this.getData.registerTime);
-					this.$message({
-					          message: res.data.message,
-					          type: 'success'
-					        });
 		      	}).catch((err)=>{
 		                    this.$message.error('接口请求出错');
+		                    console.log(err);
 		        })
 			},
 			//     		转换时间格式

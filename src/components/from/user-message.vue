@@ -84,9 +84,11 @@
 							    <el-input type="textarea" v-model="ruleForm.personalSignature" placeholder="输入个人描述（可以不填）" :disabled="disabled" style="width: 600px;"></el-input>
 							</el-form-item>
 							<div style="position: absolute;top: 85px;right: 120px;width: 235px;">
-						  		<el-upload
+								<el-upload
 								  class="avatar-uploader"
-								  action="/ucenter/upload/common/{.jpg}"
+								  action="http://192.168.1.220:9201/ucenter/upload/common/image"
+								  name ="uploadFile"
+								  :data="updateMessage"
 								  :show-file-list="false"
 								  :on-success="handleAvatarSuccess"
 								  :before-upload="beforeAvatarUpload">
@@ -148,6 +150,9 @@
 			        }
 			      };
        	return{
+       		updateMessage:{
+		    		objType:'0101'
+		    	},
        		imageUrl: '',
 		    htmlId:'',
 		    userId:'',
@@ -218,6 +223,10 @@
        	methods: {
 	      handleAvatarSuccess(res, file) {
 	        this.imageUrl = URL.createObjectURL(file.raw);
+	        this.$message({
+	          message: '头像上传成功',
+	          type: 'success'
+	        });
 	        console.log("ok");
 	      },
 	      beforeAvatarUpload(file) {
@@ -237,12 +246,15 @@
 //	      	获取数据
 	        getUserMessage(){
 				this.$axios.get('/ucenter/admin/member/'+this.userId+'/detail',this.getMyWeb.axios.aAjaxConfig).then((res)=>{
-					var data = res.data.data;
-					data.memberType = String(data.memberType);
-			        data.memberRole = String(data.memberRole);
-					this.ruleForm = data;
-					console.log(data);
-		      	}).catch(function(err){
+					if(res.data.state === "000000"){
+						var data = res.data.data;
+						data.memberType = String(data.memberType);
+				        data.memberRole = String(data.memberRole);
+						this.ruleForm = data;
+					}else{
+						this.$message.error(res.data.messag);
+					}
+		      	}).catch((err)=>{
 		                    this.$message.error('接口请求出错');
 		                    console.error(err);
 		        })
@@ -255,27 +267,23 @@
 			          		    birthday = this.getMyWeb.timestampToTime(birthday);
 			          		    this.ruleForm.birthday = birthday;
 			            	let content = this.ruleForm;
-			            	console.log(this.ruleForm);
 			            	content.memberType = Number(content.memberType);
 			            	content.memberRole = Number(content.memberRole);
-			            	
-			            	console.log(content);
 					    	var send = this.Qs.stringify(content)
-					    	console.log(send);
 						    this.$axios.post('/ucenter/admin/member',send,this.getMyWeb.axios.aAjaxConfig).then((res)=>{
-									console.log(res);
-									this.$message({
-							          message: res.data.message,
-							          type: 'success'
-							        });
-									this.$router.go(-1)
+									if(res.data.state === "000000"){
+										this.$router.go(-1)
+									}else{
+										this.$message.error(res.data.messag);
+									}
 						      	}).catch((err)=>{
 						                    this.$message.error('接口请求出错');
 						                    console.error(err);
 						       })
 			          } else {
 			             this.$message.error('表单填写格式不对，请重新填写');
-			            return false;
+			             console.error(err);
+			             return false;
 			          }
 			        });
 		   },
@@ -288,16 +296,19 @@
 			            		content.memberRole = Number(content.memberRole);
 					    	var send = "?"+this.Qs.stringify(content);
 					    	this.$axios.put('/ucenter/admin/member/'+send,this.getMyWeb.axios.aAjaxConfig).then((res)=>{
-								this.ruleForm = res.data.data;
-								console.log(res);
-								this.$router.go(-1)
+								if(res.data.state === "000000"){
+									this.ruleForm = res.data.data;
+									this.$router.go(-1)
+								}else{
+									this.$message.error(res.data.messag);
+								}
 					      	}).catch((err)=>{
 					                    this.$message.error('接口请求出错');
 					                    console.error(err);
 					        })
 			          } else {
-			             this.$message.error('表单填写格式不对，请重新填写');
-			            return false;
+				             this.$message.error('表单填写格式不对，请重新填写');
+				             return false;
 			          }
 			       });
 		    },

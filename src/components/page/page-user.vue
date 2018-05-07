@@ -37,11 +37,11 @@
 			<div style="width: 100%;overflow: hidden;background: #eff4f7;padding-bottom: 10px;">
 				<select-button :message="selectMessage" :placeholder="'用户状态'" class="page-user-select" v-on:select="selectRes"></select-button>
 				<div style="display:inline-block;margin-left:420px;">
-					<search-bar :name="'name'" v-on:search="searchRes" :placeholder="'输入手机号查询'"></search-bar>
+					<search-bar :name="'name'" v-on:search="searchRes" :placeholder="'输入手机号查询或用户名'"></search-bar>
 				</div>
 			</div>
 			<div style="padding-bottom:50px ;overflow: hidden;">
-				<v-table :message='tableData' v-on:tableRes="tableRes" :update="tableData.update"></v-table>
+				<v-table :message='tableData' v-on:tableRes="tableRes" :searchMessage="tableData.searchMessage" :selectMessage="tableData.selectMessage" :updateMessage="tableData.update"></v-table>
 			</div>
 		</div>
 	</div>
@@ -250,10 +250,6 @@
  		searchRes(data){
  			if(Object.keys(data).length != 0){
  				this.tableData.searchMessage = data;
- 				console.log(data)
- 				setTimeout(()=>{
- 					this.tableData.searchMessage = {};
- 				},500)
  			}
  		},
  		// 		选择信息
@@ -263,10 +259,6 @@
 					this.tableData.selectMessage={
 						status:data
 					};
-					console.log(this.tableData.selectMessage);
-					setTimeout(()=>{
-	 					this.tableData.selectMessage = {};
-	 				},0)
 				}
 			}
 	 	}

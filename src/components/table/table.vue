@@ -80,7 +80,7 @@
 	import vPagination from '../pagination/pagination';
 	export default {
 	  name: 'vtable',
-	  props: ['message'],
+	  props: ['message','searchMessage','selectMessage','updateMessage'],
 	  components:{
 	  	vDialog,vPagination
 	  },
@@ -90,6 +90,7 @@
        	listData:[],
         multipleSelection: [],
         update:[],
+        MessageUpdate:'',
         pageinationMessage:{
         	pageNum:1,
         	pageSize:20,
@@ -104,22 +105,39 @@
      	 this.pageMessage= this.message.urlMessage;
 		 this.getList(this.message.listUrl)
     	},
-     updated(){
-     	if(this.message.update && this.message.update != this.update){
-     		this.update = this.message.update;
-     		this.getList(this.message.listUrl)
-     	}
-     	if(Object.keys(this.message.searchMessage).length != 0){
-     		if(this.closeUp == this.message.searchMessage) return;
-			this.search(this.message.listUrl);
-			this.closeUp = this.message.searchMessage
-     	}
-     	if(Object.keys(this.message.selectMessage).length != 0){
-     		if(this.closeUp == this.message.selectMessage) return;
-			this.select(this.message.listUrl);
-			this.closeUp = this.message.selectMessage;
-     	}
-     },
+//   updated(){
+//   	if(this.message.update && this.message.update != this.update){
+//   		this.update = this.message.update;
+//   		this.getList(this.message.listUrl)
+//   	}
+//   	if(Object.keys(this.message.searchMessage).length != 0){
+//   		if(this.closeUp == this.message.searchMessage) return;
+//			this.search(this.message.listUrl);
+//			this.closeUp = this.message.searchMessage
+//   	}
+//   	if(Object.keys(this.message.selectMessage).length != 0){
+//   		if(this.closeUp == this.message.selectMessage) return;
+//			this.select(this.message.listUrl);
+//			this.closeUp = this.message.selectMessage;
+//   	}
+//   },
+     watch: {
+		    searchMessage: function (){
+		      //每当str的值改变则发送事件update:word , 并且把值传过去\
+		      if(this.closeUp == this.message.searchMessage) return;
+				this.search(this.message.listUrl);
+				this.closeUp = this.message.searchMessage;
+		    },
+		    selectMessage:function(){
+		    	if(this.closeUp == this.message.selectMessage) return;
+				this.select(this.message.listUrl);
+				this.closeUp = this.message.selectMessage;
+		    },
+		    updateMessage:function(){
+		    	this.update = this.message.update;
+     			this.getList(this.message.listUrl)
+		    }
+		},
 	 methods: {
 		    toggleSelection(rows) {
 		        if (rows) {
@@ -161,6 +179,8 @@
 						this.pageinationMessage.total = res.data.data.total;
 						this.pageinationMessage.pageSize = res.data.data.pageSize;
 						this.pageinationMessage.pageNum = res.data.data.pageNum;
+					 }else{
+					 	this.$message.error(res.data.data);
 					 }
 		      	}).catch((err)=>{
 		                    this.$message.error('接口请求出错');

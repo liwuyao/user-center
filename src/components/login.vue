@@ -2,8 +2,11 @@
 	<div class="login-box">
 		<div class="login-form">
 			<div style="position: relative;">
-				<div style="position: absolute;top: -100px;z-index: 2;display: inline-block;width: 107%;left: 50%;transform: translate(-50%,0);">
-					<h1 style="text-align: center;color: white;font-weight: 100;">成都乐听运维中心</h1>
+				<div style="position: absolute;top: -80px;z-index: 2;display: inline-block;width: 107%;left: 50%;transform: translate(-50%,0);">
+					<div style="position: relative;">
+						<img src="../assets/iocn/logo.png" style="width: 100px;position: absolute;top:-85px;left: 50%;transform: translate(-50%,0);">
+						<h1 style="text-align: center;color: white;font-weight: 100;">成都乐听运维中心</h1>
+					</div>
 				</div>
 				<el-form :model="ruleForm2" status-icon :rules="rules" ref="ruleForm2" class="demo-ruleForm" style="width: 300px;padding-top:20px">
 				  <el-form-item  prop="username">
@@ -92,14 +95,14 @@
       resetForm(formName) {
         this.$refs[formName].resetFields();
       },
-      getCode(){
-      	this.$axios.get(this.getMyWeb.url.getCaptchaImageUrl, this.getMyWeb.axios.aAjaxConfig).then((res)=>{
-      		this.code = res.data.data.base64
-      	}).catch(function(err){
-                    self.$message.error('接口请求出错');
-                    console.error(err);
-          })
-      },
+//    getCode(){
+//    	this.$axios.get(this.getMyWeb.url.getCaptchaImageUrl, this.getMyWeb.axios.aAjaxConfig).then((res)=>{
+//    		this.code = res.data.data.base64
+//    	}).catch(function(err){
+//                  self.$message.error('接口请求出错');
+//                  console.error(err);
+//        })
+//    },
       login(formName){
       	this.$refs[formName].validate((valid) => {
           if (valid) {
@@ -111,11 +114,9 @@
 								localStorage.letingUserName = data.mobile;
 								localStorage.letingAvatar= data.avatar;
 					        	this.$router.push('home');
+					        }else{
+					        	this.$message.error(res.data.message);
 					        }
-					        this.$message({
-						          message: res.data.message,
-						          type: 'success'
-						        });
 			      	}).catch((err)=>{
 			                    this.$message.error('登录失败请重新登录');
 			    })

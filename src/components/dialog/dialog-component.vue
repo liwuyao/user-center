@@ -1,6 +1,6 @@
 <template>
 	<div class="from-component">
-		<el-button size="mini" v-on:click="open2()" :type="config.classType" v-if="config.style == 'button'">{{message.name}}</el-button>
+		<el-button size="mini" v-on:click="open2()" :type="config.classType" v-if="config.style == 'button'" style="cursor: pointer;">{{message.name}}</el-button>
 		<div v-else-if="config.style == 'icon'" v-on:click="open2()" style="cursor: pointer;">
 			<i :class="config.iconClass" :title="config.title"></i>
 		</div>
@@ -19,6 +19,22 @@
 			    <el-button type="primary">确 定</el-button>
 			</div>
 		</el-dialog>-->
+<!--		提示框-->
+		<el-dialog
+		  title="提示"
+		  :visible.sync="activeState"
+		  width="30%"
+		  >
+		  <div style="display: flex;flex-direction: row;">
+		  	<i class="el-icon-warning" style="color: #f7ba2a;font-size: 30px;margin-top: -5px;"></i>
+			<div style="flex: 1;margin-left: 10px;">
+			  {{config.message}}
+			</div>
+		  </div>
+		  <span slot="footer" class="dialog-footer">
+		    <el-button type="primary" @click="activeState = false">确 定</el-button>
+		  </span>
+		</el-dialog>
 <!--		删除-->
 		<el-dialog
 		  title="删除提示"
@@ -91,20 +107,28 @@
 <script>
 	export default {
 //	  name: 'formComponent',
-	    props: ['id','config','tableSelect','chooseOne'],
+	    props: ['id','config','tableSelect','chooseOne','openDialog'],
 	    data() {
 	      return {
+	      	activeState:false,
 	        dialogDelete: false,
 	        dialogDisable:false,
 	        dialogAble:false,
 	        dialogAddUser: false,
+	        dialogPrompt:true,
 	        open:true,
 	        ids:[],
 	        formLabelWidth: '120px'
 	      };
 	    },
 		created(){
-			
+		},
+		watch: {
+//			var a = this.openDialog;
+		    openDialog: function (newValue, oldValue){
+		      //每当str的值改变则发送事件update:word , 并且把值传过去\
+		      this.activeState = true;
+		    }
 		},
 		methods:{
 			open2(){
@@ -129,6 +153,9 @@
 					if(this.config.type === "able"){
 						this.dialogAble = true;
 					}
+					if(this.config.type === "prompt"){
+						this.dialogPrompt = true;
+					}
 				}
 				if(this.id){
 					if(this.config.type === "delete"){
@@ -147,12 +174,12 @@
 				var _url = this.config.src + content;
 				console.log(_url);
 				this.$axios.delete(_url,this.getMyWeb.axios.aAjaxConfig).then((res)=>{
-					 this.returnMessage('删除成功');
-					 this.dialogDelete = false;
-					 this.$message({
-				          message: res.data.data,
-				          type: 'success'
-				        });
+					if(res.data.state === "000000"){
+						this.returnMessage('删除成功');
+					 	this.dialogDelete = false;
+					}else{
+						this.$message.error(res.data.data);
+					}
 				}).catch((err)=>{
 			                    this.$message.error('接口请求出错');
 			                    console.error(err);
@@ -163,13 +190,12 @@
 				var content = '?'+this.config.urlSearch+'=' + this.ids.join();
 				var _url = this.config.src+content;
 				this.$axios.put(_url,this.getMyWeb.axios.aAjaxConfig).then((res)=>{
-					console.log(res);
-					 this.returnMessage('禁用成功');
-					 this.dialogDisable = false;
-					 this.$message({
-				          message: res.data.data,
-				          type: 'success'
-				        });
+					if(res.data.state === "000000"){
+						this.returnMessage('禁用成功');
+					 	this.dialogDisable = false;
+					}else{
+						this.$message.error(res.data.data);
+					}
 				}).catch((err)=>{
 			                    this.$message.error('接口请求出错');
 			                    console.error(err);
@@ -181,12 +207,12 @@
 				var _url = this.config.src+content;
 				console.log(_url)
 				this.$axios.put(_url,this.getMyWeb.axios.aAjaxConfig).then((res)=>{
-					 this.returnMessage('启用成功');
-					 this.dialogAble = false;
-					 this.$message({
-				          message: res.data.data,
-				          type: 'success'
-				        });
+					if(res.data.state === "000000"){
+						this.returnMessage('启用成功');
+					 	this.dialogAble = false;
+					}else{
+						this.$message.error(res.data.data);
+					}
 				}).catch((err)=>{
 			                    this.$message.error('接口请求出错');
 			                    console.error(err);

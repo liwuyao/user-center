@@ -18,19 +18,27 @@
 							<h4>基本信息</h4>
 						</div>
 						<el-form-item label="应用名称" prop="clientName">
-						    <el-input v-model="ruleForm.clientName" style="width: 400px;" :disabled="disabled" placeholder="请输入应用名称（3-50字符）"></el-input>
+						    <el-input v-model="ruleForm.clientName" style="width: 400px;"  placeholder="请输入应用名称（3-50字符）"></el-input>
 						</el-form-item>
 						<el-form-item label="clientKey" prop="clientKey">
-						    <el-input style="width: 400px;"  v-model="ruleForm.clientKey" :disabled="disabled" placeholder="请输入clientKey（5-50字符，包含字母和数字）"></el-input>
+						    <el-input style="width: 400px;"  v-model="ruleForm.clientKey"  placeholder="请输入clientKey（5-50字符，包含字母和数字）"></el-input>
 						</el-form-item>
 						<el-form-item label="应用类型">
-						    <el-radio-group v-model="ruleForm.clientType" disabled=true>
+						    <el-radio-group v-model="ruleForm.clientType" :disabled=true>
 						        <el-radio label="互联网"></el-radio>
 						        <el-radio label="系统应用"></el-radio>
 						    </el-radio-group>
 						</el-form-item>
+						<el-form-item label="钥密" v-if="disabled">
+							<span v-if="resetWord" style="color: green;">{{resetWord}}</span>
+						    <span class="resetPassWord" v-on:click="resetPassWord()">
+						    	重置钥密
+						    </span>
+						    <v-dialog :config="dialogConfig" :openDialog.sync="dialogConfig.state"></v-dialog>
+						    <p style="color: skyblue;font-size: 12px;">注：clientSecret是校验应用开发者身份的钥密，具有极高的安全性，切记勿把密码直接交给第三方开发者或直接储存在代码中</p>
+						</el-form-item>
 						 <el-form-item label="应用描述" prop="clientContent" style="margin-top: 30px;">
-						    <el-input type="textarea" v-model="ruleForm.clientContent" placeholder="请输入应用描述" :disabled="disabled" style="width: 990px;"></el-input>
+						    <el-input type="textarea" v-model="ruleForm.clientContent" placeholder="请输入应用描述" style="width: 990px;"></el-input>
 						 </el-form-item>
 						 <!--<div style="padding: 22px 35px;border-bottom: 1px solid gainsboro;margin-bottom: 20px;">
 							<h4>安全信息</h4>
@@ -61,15 +69,17 @@
 						    </el-select>
 					  	</el-form-item>-->
 					  	<div style="position: absolute;top: 85px;right: 120px;width: 235px;">
-					  		<el-upload
-							  class="avatar-uploader"
-							  action="https://jsonplaceholder.typicode.com/posts/"
-							  :show-file-list="false"
-							  :on-success="handleAvatarSuccess"
-							  :before-upload="beforeAvatarUpload">
-							  <img v-if="imageUrl" :src="imageUrl" class="avatar">
-							  <i v-else class="el-icon-plus avatar-uploader-icon"></i>
-							</el-upload>
+							<el-upload
+								  class="avatar-uploader"
+								  action="http://192.168.1.220:9201/ucenter/upload/common/image"
+								  name ="uploadFile"
+								  :data="updateMessage"
+								  :show-file-list="false"
+								  :on-success="handleAvatarSuccess"
+								  :before-upload="beforeAvatarUpload">
+								  <img v-if="imageUrl" :src="imageUrl" class="avatar">
+								  <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+								</el-upload>
 							<p style="font-size: 12px;color: gainsboro;">平台图为非必上传，点击可完成上传，只支持PNG，JPG格式，文件不能超过2M</p>
 					  	</div>
 					  	<div style="height: 50px;position: relative;">
@@ -84,7 +94,11 @@
 </template>
 
 <script>
+	import vDialog from '../dialog/dialog-component';
 	export default {
+		components:{
+           vDialog
+        },
 		created(){
 			var userId = this.$route.params.id;
 			console.log(userId);
@@ -102,17 +116,28 @@
 			        }
 			      };
 		    return {
+		    	updateMessage:{
+		    		objType:'0101'
+		    	},
+		    	test:false,
 		    	imageUrl: '',
 		    	htmlId:'',
 		    	userId:'',
 		    	disabled:false,
 		    	linkMessage:'增加应用',
+		    	resetWord:'',
 		        ruleForm: {
 		          clientName: '',
 		          clientKey: '',
 		          thumbnail:null,
 		          clientContent: ''
 		        },
+		        dialogConfig:{
+				       		message:'clientSecret已重置',
+				       		type:'prompt',
+				       		style:'',
+				       		state:false
+				       },
 		        rules: {
 		          clientName: [
 		            { required: true, message: '请输入应用名称', trigger: 'blur' },
@@ -140,12 +165,13 @@
 			} 
 //			通过url查询id
 			this.userId = theRequest.id;
-			if(this.htmlId =='look'){
-				this.linkMessage = "查看应用"
-				this.getUserMessage();
-				this.disabled = true;
-			}
+//			if(this.htmlId =='look'){
+//				this.linkMessage = "查看应用"
+//				this.getUserMessage();
+//				this.disabled = true;
+//			}
 			if(this.htmlId == 'modify'){
+				this.disabled = true;
 				this.linkMessage = "修改应用";
 				this.getUserMessage();
 			};
@@ -153,7 +179,10 @@
     	 methods: {
 	      handleAvatarSuccess(res, file) {
 	        this.imageUrl = URL.createObjectURL(file.raw);
-	        console.log("ok");
+	       	 this.$message({
+	          message: '头像上传成功',
+	          type: 'success'
+	        });
 	      },
 	      beforeAvatarUpload(file) {
 	        const isJPG = file.type === 'image/jpeg';
@@ -172,9 +201,12 @@
 //	      	获取数据
 	        getUserMessage(){
 				this.$axios.get('/ucenter/admin/client/'+this.userId,this.getMyWeb.axios.aAjaxConfig).then((res)=>{
-					var data = res.data.data;
-					this.ruleForm = data;
-					console.log(data);
+					if(res.data.state === "000000"){
+						var data = res.data.data;
+						this.ruleForm = data;
+					}else{
+						this.$message.error(res.data.messag);
+					}
 		      	}).catch(function(err){
 		                    this.$message.error('接口请求出错');
 		                    console.error(err);
@@ -188,9 +220,12 @@
 					    	var send = this.Qs.stringify(content)
 					    	console.log(send);
 						    this.$axios.post('/ucenter/admin/client',send,this.getMyWeb.axios.aAjaxConfig).then((res)=>{
-									console.log(res);
-									this.$router.go(-1)
-						      	}).catch(function(err){
+									if(res.data.state === "000000"){
+										this.$router.go(-1)
+									}else{
+										this.$message.error(res.data.messag);
+									}
+						      	}).catch((err)=>{
 						                    this.$message.error('接口请求出错');
 						                    console.error(err);
 						       })
@@ -211,9 +246,12 @@
 					    	var send = "?"+this.Qs.stringify(content);
 					    	   	console.log(send);
 					    	this.$axios.put('/ucenter/admin/client/'+send,this.getMyWeb.axios.aAjaxConfig).then((res)=>{
-								this.ruleForm = res.data.data;
-								console.log(res);
-								this.$router.go(-1)
+					    		if(res.data.state === "000000"){
+					    			this.ruleForm = res.data.data;
+									this.$router.go(-1)
+					    		}else{
+					    			this.$message.error(res.data.messag);
+					    		}
 					      	}).catch(function(err){
 					                    this.$message.error('接口请求出错');
 					                    console.error(err);
@@ -223,7 +261,36 @@
 			            return false;
 			          }
 			       });
-		    }
+		    },
+//		    重置钥密
+			resetPassWord(){
+				var content = {
+					clientId:this.userId
+				}
+				var send = "?"+this.Qs.stringify(content);
+				this.$axios.put('/ucenter/admin/client/secretReset/'+send,this.getMyWeb.axios.aAjaxConfig).then((res)=>{
+								if(res.data.state === "000000"){
+									this.resetWord = res.data.data;
+									this.dialogConfig.state = !this.dialogConfig.state;
+								}else{
+									 this.$message.error(res.data.messag);
+								}
+					      	}).catch((err)=>{
+					                    this.$message.error('接口请求出错');
+					        })
+			},
+//			测试
+//			test2(){
+//				console.log(2)
+//				this.$axios.post('/updata/upload/common/image',this.getMyWeb.axios.aAjaxConfig).then((res)=>{
+//								console.log(res)
+//					      	}).catch((err)=>{
+//					                    this.$message.error('接口请求出错');
+//					        })
+//			},
+			uperror(){
+				console.log('mmp')
+			}
 	   }
 	}
 </script>

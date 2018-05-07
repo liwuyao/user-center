@@ -41,7 +41,7 @@
 				</div>
 			</div>
 			<div style="padding-bottom:50px ;overflow: hidden;">
-				<v-table :message='tableData' v-on:tableRes="tableRes"></v-table>
+				<v-table :message='tableData' v-on:tableRes="tableRes" :searchMessage="tableData.searchMessage" :selectMessage="tableData.selectMessage" :updateMessage="tableData.update"></v-table>
 			</div>
 		</div>
 	</div>
@@ -63,7 +63,7 @@
        	return{
        		tableSelect:[],
        		tableData:{
-       			update:[],
+       			update:new Date(),
        			searchMessage:{},
        			selectMessage:{},
        			urlMessage:{
@@ -221,34 +221,39 @@
 	 			for(let index in data[i]){
 	   					if(data[i].state == 0){
 	   						disable.push(data[i]);
-	   					}
-	   					if(disable.length != 0){
+	   					};
+	   					if(data[i].state == 1){
+	   						able.push(data[i]);
+	   					};
+	   					if(disable.length>0 && able.length>0){
+	   						this.btnMessage.disable.disable = true;
+	   						this.btnMessage.able.disable = true;
+	   					}else{
+	   						if(disable.length != 0){
 	   							this.btnMessage.disable.disable = false;
 	   						}else{
 	   							this.btnMessage.disable.disable = true;
+		   					};
+		   					if(able.length != 0){
+		   							this.btnMessage.able.disable = false;
+		   						}else{
+		   							this.btnMessage.able.disable = true;
+		   					};
 	   					}
-	   					if(data[i].state == 1){
-	   						able.push(data[i]);
-	   					}
-	   					if(able.length != 0){
-	   							this.btnMessage.able.disable = false;
-	   						}else{
-	   							this.btnMessage.able.disable = true;
-	   						}
 	   				}
 	 			}
  		},
 // 		弹框信息返回
  		dialogRes(data){
- 			this.tableData.update = this.tableSelect;
+ 			this.tableData.update = new Date();
  		},
 // 		搜索信息
  		searchRes(data){
  			if(Object.keys(data).length != 0){
  				this.tableData.searchMessage = data;
- 				setTimeout(()=>{
- 					this.tableData.searchMessage = {};
- 				},0)
+// 				setTimeout(()=>{
+// 					this.tableData.searchMessage = {};
+// 				},0)
  			}
  		},
 // 		选择信息
@@ -257,9 +262,6 @@
 					this.tableData.selectMessage={
 						state:data
 					};
-					setTimeout(()=>{
-	 					this.tableData.selectMessage = {};
-	 				},0)
 				}
 			}
 	 	}
