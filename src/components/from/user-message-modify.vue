@@ -95,7 +95,7 @@
 					<!--			<h1>此功能尚未开放</h1>-->
 								<el-form :model="passMessage" :rules="rules2" ref="passMessage" label-width="100px" class="demo-ruleForm" style="margin-top: 20px;">
 									<el-form-item label="当前密码" prop="currentMemberPassword">
-									    <el-input type="text" v-model="passMessage.currentMemberPassword"  style="width: 400px;" ></el-input>
+									    <el-input type="password" v-model="passMessage.currentMemberPassword"  style="width: 400px;" ></el-input>
 									</el-form-item>
 									<el-form-item label="新密码" prop="newPassword">
 									    <el-input type="password" v-model="passMessage.newPassword" style="width: 400px;" ></el-input>
@@ -129,7 +129,7 @@
 		          callback(new Error('请输入密码'));
 		        } else {
 		          if (this.passMessage.newPasswordConfirm !== '') {
-		            this.$refs.passMessage.validateField('passwordConfirm');
+		            this.$refs.passMessage.validateField('newPasswordConfirm');
 		          }
 		          callback();
 		        }
@@ -178,10 +178,12 @@
 			    rules2: {
 			    	currentMemberPassword:[
 			    		{ required: true, message: '密码不能为空', trigger: 'blur' },
+			    		{ min: 6, message: '密码长度不小于6', trigger: 'blur' }
 			    	],
 			        newPassword: [
 		            	{  required: true, message: '密码不能为空', trigger: 'blur' },
-		            	{ validator: validatePass, trigger: 'blur',required: true}
+		            	{ validator: validatePass, trigger: 'blur',required: true},
+		            	{ min: 6, message: '密码长度不小于6', trigger: 'blur' }
 		            ],
 		            newPasswordConfirm: [
 		            	{  required: true, message: '密码不能为空', trigger: 'blur' },
@@ -246,20 +248,48 @@
 	        modify(formName){
 		    	 this.$refs[formName].validate((valid) => {
 			          if (valid) {
-			          	var birthday = new Date(this.modifyMessage.birthday);
+			          	var content = this.modifyMessage;
+			          	var birthday = new Date(content.birthday);
 			          		birthday = this.getMyWeb.timestampToTime(birthday);
-			          		this.modifyMessage.birthday = birthday;
-			          		this.modifyMessage.gender = Number(this.modifyMessage.gender);
-			            	var content = this.modifyMessage;
+			          		content.birthday = birthday;
+			          		content.gender = Number(content.gender);
 					    	content.memberId = this.userId;
 					    	var send = "?"+this.Qs.stringify(content);
-					    	console.log(content);
 					    	this.$axios.put('/ucenter/admin/member/'+send,this.getMyWeb.axios.aAjaxConfig).then((res)=>{
 					    		if(res.data.state === '000000'){
 							      	this.$message({
 							          message: '用户信息修改成功',
 							          type: 'success'
-							        });
+							       });
+					    		}else{
+							        this.$message.error(res.data.message);
+					    		}
+
+					      	}).catch(function(err){
+					                    this.$message.error('接口请求出错');
+					                    console.error(err);
+					        })
+					      	this.modifyMessage.gender = String(this.modifyMessage.gender);
+			          } else {
+				            this.$message.error('表单填写格式不对，请重新填写');
+				            return false;
+				          }
+			       });
+		    },
+//		    修改密码
+		    resetPassWrod(formName){
+		    	this.$refs[formName].validate((valid) => {
+			          if (valid) {
+			          	var content = this.passMessage;
+		    				content.memberId = this.userId;
+					    	var send = "?"+this.Qs.stringify(content);
+					    	this.$axios.put('/ucenter/admin/member/passwordUpdate'+send,this.getMyWeb.axios.aAjaxConfig).then((res)=>{
+					    		if(res.data.state === '000000'){
+							       this.$message({
+							          message: res.data.message,
+							          type: 'success'
+							       });
+							       this.resetForm(formName);
 					    		}else{
 							        this.$message.error(res.data.message);
 					    		}
@@ -274,33 +304,9 @@
 				          }
 			       });
 		    },
-		    resetPassWrod(formName){
-		    	this.$refs[formName].validate((valid) => {
-			          if (valid) {
-			          	var content = this.passMessage;
-		    				content.memberId = this.userId;
-					    	var send = "?"+this.Qs.stringify(content);
-					    	console.log(content);
-					    	this.$axios.put('/ucenter/admin/member/passwordUpdate'+send,this.getMyWeb.axios.aAjaxConfig).then((res)=>{
-					    		if(res.data.state === '000000'){
-							       this.$message({
-							          message: '密码修改成功',
-							          type: 'success'
-							        });
-									console.log(res);
-					    		}else{
-							        this.$message.error(res.data.message);
-					    		}
-
-					      	}).catch(function(err){
-					                    this.$message.error('接口请求出错');
-					                    console.error(err);
-					        })
-			          } else {
-				            this.$message.error('表单填写格式不对，请重新填写');
-				            return false;
-				          }
-			       });
+//		    重置表单
+			resetForm(formName) {
+		        this.$refs[formName].resetFields();
 		    },
 //		    选项卡回调函数
 			handleClick(tab, event) {

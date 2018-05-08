@@ -60,7 +60,8 @@
 		            { min: 2, max: 20, message: '2-20位', trigger: 'blur' }
 		        ],
 		        password: [
-	            	{ validator: validatePass, trigger: 'blur',required: true}
+	            	{ validator: validatePass, trigger: 'blur',required: true},
+	            	{ min: 6, message: '密码长度不小于6', trigger: 'blur' }
 	            ]
 		    }
       };

@@ -170,7 +170,7 @@
 //	        获取列表数据
 			getList(src){
 //				this.pageMessage.condition= this.message.searchMessage.condition;
-//				this.pageMessage.state = 
+//				this.pageMessage.state = ;
 				var content=this.pageMessage;
 				this.$axios.get(src, {params:content},this.getMyWeb.axios.aAjaxConfig).then((res)=>{
 					 if(res.data.state === '000000'){
@@ -183,13 +183,13 @@
 					 	this.$message.error(res.data.data);
 					 }
 		      	}).catch((err)=>{
-		                    this.$message.error('接口请求出错');
+//		                    this.$message.error('接口请求出错');
 		                    console.error(err);
 		        })
 			},
 //			搜索
 			search(src){
-				for(let i in this.pageMessage){
+					for(let i in this.pageMessage){
 					for(let j in this.message.searchMessage){
 						if(i == j){
 							this.pageMessage[i]= this.message.searchMessage[j];

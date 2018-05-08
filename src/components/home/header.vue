@@ -33,7 +33,6 @@
 			logout(){
 				let content = localStorage.letingUserName;
 		    	let send = this.Qs.stringify(content);
-		    	console.log('ok')
 				this.$axios.post('/ucenter/admin/logout',send,this.getMyWeb.axios.aAjaxConfig).then((res)=>{
 							console.log(res);
 							this.$message({
@@ -41,7 +40,7 @@
 					          type: 'success'
 					        });
 							setTimeout(()=>{
-								this.$router.go('login');
+								this.$router.push('/login');
 							},500)
 			      	}).catch((err)=>{
 			                    this.$message.error(err.data.message);
