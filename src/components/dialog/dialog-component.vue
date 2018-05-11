@@ -1,25 +1,12 @@
 <template>
 	<div class="from-component">
-		<el-button size="mini" v-on:click="open2()" :type="config.classType" v-if="config.style == 'button'" style="cursor: pointer;">{{message.name}}</el-button>
-		<div v-else-if="config.style == 'icon'" v-on:click="open2()" style="cursor: pointer;">
-			<i :class="config.iconClass" :title="config.title"></i>
-		</div>
-		<div v-on:click="open2()" style="position: absolute;width: 100%;height: 100%;" v-else></div>
-		<!--<el-dialog title="增加" :visible.sync="dialogAddUser">
-			<el-form :model="form">
-			    <el-form-item label="用户名称" :label-width="formLabelWidth">
-			      <el-input v-model="form.name" auto-complete="off"></el-input>
-			    </el-form-item>
-			    <el-form-item label="用户密码" :label-width="formLabelWidth">
-			      <el-input v-model="form.name" auto-complete="off"></el-input>
-			    </el-form-item>
-			</el-form>
-			<div slot="footer" class="dialog-footer">
-			    <el-button @click="dialogFormVisible = false">取 消</el-button>
-			    <el-button type="primary">确 定</el-button>
+		<div v-if="show">
+			<el-button size="mini" v-on:click="open2()" :type="config.classType" v-if="config.style == 'button'" style="cursor: pointer;margin: 0 5px;">{{message.name}}</el-button>
+			<div v-else-if="config.style == 'icon'" v-on:click="open2()" style="cursor: pointer;margin: 0 5px;">
+				<i :class="config.iconClass" :title="config.title"></i>
 			</div>
-		</el-dialog>-->
-<!--		提示框-->
+			<div v-on:click="open2()" style="position: absolute;width: 100%;height: 100%;margin: 0 5px;" v-else></div>
+		</div>
 		<el-dialog
 		  title="提示"
 		  :visible.sync="activeState"
@@ -59,7 +46,7 @@
 		</el-dialog>
 		<!--禁用-->
 		<el-dialog
-		  title="禁用提示"
+		  :title="config.title"
 		  :visible.sync="dialogDisable"
 		  width="30%"
 		  >
@@ -81,7 +68,7 @@
 		</el-dialog>
 		<!--		  启用弹框-->
 		<el-dialog
-		  title="启用提示"
+		  :title="config.title"
 		  :visible.sync="dialogAble"
 		  width="30%"
 		  >
@@ -101,15 +88,22 @@
 		    <el-button type="primary" @click="ableMessage()">确 定</el-button>
 		  </span>
 		</el-dialog>
+<!--		商品相关弹框-->
+		<dialog-product :config="config" :id="id" :tableSelect='tableSelect' :chooseOne='chooseOne' openDialog='openDialog' :change="openPrivate" :message='message' v-if="config.privateName"></dialog-product>
 	</div>
 </template>
 
 <script>
+	import dialogProduct from './dialog-product.vue'
 	export default {
 //	  name: 'formComponent',
-	    props: ['id','config','tableSelect','chooseOne','openDialog'],
+	    props: ['id','config','tableSelect','chooseOne','openDialog','message'],
+	    components:{
+	  	dialogProduct
+	   },
 	    data() {
 	      return {
+	      	show:true,
 	      	activeState:false,
 	        dialogDelete: false,
 	        dialogDisable:false,
@@ -117,11 +111,20 @@
 	        dialogAddUser: false,
 	        dialogPrompt:true,
 	        open:true,
+	        openPrivate:'',
 	        ids:[],
 	        formLabelWidth: '120px'
 	      };
 	    },
 		created(){
+//			上架按钮的判断
+			if(this.message){
+				if(this.config.type == 'productExamine'){
+					if(this.message.status != 1) {
+						this.show = false;
+					}
+				}
+			}
 		},
 		watch: {
 //			var a = this.openDialog;
@@ -132,6 +135,7 @@
 		},
 		methods:{
 			open2(){
+//				公用弹框
 				if(!this.id && this.tableSelect.length == 0){
 					this.$message.error('请选择要操作对象') 
 				}else if(!this.id && this.tableSelect.length != 0){
@@ -162,12 +166,21 @@
 						this.dialogDelete = true;
 					}
 				}
+//				私有弹框
+				if(this.config.privateName){
+					console.log('2')
+					 this.openPrivate = new Date();
+				}
 			},
 //			删除
 			deleteMessage(){
 				var content;
 				if(this.id){
-						content  = '?'+this.config.urlSearch+'=' + this.id
+						if(this.config.urlSearch){
+							content  = '?'+this.config.urlSearch+'=' + this.id
+						}else{
+							content = '/'+this.id;
+						}
 				}else{
 					content  = '?'+this.config.urlSearch+'=' + this.ids.join()
 				}
@@ -176,6 +189,10 @@
 				this.$axios.delete(_url,this.getMyWeb.axios.aAjaxConfig).then((res)=>{
 					if(res.data.state === "000000"){
 						this.returnMessage('删除成功');
+						this.$message({
+					          message: res.data.message,
+					          type: 'success'
+					        });
 					 	this.dialogDelete = false;
 					}else{
 						this.$message.error(res.data.data);

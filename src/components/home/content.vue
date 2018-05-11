@@ -41,6 +41,21 @@
 								},
 							]
 						},
+						{
+							icon:'iconfont icon-el-icon-karakal-slideBar-productcenter slide-bar2-icon',
+							name:'商品中心',
+							index:'',
+							child:[
+								{
+									title:'商品列表',
+									index:'/productList'
+								},
+								{
+									title:'商品分类',
+									index:'/productCategory'
+								},
+							]
+						},
 					]
 			}
 		},

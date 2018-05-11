@@ -166,7 +166,7 @@
 				  password:'',
 				  passwordConfirm:'',
 				  nickname:'',
-				  birthday:'',
+				  birthday:null,
 				  gender:'',
 				  career:'',
 				  company:'',

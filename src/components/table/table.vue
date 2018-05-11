@@ -29,8 +29,20 @@
 		        	<span v-else style="color: red;">禁用</span>
 		        </span>
 		        <span v-else-if="item.prop == 'status'">
-		        	<span v-if="props.row[item.prop] == 0 " style="color: green;">启用</span>
-		        	<span v-else style="color: red;">禁用</span>
+		        	<span v-if="item.lable =='商品状态'">
+		        		<span v-if="props.row[item.prop] == -1" style="color: red;">已删除</span>
+		        		<span style="color: gray;" v-else-if="props.row[item.prop] == 0">待编辑</span>
+		        		<span style="color: red;" v-else-if="props.row[item.prop] == 1">待审核</span>
+		        		<span style="color: red;" v-else-if="props.row[item.prop] == 2">通过</span>
+		        		<span style="color: red;" v-else-if="props.row[item.prop] == 3">不通过</span>
+		        		<span style="color: red;" v-else-if="props.row[item.prop] == 4">上架</span>
+		        		<span style="color: red;" v-else-if="props.row[item.prop] == 5">下架</span>
+		        		<span style="color: red;" v-else-if="props.row[item.prop] == 6">暂歇</span>
+		        	</span>
+		        	<span v-else>
+		        		<span v-if="props.row[item.prop] == 0 " style="color: green;">启用</span>
+		        		<span v-else style="color: red;">禁用</span>
+		        	</span>
 		        </span>
 		        <span v-else-if="item.prop == 'gender'">
 		        	<span v-if="props.row[item.prop] == 0 ">男</span>
@@ -40,10 +52,16 @@
 		        <span v-else-if="!props.row[item.prop]">
 		        	————
 		        </span>
+		        <span v-else-if="item.prop =='weight'">
+		        	{{transformationLevel(props.row[item.prop])}}
+		        </span>
 		        <span v-else-if="item.prop =='registerTime'">
 		        	{{transformationTime(props.row[item.prop])}}
 		        </span>
 		        <span v-else-if="item.prop =='createTime'">
+		        	{{transformationTime(props.row[item.prop])}}
+		        </span>
+		        <span v-else-if="item.prop =='ctime'">
 		        	{{transformationTime(props.row[item.prop])}}
 		        </span>
 		        <span v-else>{{ props.row[item.prop] }}</span>
@@ -51,14 +69,22 @@
 		    </el-table-column>
 		     <el-table-column label="操作" v-if="message.listBtnConfig">
 		      <template slot-scope="scope">
+		      	<div style="display: inline-block;" v-if="message.listBtnConfig.btn">
+		      		<div v-for="(item, index) in message.listBtnConfig.btn" :key="index" style="margin: 0 5px;">
+			      			<i :class="item.iconClass" :title="item.title" v-on:click="btn(item.privateName,scope.row)" style="cursor: pointer;"></i>
+			      	</div>
+		      	</div>
 		      	<div style="display: inline-block;" v-if="message.listBtnConfig.linkTo">
 			      		<router-link v-for="(item, index) in message.listBtnConfig.linkTo" :key="index" :to="src(item.src,scope.row[message.listBtnConfig.pageMessage.idName])" style="margin: 0 5px;">
 			      			<i :class="item.iconClass" :title="item.name"></i>
 			      		</router-link>
 		      	</div>
 		      	<div style="display: inline-block;" v-if="message.listBtnConfig.dialog">
-		      		 <v-dialog v-for="(item, index) in message.listBtnConfig.dialog" :key="index"
-		      		 	:config="item" :id='scope.row[message.listBtnConfig.pageMessage.idName]' :chooseOne='scope.row' v-on:send="dialogMessage" style="margin:0 5px;" ></v-dialog>
+		      	<!--	<div v-for="(item, index) in message.listBtnConfig.dialog" :key="index" style="float: left;">-->
+		      			<v-dialog v-for="(item, index) in message.listBtnConfig.dialog" :key="index" 
+		      				:config="item" :id='scope.row[message.listBtnConfig.pageMessage.idName]' :chooseOne='scope.row' :message="scope.row" v-on:send="dialogMessage">
+			      		</v-dialog>
+		      	<!--	</div>-->
 		      	</div>
 		      </template>
     		</el-table-column>
@@ -187,6 +213,14 @@
 		                    console.error(err);
 		        })
 			},
+//			按钮操作
+			btn(name,row){
+				console.log(name);
+				if(name == 'productLookChild'){
+					this.pageMessage.parentId = row.parentId;
+					this.getList(this.message.listUrl);
+				}
+			},
 //			搜索
 			search(src){
 					for(let i in this.pageMessage){
@@ -227,6 +261,13 @@
 //     		转换时间格式
 			transformationTime(date){
                 return (new Date(date)).format("yyyy-MM-dd hh:mm");
+			},
+//			转换级别
+			transformationLevel(num){
+				var level = '';
+				var cnum = ['零', '一', '二', '三', '四', '五', '六', '七', '八', '九'];
+				level = cnum[num]+'级';
+				return level;
 			},
 //			刷新
 			refresh(){

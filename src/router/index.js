@@ -1,10 +1,11 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import Login from '@/components/login'
-import Zhuce from '@/components/zhuce'
 import Home from '@/components/home/home.vue'
 import Index from '@/components/page/page-application.vue'
 import User from '@/components/page/page-user.vue'
+import productList from '@/components/page/page-product-list.vue'
+import productCategory from '@/components/page/page-product-category.vue'
 import applicationMessage from '@/components/from/application-message.vue'
 import userMessage from '@/components/from/user-message.vue'
 import userMessageModify from '@/components/from/user-message-modify.vue'
@@ -23,10 +24,6 @@ export default new Router({
     {
       path: '/login',
       component: Login
-    },
-    {
-      path: '/zhuce',
-      component: Zhuce
     },
     {
       path: '/client/:id',
@@ -59,6 +56,14 @@ export default new Router({
         {
           path: '/usercenter',
           component: User
+        },
+        {
+          path: '/productList',
+          component: productList
+        },
+        {
+          path: '/productCategory',
+          component: productCategory
         }
       ]
     }

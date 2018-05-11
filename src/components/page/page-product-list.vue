@@ -1,43 +1,26 @@
 <template>
-	<div class="application">
+	<div class="product-list">
 		<div class="application-content">
 			<div style="overflow: hidden;padding: 30px 0;background: #eff4f7;">
-				<div class="btn-box">
-					<router-link to='client/addClient'  style="display:block;">
-						<v-button :message="btnMessage.add"></v-button>	  	
-					</router-link>
-				</div>
-				<div class="btn-box">
-					<v-button :message="btnMessage.delete" style="cursor: pointer;"></v-button>
-					<v-dialog :config="btnMessage.delete.formConfig" class="page-dialog" :tableSelect='tableSelect' v-on:send="dialogRes"></v-dialog>
-				</div>
-				<div class="btn-box-default" :class="{btnActive:!btnMessage.disable.disable}">
+				<div class="btn-box-default" :class="{btnActive:!btnMessage.disable.disable}" style="margin-left: 17px;">
 					<el-button class="btn-elm-box" :disabled='btnMessage.disable.disable'>
 					<i :class="btnMessage.disable.icon"></i>
-					禁止
+					下架
 					</el-button>
 					<v-dialog :config="btnMessage.disable.formConfig" class="page-dialog" :tableSelect='tableSelect' v-on:send="dialogRes" v-if="!btnMessage.disable.disable"></v-dialog>
 				</div>
 				<div class="btn-box-default" :class="{btnActive:!btnMessage.able.disable}">
 					<el-button class="btn-elm-box" :disabled='btnMessage.able.disable'>
 					<i :class="btnMessage.able.icon"></i>
-					启用
+					上架
 					</el-button>
 					<v-dialog :config="btnMessage.able.formConfig" class="page-dialog" :tableSelect='tableSelect' v-on:send="dialogRes" v-if="!btnMessage.able.disable"></v-dialog>
 				</div>
-				<!--<div class="btn-box">
-					<v-button :message="btnMessage.disable"></v-button>
-					<v-dialog :config="btnMessage.disable.formConfig" class="page-dialog" :tableSelect='tableSelect' v-on:send="dialogRes"></v-dialog>
-				</div>
-				<div class="btn-box">
-					<v-button :message="btnMessage.able"></v-button>
-					<v-dialog :config="btnMessage.able.formConfig" class="page-dialog" :tableSelect='tableSelect' v-on:send="dialogRes"></v-dialog>
-				</div>-->
 			</div>
 			<div style="width: 100%;overflow: hidden;background: #eff4f7;padding-bottom: 10px;">
-				<select-button :message="selectMessage" :placeholder="'应用状态'" class="application-select" v-on:select="selectRes"></select-button>
+				<select-button :message="selectMessage" :placeholder="'商品状态'" class="application-select" v-on:select="selectRes"></select-button>
 				<div style="display:inline-block;margin-left:420px;">
-					<search-bar :name="'condition'" v-on:search="searchRes" :placeholder="'输入clientkey查询'"></search-bar>
+					<search-bar :name="'productName'" v-on:search="searchRes" :placeholder="'请输入商品名称'"></search-bar>
 				</div>
 			</div>
 			<div style="padding-bottom:50px ;overflow: hidden;">
@@ -67,63 +50,80 @@
        			searchMessage:{},
        			selectMessage:{},
        			urlMessage:{
-       				condition:null,
-        			state:'',
+       				productName:null,
+        			status:'',
 	   				pageIndex:'1',
 	   				pageSize:'20'
        			},
-       			listUrl:'/ucenter/admin/client',
+       			listUrl:'/ucenter/admin/v1/product',
        			listConfig:[
        				{
-       					lable:'应用名称',
+       					lable:'商品名称',
        					width:'120',
-       					prop:'clientName'
+       					prop:'name'
        				},
        				{
-       					lable:'clientKey',
+       					lable:'副标题',
        					width:'140',
-       					prop:'clientKey'
+       					prop:'subTitle'
        				},
        				{
-       					lable:'注册用户',
+       					lable:'商品描述',
        					width:'250',
-       					prop:'createMemberName'
+       					prop:'description'
        				},
        				{
-       					lable:'注册时间',
+       					lable:'标签',
        					width:'250',
-       					prop:'createTime'
+       					prop:'label'
        				},
        				{
-       					lable:'状态',
+       					lable:'审核时间',
+       					width:'250',
+       					prop:'auditTime'
+       				},
+       				{
+       					lable:'商品状态',
        					width:'120',
-       					prop:'state'
+       					prop:'status'
        				}
        			],
        			listBtnConfig:{
        				pageMessage:{
-       					idName:'clientId'
+       					idName:'id'
        				},
-       				linkTo:[
-	       				{
-	       					name:'查看',
-	       					src:'/lookClient',
-	       					iconClass:'table-icon iconfont icon-el-icon-karakal-chakan'
-	       				},
-	       				{
-	       					name:'修改',
-	       					src:'/client/modify',
-	       					iconClass:'table-icon iconfont icon-el-icon-karakal-xiugai'
-	       				},
-       				],
+//     				linkTo:[
+//	       				{
+//	       					name:'审核',
+//	       					src:'/lookClient',
+//	       					iconClass:'table-icon iconfont icon-el-icon-karakal-slideBar-shenhe'
+//	       				},
+//	       				{
+//	       					name:'修改',
+//	       					src:'/client/modify',
+//	       					iconClass:'table-icon iconfont icon-el-icon-karakal-xiugai'
+//	       				},
+//     				],
        				dialog:[
+       					{
+				       		name:"name",
+				       		title:'审核',
+				       		privateName:'product',
+				       		idName:'id',
+				       		urlSearch:'productId',
+				       		type:"productExamine",
+				       		src:"/ucenter/admin/v1/product/audit",
+				       		classType:'danger',
+				       		style:'icon',
+				       		iconClass:'table-icon iconfont icon-el-icon-karakal-slideBar-shenhe'
+				       },
 				       	{
-				       		name:"clientName",
+				       		name:"name",
 				       		title:'删除',
-				       		idName:'clientId',
-				       		urlSearch:'clientIds',
+				       		idName:'id',
+				       		urlSearch:'productId',
 				       		type:"delete",
-				       		src:"/ucenter/admin/client",
+				       		src:"/ucenter/admin/v1/product",
 				       		classType:'danger',
 				       		style:'icon',
 				       		iconClass:'table-icon iconfont icon-el-icon-karakal-iconfontshanchu5'
@@ -132,58 +132,33 @@
        			}
        		},
        		btnMessage:{
-       			add:{
-       				name:"增加",
-		       		type:"add",
-		       		icon:"button-icon iconfont icon-el-icon-karakal-zengjia",
-		       		formConfig:{
-		       			name:"增加",
-		       			type:"add",
-		       			classType:'',
-		       			style:'button'
-		       		}
-       			},
-       			delete:{
-       				name:"删除",
-		       		type:"delete",
-		       		icon:"button-icon iconfont icon-el-icon-karakal-iconfontshanchu5",
-		       		formConfig:{
-		       			idNames:'clientId',
-		       			urlSearch:'clientIds',
-		       			src:"/ucenter/admin/client",
-		       			name:"clientName",
-		       			type:"delete",
-		       			classType:'',
-		       			style:''
-		       		}
-       			},
        			disable:{
-       				name:"禁用",
+       				name:"下架提示",
 		       		type:"disable",
 		       		disable:true,
 		       		icon:"button-icon iconfont icon-el-icon-karakal-jinyong",
 		       		formConfig:{
-		       			title:'禁用提示',
-		       			idName:'clientId',
-		       			urlSearch:'clientIds',
-		       			src:"/ucenter/admin/client/disable",
-		       			name:"clientName",
+		       			title:'下架提示',
+		       			idName:'id',
+		       			urlSearch:'productId',
+		       			src:"/ucenter/admin/v1/product/unpublish",
+		       			name:"name",
 		       			type:"disable",
 		       			classType:'',
 		       			style:''
 		       		}
        			},
        			able:{
-       				name:"启用",
+       				name:"上架提示",
 		       		type:"able",
 		       		disable:true,
 		       		icon:"button-icon iconfont icon-el-icon-karakal-qiyong",
 		       		formConfig:{
-		       			title:'启用提示',
-		       			idName:'clientId',
-		       			urlSearch:'clientIds',
-		       			src:"/ucenter/admin/client/enable",
-		       			name:"clientName",
+		       			title:'上架提示',
+		       			idName:'id',
+		       			urlSearch:'productId',
+		       			src:"/ucenter/admin/v1/product/publish",
+		       			name:"name",
 		       			type:"able",
 		       			classType:'',
 		       			style:''
@@ -191,14 +166,20 @@
        			}
        		},
        		selectMessage:[
-		        { value: '-1',
+       			{ value: '',
 		          label: '全部'
 		        },
 		        { value: '0',
-		          label: '启用'
+		          label: '待编辑'
 		        },
 		        { value: '1',
-		          label: '禁用'
+		          label: '待审核'
+		        },
+		        { value: '2',
+		          label: '审核通过'
+		        },
+		        { value: '3',
+		          label: '审核不通过'
 		        },
        		],
 	        isActive:false
@@ -215,34 +196,34 @@
  			this.tableSelect = data;
  			var able = [];
  			var disable = [];
- 			if(data.length == 0){
+ 			console.log(data);
+ 			if(data.length == 0 || data.length>1){
  				this.btnMessage.disable.disable = true;
  				this.btnMessage.able.disable = true;
  			}
 	 			for(let i = 0;i<data.length;i++){
-	 			for(let index in data[i]){
-	   					if(data[i].state == 0){
+	   					if(data[i].status == 4){
 	   						disable.push(data[i]);
 	   					};
-	   					if(data[i].state == 1){
+	   					if(data[i].status == 2 || data[i].status == 6){
 	   						able.push(data[i]);
 	   					};
+//	   					console.log(disable.length);
 	   					if(disable.length>0 && able.length>0){
 	   						this.btnMessage.disable.disable = true;
 	   						this.btnMessage.able.disable = true;
 	   					}else{
-	   						if(disable.length != 0){
+	   						if(disable.length == 1){
 	   							this.btnMessage.disable.disable = false;
 	   						}else{
 	   							this.btnMessage.disable.disable = true;
 		   					};
-		   					if(able.length != 0){
+		   					if(able.length == 1){
 		   							this.btnMessage.able.disable = false;
 		   						}else{
 		   							this.btnMessage.able.disable = true;
 		   					};
 	   					}
-	   				}
 	 			}
  		},
 // 		弹框信息返回
@@ -251,6 +232,7 @@
  		},
 // 		搜索信息
  		searchRes(data){
+ 			console.log(data)
  			if(Object.keys(data).length != 0){
  				this.tableData.searchMessage = data;
 // 				setTimeout(()=>{
@@ -260,11 +242,9 @@
  		},
 // 		选择信息
 		selectRes(data){
-				if(data){
 					this.tableData.selectMessage={
-						state:data
+						status:data
 					};
-				}
 			}
 	 	}
     }

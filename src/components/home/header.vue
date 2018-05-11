@@ -34,7 +34,6 @@
 				let content = localStorage.letingUserName;
 		    	let send = this.Qs.stringify(content);
 				this.$axios.post('/ucenter/admin/logout',send,this.getMyWeb.axios.aAjaxConfig).then((res)=>{
-							console.log(res);
 							this.$message({
 					          message: res.data.message,
 					          type: 'success'

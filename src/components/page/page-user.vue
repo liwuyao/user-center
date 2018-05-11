@@ -168,6 +168,7 @@
 		       		disable:true,
 		       		icon:"button-icon iconfont icon-el-icon-karakal-jinyong",
 		       		formConfig:{
+		       			title:'禁用提示',
 		       			idName:'memberId',
 		       			urlSearch:'memberIds',
 		       			src:"/ucenter/admin/member/disable",
@@ -183,6 +184,7 @@
 		       		disable:true,
 		       		icon:"button-icon iconfont icon-el-icon-karakal-qiyong",
 		       		formConfig:{
+		       			title:'启用提示',
 		       			idName:'memberId',
 		       			urlSearch:'memberIds',
 		       			src:"/ucenter/admin/member/enable",
