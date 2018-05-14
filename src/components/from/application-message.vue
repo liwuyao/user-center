@@ -23,18 +23,17 @@
 						<el-form-item label="clientKey" prop="clientKey">
 						    <el-input style="width: 400px;"  v-model="ruleForm.clientKey"  placeholder="请输入clientKey（5-50字符，包含字母和数字）"></el-input>
 						</el-form-item>
-						<el-form-item label="应用类型">
-						    <el-radio-group v-model="ruleForm.clientType" :disabled=true>
-						        <el-radio label="互联网"></el-radio>
-						        <el-radio label="系统应用"></el-radio>
+						<el-form-item label="应用类型" prop="clientType">
+						    <el-radio-group v-model="ruleForm.clientType">
+						        <el-radio label="COMMON_CLIENT">互联网</el-radio>
+						        <el-radio label="SYSTEM_CLIENT">系统应用</el-radio>
 						    </el-radio-group>
 						</el-form-item>
 						<el-form-item label="钥密" v-if="disabled">
 							<span v-if="resetWord" style="color: green;">{{resetWord}}</span>
-						    <span class="resetPassWord" v-on:click="resetPassWord()">
+						    <span class="resetPassWord" v-on:click="dialogReset = true">
 						    	重置钥密
 						    </span>
-						    <v-dialog :config="dialogConfig" :openDialog.sync="dialogConfig.state"></v-dialog>
 						    <p style="color: skyblue;font-size: 12px;">注：clientSecret是校验应用开发者身份的钥密，具有极高的安全性，切记勿把密码直接交给第三方开发者或直接储存在代码中</p>
 						</el-form-item>
 						 <el-form-item label="应用描述" prop="clientContent" style="margin-top: 30px;">
@@ -68,6 +67,7 @@
 						      <el-option label="电子商务业" value="beijing"></el-option>
 						    </el-select>
 					  	</el-form-item>-->
+					  <!--	<img :src="ruleForm.thumbnail" title="头像" style="position: absolute;top: 85px;right: 170px;width: 50px;"/>-->
 					  	<div style="position: absolute;top: 85px;right: 120px;width: 235px;">
 							<el-upload
 								  class="avatar-uploader"
@@ -90,6 +90,22 @@
 				</div>
 			</div>
 		</div>
+<!--		重置钥密弹框-->
+		<el-dialog
+		  title="提示"
+		  :visible.sync="dialogReset"
+		  width="30%"
+		  >
+		  <div style="display: flex;flex-direction: row;">
+		  	<i class="el-icon-warning" style="color: #f7ba2a;font-size: 30px;margin-top: -5px;"></i>
+			<div style="flex: 1;margin-left: 10px;">
+			  确定要重置钥密吗？重置后之前钥密将作废
+			</div>
+		  </div>
+		  <span slot="footer" class="dialog-footer">
+		    <el-button type="primary" @click="resetPassWord()">确 定</el-button>
+		  </span>
+		</el-dialog>
 	</div>
 </template>
 
@@ -98,11 +114,7 @@
 	export default {
 		components:{
            vDialog
-        },
-		created(){
-			var userId = this.$route.params.id;
-			console.log(userId);
-		},
+       },
 		 data() {
 		 	   	var validatePass = (rule, value, callback) => {
 		 	   	var reg = new RegExp(/^(?![^a-zA-Z]+$)(?!\D+$)/);
@@ -119,6 +131,7 @@
 		    	updateMessage:{
 		    		objType:'0101'
 		    	},
+		    	dialogReset:false,
 		    	test:false,
 		    	imageUrl: '',
 		    	htmlId:'',
@@ -144,16 +157,21 @@
 		            { min: 3, max: 50, message: '长度在 3 到 5 个字符', trigger: 'blur' }
 		          ],
 		          clientKey: [
+		            { required: true, message: '请输入clientKey', trigger: 'blur' },
 		            { min: 5, max: 50, message: '长度在 3 到 5 个字符', trigger: 'blur' },
 		            { validator: validatePass, trigger: 'blur' }
 		          ],
 		          clientContent: [
 		            { required: true, message: '请填写应用描述', trigger: 'blur' }
+		          ],
+		          clientType: [
+		          	{ required: true, message: '请选择类型', trigger: 'blur' }
 		          ]
 		        }
 		      }
     	},
     	created(){
+//  		获取id
     		this.htmlId = this.$route.params.id;
     		var _url = window.location.href;
     		var theRequest = new Object(); 
@@ -204,6 +222,7 @@
 					if(res.data.state === "000000"){
 						var data = res.data.data;
 						this.ruleForm = data;
+						this.imageUrl = this.ruleForm.thumbnail;
 					}else{
 						this.$message.error(res.data.messag);
 					}
@@ -216,14 +235,14 @@
 	       sendClientMessage(formName){
 	       		 this.$refs[formName].validate((valid) => {
 			          if (valid) {
+			          	    this.ruleForm.thumbnail = this.getMyWeb.url.headerUrl;
 			            	let content = this.ruleForm;
 					    	var send = this.Qs.stringify(content)
-					    	console.log(send);
 						    this.$axios.post('/ucenter/admin/client',send,this.getMyWeb.axios.aAjaxConfig).then((res)=>{
 									if(res.data.state === "000000"){
 										this.$router.go(-1)
 									}else{
-										this.$message.error(res.data.messag);
+										this.$message.error(res.data.message);
 									}
 						      	}).catch((err)=>{
 						                    this.$message.error('接口请求出错');
@@ -270,8 +289,8 @@
 				var send = "?"+this.Qs.stringify(content);
 				this.$axios.put('/ucenter/admin/client/secretReset/'+send,this.getMyWeb.axios.aAjaxConfig).then((res)=>{
 								if(res.data.state === "000000"){
-									this.resetWord = res.data.data;
-									this.dialogConfig.state = !this.dialogConfig.state;
+									this.resetWord = res.data.message;
+									this.dialogReset = false;
 								}else{
 									 this.$message.error(res.data.messag);
 								}

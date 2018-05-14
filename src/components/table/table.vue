@@ -33,11 +33,11 @@
 		        		<span v-if="props.row[item.prop] == -1" style="color: red;">已删除</span>
 		        		<span style="color: gray;" v-else-if="props.row[item.prop] == 0">待编辑</span>
 		        		<span style="color: red;" v-else-if="props.row[item.prop] == 1">待审核</span>
-		        		<span style="color: red;" v-else-if="props.row[item.prop] == 2">通过</span>
-		        		<span style="color: red;" v-else-if="props.row[item.prop] == 3">不通过</span>
-		        		<span style="color: red;" v-else-if="props.row[item.prop] == 4">上架</span>
-		        		<span style="color: red;" v-else-if="props.row[item.prop] == 5">下架</span>
-		        		<span style="color: red;" v-else-if="props.row[item.prop] == 6">暂歇</span>
+		        		<span style="color: red;" v-else-if="props.row[item.prop] == 2">已通过</span>
+		        		<span style="color: gray;" v-else-if="props.row[item.prop] == 3">不通过</span>
+		        		<span style="color: gray;" v-else-if="props.row[item.prop] == 4">已上架</span>
+		        		<span style="color: gray;" v-else-if="props.row[item.prop] == 5">已下架</span>
+		        		<span style="color: gray;" v-else-if="props.row[item.prop] == 6">暂歇停</span>
 		        	</span>
 		        	<span v-else>
 		        		<span v-if="props.row[item.prop] == 0 " style="color: green;">启用</span>
@@ -213,11 +213,11 @@
 		                    console.error(err);
 		        })
 			},
-//			按钮操作
+//			按钮操作()
 			btn(name,row){
-				console.log(name);
+//				判断是否属于私有
 				if(name == 'productLookChild'){
-					this.pageMessage.parentId = row.parentId;
+					this.pageMessage.parentId = row.id;
 					this.getList(this.message.listUrl);
 				}
 			},

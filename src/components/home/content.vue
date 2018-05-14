@@ -53,7 +53,7 @@
 								{
 									title:'商品分类',
 									index:'/productCategory'
-								},
+								}
 							]
 						},
 					]

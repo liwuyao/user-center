@@ -25,14 +25,14 @@
 						    <el-form-item label="确认密码" prop="passwordConfirm">
 						        <el-input type="password" v-model="ruleForm.passwordConfirm" auto-complete="off" style="width: 400px;" :disabled="disabled"  placeholder="两次密码要一致"></el-input>
 						    </el-form-item>
-							<el-form-item label="用户类型">
+							<el-form-item label="用户类型" prop="memberType">
 							    <el-radio-group v-model="ruleForm.memberType" :disabled="disabled">
 							        <el-radio label= '0'>互联网</el-radio>
 							        <el-radio label= '1'>系统应用</el-radio>
 							    </el-radio-group>
 							</el-form-item>
-							<el-form-item label="用户角色">
-							    <el-radio-group v-model="ruleForm.memberRole" :disabled="disabled">
+							<el-form-item label="用户角色" prop="memberRole">
+							    <el-radio-group v-model="ruleForm.memberRole" :disabled="typeDisable">
 							        <el-radio label="0">普通用户</el-radio>
 							        <el-radio label="1">管理员</el-radio>
 							    </el-radio-group>
@@ -44,7 +44,7 @@
 							    <el-input v-model="ruleForm.nickname" style="width: 400px;" :disabled="disabled" placeholder="请填写昵称（可以不填）"></el-input>
 							</el-form-item>
 							<el-form-item label="生日" prop="nickname">
-							    <el-date-picker type="date" placeholder="选择日期" v-model="ruleForm.birthday" style="width: 400px;" :disabled="disabled"></el-date-picker>
+							    <el-date-picker type="date" placeholder="选择日期" v-model="birthday" style="width: 400px;" :disabled="disabled"></el-date-picker>
 							</el-form-item>
 							<el-form-item label="性别">
 							    <el-radio-group v-model="ruleForm.gender" :disabled="disabled">
@@ -158,6 +158,9 @@
 		    userId:'',
 		    disabled:false,
        		linkMessage:"增加用户",
+       		typeDisable:false,
+       		oldType:'',
+       		birthday:'',
        		ruleForm: {
 		          mobile: '',
 		          memberName: '',
@@ -166,7 +169,6 @@
 				  password:'',
 				  passwordConfirm:'',
 				  nickname:'',
-				  birthday:null,
 				  gender:'',
 				  career:'',
 				  company:'',
@@ -176,6 +178,12 @@
 				  personalSignature:''
 		    },
 		    rules: {
+		    	memberType:[
+		    		{ required: true, message: '请选择', trigger: 'blur' },
+		    	],
+		    	memberRole:[
+		    		{ required: true, message: '请选择', trigger: 'blur' },
+		    	],
 		        mobile: [
 		            {validator: validateMobile, trigger: 'blur',required: true}
 		        ],
@@ -221,6 +229,17 @@
 				this.getUserMessage();
 			};
     	},
+    	watch: {
+    		'ruleForm.memberType':function(val, oldVal){
+    			if(val == '0'){
+    				this.ruleForm.memberRole = '0';
+    				this.typeDisable = true;
+    			}else{
+    				this.typeDisable = false;
+    			}
+    			
+    		}
+    	},
        	methods: {
 	      handleAvatarSuccess(res, file) {
 	        this.imageUrl = URL.createObjectURL(file.raw);
@@ -253,7 +272,7 @@
 				        data.memberRole = String(data.memberRole);
 						this.ruleForm = data;
 					}else{
-						this.$message.error(res.data.messag);
+						this.$message.error(res.data.message);
 					}
 		      	}).catch((err)=>{
 		                    this.$message.error('接口请求出错');
@@ -264,9 +283,11 @@
 	       sendClientMessage(formName){
 	       		 this.$refs[formName].validate((valid) => {
 			          if (valid) {
-			          		var birthday = new Date(this.ruleForm.birthday);
+			          		if(this.birthday){
+			          			var birthday = new Date(this.birthday);
 			          		    birthday = this.getMyWeb.timestampToTime(birthday);
 			          		    this.ruleForm.birthday = birthday;
+			          		}
 			            	let content = this.ruleForm;
 			            	content.memberType = Number(content.memberType);
 			            	content.memberRole = Number(content.memberRole);
@@ -275,7 +296,10 @@
 									if(res.data.state === "000000"){
 										this.$router.go(-1)
 									}else{
-										this.$message.error(res.data.messag);
+										this.$message.error(res.data.message);
+										  this.$refs['ruleForm'].resetFields();
+								          this.ruleForm.memberType = '';
+								          this.ruleForm.memberRole = '';
 									}
 						      	}).catch((err)=>{
 						                    this.$message.error('接口请求出错');
@@ -283,7 +307,9 @@
 						       })
 			          } else {
 			             this.$message.error('表单填写格式不对，请重新填写');
-			             console.error(err);
+			             this.$refs['ruleForm'].resetFields();
+			             this.ruleForm.memberType = '';
+			             this.ruleForm.memberRole = '';
 			             return false;
 			          }
 			        });
@@ -292,6 +318,11 @@
 		    modifyMessage(formName){
 		    	 this.$refs[formName].validate((valid) => {
 			          if (valid) {
+			          		if(this.birthday){
+			          			var birthday = new Date(this.birthday);
+			          		    birthday = this.getMyWeb.timestampToTime(birthday);
+			          		    this.ruleForm.birthday = birthday;
+			          		}
 			            	var content = this.ruleForm;
 					    	    content.memberType = Number(content.memberType);
 			            		content.memberRole = Number(content.memberRole);
@@ -302,6 +333,9 @@
 									this.$router.go(-1)
 								}else{
 									this.$message.error(res.data.messag);
+									this.$refs['ruleForm'].resetFields();
+								          this.ruleForm.memberType = '';
+								          this.ruleForm.memberRole = '';
 								}
 					      	}).catch((err)=>{
 					                    this.$message.error('接口请求出错');
@@ -309,6 +343,9 @@
 					        })
 			          } else {
 				             this.$message.error('表单填写格式不对，请重新填写');
+				             this.$refs['ruleForm'].resetFields();
+				             this.ruleForm.memberType = '';
+				             this.ruleForm.memberRole = '';
 				             return false;
 			          }
 			       });

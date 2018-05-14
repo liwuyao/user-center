@@ -109,11 +109,16 @@
 		      //每当str的值改变则发送事件update:word , 并且把值传过去\
 		     if(this.config.type == 'productExamine'){
 		     	this.dialogExamine = true;
-		     	this.$refs['examineMessage'].resetFields();
+		     	setTimeout(()=>{
+		     		this.$refs['examineMessage'].resetFields();
+		     	},0)
 		     }
 		     if(this.config.type == 'productAddCategory'){
 		     	this.dialogAddCategory = true;
-		     	this.$refs['addCategory'].resetFields();
+		     	
+		     	setTimeout(()=>{
+		     		this.$refs['addCategory'].resetFields();
+		     	},0)
 		     }
 		    }
 		},

@@ -168,7 +168,6 @@
 				}
 //				私有弹框
 				if(this.config.privateName){
-					console.log('2')
 					 this.openPrivate = new Date();
 				}
 			},
