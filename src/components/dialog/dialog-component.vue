@@ -89,17 +89,20 @@
 		  </span>
 		</el-dialog>
 <!--		商品相关弹框-->
-		<dialog-product :config="config" :id="id" :tableSelect='tableSelect' :chooseOne='chooseOne' openDialog='openDialog' :change="openPrivate" :message='message' v-if="config.privateName"></dialog-product>
+		<dialog-product v-on:send="dialogRes" :config="config" :id="id" :tableSelect='tableSelect' :chooseOne='chooseOne' openDialog='openDialog' :change="openPrivate" :message='message' v-if="config.privateName == 'product'"></dialog-product>
+		<dialog-order-list v-on:send="dialogRes" :config="config" :id="id" :tableSelect='tableSelect' :chooseOne='chooseOne' openDialog='openDialog' :change="openPrivate" :message='message' v-if="config.privateName == 'orderList'"></dialog-order-list>
 	</div>
 </template>
 
 <script>
 	import dialogProduct from './dialog-product.vue'
+	import dialogOrderList from './dialog-order-list.vue'
 	export default {
 //	  name: 'formComponent',
 	    props: ['id','config','tableSelect','chooseOne','openDialog','message'],
 	    components:{
-	  	dialogProduct
+	  	dialogProduct,
+	  	dialogOrderList
 	   },
 	    data() {
 	      return {
@@ -124,19 +127,41 @@
 						this.show = false;
 					}
 				}
+				if(this.config.type == 'lookChildCategory'){
+					if(!this.message.hasChild) {
+						this.show = false;
+					}
+				}
 			}
+//			if(this.message){
+//				if(this.config.type == 'productExamine'){
+//					if(this.message.status != 1) {
+//						this.show = false;
+//					}
+//				}
+//			}
+			
 		},
 		watch: {
 //			var a = this.openDialog;
 		    openDialog: function (newValue, oldValue){
 		      //每当str的值改变则发送事件update:word , 并且把值传过去\
 		      this.activeState = true;
-		    }
+		    },
+		    'message.status': function(){
+		    	this.show = true
+		    	if(this.config.type == 'productExamine'){
+					if(this.message.status != 1) {
+						this.show = false;
+					}
+				}
+		    },
 		},
 		methods:{
 			open2(){
 //				公用弹框
-				if(!this.id && this.tableSelect.length == 0){
+				console.log(this.id);
+				if(!this.id && this.tableSelect.length == 0 && !this.config.privateName){
 					this.$message.error('请选择要操作对象') 
 				}else if(!this.id && this.tableSelect.length != 0){
 					var ids = [];
@@ -146,7 +171,7 @@
 			        			ids.push(this.tableSelect[i][index]);
 			        		}
 			        	}
-			        }
+			        };
 			        this.ids = ids;
 					if(this.config.type === "delete"){
 						this.dialogDelete = true;
@@ -184,7 +209,6 @@
 					content  = '?'+this.config.urlSearch+'=' + this.ids.join()
 				}
 				var _url = this.config.src + content;
-				console.log(_url);
 				this.$axios.delete(_url,this.getMyWeb.axios.aAjaxConfig).then((res)=>{
 					if(res.data.state === "000000"){
 						this.returnMessage('删除成功');
@@ -236,7 +260,10 @@
 			},
 			returnMessage(item){
 				this.$emit('send',{b:item})
-			}
+			},
+			dialogRes(data){
+	 			this.$emit('send',{b:data})
+	 		}
 		}
 	 }
 </script>

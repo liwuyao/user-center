@@ -6,6 +6,8 @@ import Index from '@/components/page/page-application.vue'
 import User from '@/components/page/page-user.vue'
 import productList from '@/components/page/page-product-list.vue'
 import productCategory from '@/components/page/page-product-category.vue'
+import orderList from '@/components/page/page-order-list.vue'
+
 import applicationMessage from '@/components/from/application-message.vue'
 import userMessage from '@/components/from/user-message.vue'
 import userMessageModify from '@/components/from/user-message-modify.vue'
@@ -64,6 +66,10 @@ export default new Router({
         {
           path: '/productCategory',
           component: productCategory
+        },
+        {
+          path: '/orderList',
+          component: orderList
         }
       ]
     }

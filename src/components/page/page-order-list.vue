@@ -2,28 +2,12 @@
 	<div class="order-lsit">
 		<div class="application-content">
 			<div style="overflow: hidden;padding: 30px 0;background: #eff4f7;">
-				<div class="btn-box">
-					<router-link to='client/addClient'  style="display:block;">
-						<v-button :message="btnMessage.add"></v-button>	  	
-					</router-link>
-				</div>
-				<div class="btn-box">
-					<v-button :message="btnMessage.delete" style="cursor: pointer;"></v-button>
-					<v-dialog :config="btnMessage.delete.formConfig" class="page-dialog" :tableSelect='tableSelect' v-on:send="dialogRes"></v-dialog>
-				</div>
-				<div class="btn-box-default" :class="{btnActive:!btnMessage.disable.disable}">
+				<div class="btn-box-default" :class="{btnActive:!btnMessage.disable.disable}" style="margin-left: 17px;">
 					<el-button class="btn-elm-box" :disabled='btnMessage.disable.disable'>
 					<i :class="btnMessage.disable.icon"></i>
-					禁止
+					关闭
 					</el-button>
-					<v-dialog :config="btnMessage.disable.formConfig" class="page-dialog" :tableSelect='tableSelect' v-on:send="dialogRes" v-if="!btnMessage.disable.disable"></v-dialog>
-				</div>
-				<div class="btn-box-default" :class="{btnActive:!btnMessage.able.disable}">
-					<el-button class="btn-elm-box" :disabled='btnMessage.able.disable'>
-					<i :class="btnMessage.able.icon"></i>
-					启用
-					</el-button>
-					<v-dialog :config="btnMessage.able.formConfig" class="page-dialog" :tableSelect='tableSelect' v-on:send="dialogRes" v-if="!btnMessage.able.disable"></v-dialog>
+					<v-dialog :config="btnMessage.disable.formConfig" class="page-dialog" :tableSelect='tableSelect' v-on:send="dialogRes"></v-dialog>
 				</div>
 				<!--<div class="btn-box">
 					<v-button :message="btnMessage.disable"></v-button>
@@ -37,7 +21,7 @@
 			<div style="width: 100%;overflow: hidden;background: #eff4f7;padding-bottom: 10px;">
 				<select-button :message="selectMessage" :placeholder="'应用状态'" class="application-select" v-on:select="selectRes"></select-button>
 				<div style="display:inline-block;margin-left:420px;">
-					<search-bar :name="'condition'" v-on:search="searchRes" :placeholder="'输入clientkey查询'"></search-bar>
+					<search-bar :name="'orderId'" v-on:search="searchRes" :placeholder="'输入订单ID查询'"></search-bar>
 				</div>
 			</div>
 			<div style="padding-bottom:50px ;overflow: hidden;">
@@ -63,142 +47,148 @@
        	return{
        		tableSelect:[],
        		tableData:{
+       			selectShow:true,
        			update:new Date(),
        			searchMessage:{},
        			selectMessage:{},
        			urlMessage:{
-       				condition:null,
-        			state:'',
+       				orderId:null,
+        			status:'',
 	   				pageIndex:'1',
 	   				pageSize:'20'
        			},
-       			listUrl:'/ucenter/admin/client',
+       			listUrl:'/ucenter/admin/v1/order/all',
        			listConfig:[
        				{
-       					lable:'应用名称',
-       					width:'120',
+       					lable:'用户名',
+       					width:'150',
        					prop:'clientName'
        				},
        				{
-       					lable:'clientKey',
-       					width:'140',
-       					prop:'clientKey'
+       					lable:'订单ID',
+       					prop:'id'
        				},
        				{
-       					lable:'注册用户',
-       					width:'250',
-       					prop:'createMemberName'
+       					lable:'订单价格',
+       					width:'120',
+       					prop:'price'
        				},
        				{
-       					lable:'注册时间',
-       					width:'250',
+       					lable:'创建时间',
+       					width:'200',
        					prop:'createTime'
        				},
        				{
-       					lable:'状态',
+       					lable:'订单状态',
        					width:'120',
-       					prop:'state'
-       				}
+       					prop:'status'
+       				},
        			],
        			listBtnConfig:{
        				pageMessage:{
-       					idName:'clientId'
+       					idName:'id'
        				},
-       				linkTo:[
-	       				{
-	       					name:'查看',
-	       					src:'/lookClient',
-	       					iconClass:'table-icon iconfont icon-el-icon-karakal-chakan'
-	       				},
-	       				{
-	       					name:'修改',
-	       					src:'/client/modify',
-	       					iconClass:'table-icon iconfont icon-el-icon-karakal-xiugai'
-	       				},
-       				],
+//     				linkTo:[
+//	       				{
+//	       					name:'查看',
+//	       					src:'/lookClient',
+//	       					iconClass:'table-icon iconfont icon-el-icon-karakal-chakan'
+//	       				},
+//	       				{
+//	       					name:'修改',
+//	       					src:'/client/modify',
+//	       					iconClass:'table-icon iconfont icon-el-icon-karakal-xiugai'
+//	       				},
+//     				],
        				dialog:[
 				       	{
-				       		name:"clientName",
-				       		title:'删除',
-				       		idName:'clientId',
-				       		urlSearch:'clientIds',
-				       		type:"delete",
-				       		src:"/ucenter/admin/client",
+				       		name:"id",
+				       		title:'查看退换记录',
+				       		privateName:'orderList',
+				       		idName:'id',
+				       		urlSearch:'productId',
+				       		type:"backList",
+				       		src:"/ucenter/admin/v1/order/replace/record",
 				       		classType:'danger',
 				       		style:'icon',
-				       		iconClass:'table-icon iconfont icon-el-icon-karakal-iconfontshanchu5'
-				       	}
+				       		iconClass:'table-icon iconfont icon-el-icon-karakal-slideBar-shenhe'
+				       },
 	       			]
        			}
        		},
        		btnMessage:{
-       			add:{
-       				name:"增加",
-		       		type:"add",
-		       		icon:"button-icon iconfont icon-el-icon-karakal-zengjia",
-		       		formConfig:{
-		       			name:"增加",
-		       			type:"add",
-		       			classType:'',
-		       			style:'button'
-		       		}
-       			},
-       			delete:{
-       				name:"删除",
-		       		type:"delete",
-		       		icon:"button-icon iconfont icon-el-icon-karakal-iconfontshanchu5",
-		       		formConfig:{
-		       			idNames:'clientId',
-		       			urlSearch:'clientIds',
-		       			src:"/ucenter/admin/client",
-		       			name:"clientName",
-		       			type:"delete",
-		       			classType:'',
-		       			style:''
-		       		}
-       			},
        			disable:{
-       				name:"禁用",
+       				name:"关闭",
 		       		type:"disable",
 		       		disable:true,
 		       		icon:"button-icon iconfont icon-el-icon-karakal-jinyong",
 		       		formConfig:{
+		       			privateName:'orderList',
 		       			title:'禁用提示',
-		       			idName:'clientId',
-		       			urlSearch:'clientIds',
-		       			src:"/ucenter/admin/client/disable",
-		       			name:"clientName",
-		       			type:"disable",
-		       			classType:'',
-		       			style:''
-		       		}
-       			},
-       			able:{
-       				name:"启用",
-		       		type:"able",
-		       		disable:true,
-		       		icon:"button-icon iconfont icon-el-icon-karakal-qiyong",
-		       		formConfig:{
-		       			title:'启用提示',
-		       			idName:'clientId',
-		       			urlSearch:'clientIds',
-		       			src:"/ucenter/admin/client/enable",
-		       			name:"clientName",
-		       			type:"able",
+		       			idName:'id',
+		       			urlSearch:'orderId',
+		       			src:"/ucenter/admin/v1/order/close",
+		       			name:"id",
+		       			type:"orderClose",
 		       			classType:'',
 		       			style:''
 		       		}
        			}
        		},
        		selectMessage:[
-		        { value: '-1',
+       			{ value: '',
 		          label: '全部'
 		        },
-		        { value: '0',
-		          label: '启用'
-		        },
 		        { value: '1',
-		          label: '禁用'
+		          label: '已取消'
+		        },
+		        { value: '2',
+		          label: '待支付'
+		        },
+		        { value: '3',
+		          label: '支付成功'
+		        },
+		        { value: '4',
+		          label: '支付失败'
+		        },
+		        { value: '5',
+		          label: '已确认'
+		        },
+		        { value: '6',
+		          label: '退款中'
+		        },
+		        { value: '7',
+		          label: '退款成功'
+		        },
+		        { value: '8',
+		          label: '已发货'
+		        },
+		        { value: '9',
+		          label: '待收货'
+		        },
+		        { value: '10',
+		          label: '已收货'
+		        },
+		        { value: '11',
+		          label: '已删除'
+		        },
+		        { value: '12',
+		          label: '已关闭'
+		        },
+		        { value: '13',
+		          label: '更换中'
+		        },
+		        { value: '14',
+		          label: '拒绝更换'
+		        },
+		        { value: '15',
+		          label: '同意更换'
+		        },
+		        { value: '16',
+		          label: '已沟通'
+		        },
+		        { value: '17',
+		          label: '已更换'
 		        },
        		],
 	        isActive:false
@@ -213,37 +203,27 @@
 //     	},
 //		列表信息返回
  		tableRes(data){
+ 			if(typeof(data) == 'object') return;
  			this.tableSelect = data;
- 			var able = [];
  			var disable = [];
- 			if(data.length == 0){
- 				this.btnMessage.disable.disable = true;
- 				this.btnMessage.able.disable = true;
- 			}
+ 			this.btnMessage.disable.disable = true;
 	 			for(let i = 0;i<data.length;i++){
-	 			for(let index in data[i]){
-	   					if(data[i].state == 0){
+	   					if(data[i].status == 4 || data[i].status == 5){
 	   						disable.push(data[i]);
 	   					};
-	   					if(data[i].state == 1){
-	   						able.push(data[i]);
-	   					};
-	   					if(disable.length>0 && able.length>0){
+//	   					if(data[i].status == 2 || data[i].status == 6){
+//	   						able.push(data[i]);
+//	   					};
+////	   					console.log(disable.length);
+	   					if(disable.length>0){
 	   						this.btnMessage.disable.disable = true;
-	   						this.btnMessage.able.disable = true;
 	   					}else{
-	   						if(disable.length != 0){
+	   						if(disable.length == 1){
 	   							this.btnMessage.disable.disable = false;
 	   						}else{
 	   							this.btnMessage.disable.disable = true;
 		   					};
-		   					if(able.length != 0){
-		   							this.btnMessage.able.disable = false;
-		   						}else{
-		   							this.btnMessage.able.disable = true;
-		   					};
 	   					}
-	   				}
 	 			}
  		},
 // 		弹框信息返回
@@ -261,10 +241,8 @@
  		},
 // 		选择信息
 		selectRes(data){
-				if(data){
 					this.tableData.selectMessage={
-						state:data
-					};
+						status:data
 				}
 			}
 	 	}

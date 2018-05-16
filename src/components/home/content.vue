@@ -56,6 +56,17 @@
 								}
 							]
 						},
+						{
+							icon:'iconfont icon-el-icon-karakal-slideBar-productcenter slide-bar2-icon',
+							name:'订单管理',
+							index:'',
+							child:[
+								{
+									title:'订单列表',
+									index:'/orderList'
+								}
+							]
+						},
 					]
 			}
 		},

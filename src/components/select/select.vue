@@ -34,7 +34,7 @@
 	          value: '选项5',
 	          label: '北京烤鸭'
 	        }],
-	        value: ''
+	        value: '1'
 	      }
 	    }
 	}

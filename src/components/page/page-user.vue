@@ -63,6 +63,7 @@
        	return{
        		tableSelect:[],
        		tableData:{
+       			selectShow:true,
        			update:[],
        			searchMessage:{},
        			selectMessage:{},
@@ -76,17 +77,15 @@
        			listConfig:[
        				{
        					lable:'手机号码',
-       					width:'200',
+       					width:'250',
        					prop:'mobile'
        				},
        				{
        					lable:'用户名',
-       					width:'200',
        					prop:'memberName'
        				},
        				{
        					lable:'昵称',
-       					width:'200',
        					prop:'nickname'
        				},
        				{
@@ -96,12 +95,10 @@
        				},
        				{
        					lable:'注册时间',
-       					width:'250',
        					prop:'registerTime'
        				},
        				{
        					lable:'状态',
-       					width:'120',
        					prop:'status'
        				}
        			],

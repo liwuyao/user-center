@@ -17,7 +17,7 @@
 <script>
 	export default {
 	  name: 'selectButton',
-	  props: ['message','placeholder'],
+	  props: ['message','placeholder','defaultVal'],
 	  data() {
 	      return {
 	        options: [],
@@ -25,9 +25,17 @@
 		    }
 		},
 	 	created(){
+	 		if(this.defaultVal){
+	 			this.value = this.defaultVal;
+	 		}
 	    	this.options = this.message;
 	    },
-	  methods:{
+	    watch: {
+	    	defaultVal:function(){
+	    		this.value = this.defaultVal;
+	    	}
+	    },
+	  	methods:{
 	    	changes(){
 	    		this.$emit('select',this.value);
 	    	}

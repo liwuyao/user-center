@@ -35,7 +35,7 @@
 				</div>-->
 			</div>
 			<div style="width: 100%;overflow: hidden;background: #eff4f7;padding-bottom: 10px;">
-				<select-button :message="selectMessage" :placeholder="'应用状态'" class="application-select" v-on:select="selectRes"></select-button>
+				<select-button :message="selectMessage" :placeholder="'应用状态'" :defaultVal="selectDefaultVal" class="application-select" v-on:select="selectRes"></select-button>
 				<div style="display:inline-block;margin-left:420px;">
 					<search-bar :name="'condition'" v-on:search="searchRes" :placeholder="'输入clientkey查询'"></search-bar>
 				</div>
@@ -63,6 +63,7 @@
        	return{
        		tableSelect:[],
        		tableData:{
+       			selectShow:true,
        			update:new Date(),
        			searchMessage:{},
        			selectMessage:{},
@@ -76,7 +77,6 @@
        			listConfig:[
        				{
        					lable:'应用名称',
-       					width:'120',
        					prop:'clientName'
        				},
        				{
@@ -190,6 +190,7 @@
 		       		}
        			}
        		},
+       		selectDefaultVal:'-1',
        		selectMessage:[
 		        { value: '-1',
 		          label: '全部'
@@ -205,14 +206,19 @@
        	}
        },
        created(){
+       	
        },
        methods:{
 //     	sendFrom(a){
 //     		console.log(a.b)
 //     	},
 //		列表信息返回
- 		tableRes(data){
- 			this.tableSelect = data;
+ 		tableRes(data,back){
+ 			console.log(back);
+ 			if(data){
+ 				this.tableSelect = data;
+// 			重置select值
+//			this.selectDefaultVal = 
  			var able = [];
  			var disable = [];
  			if(data.length == 0){
@@ -244,6 +250,7 @@
 	   					}
 	   				}
 	 			}
+ 			}
  		},
 // 		弹框信息返回
  		dialogRes(data){
@@ -266,7 +273,13 @@
 					};
 				}
 			}
-	 	}
+	 	},
+//	 	列表后退
+		backList(data){
+			console.log(data);
+			this.selectDefaultVal = data.state;
+		}
+       
     }
 </script>
 

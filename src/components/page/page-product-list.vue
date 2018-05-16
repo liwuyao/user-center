@@ -18,7 +18,7 @@
 				</div>
 			</div>
 			<div style="width: 100%;overflow: hidden;background: #eff4f7;padding-bottom: 10px;">
-				<select-button :message="selectMessage" :placeholder="'商品状态'" class="application-select" v-on:select="selectRes"></select-button>
+				<select-button :message="selectMessage" :placeholder="'商品状态'" :defaultVal="selectDefaultVal" class="application-select" v-on:select="selectRes"></select-button>
 				<div style="display:inline-block;margin-left:420px;">
 					<search-bar :name="'productName'" v-on:search="searchRes" :placeholder="'请输入商品名称'"></search-bar>
 				</div>
@@ -46,12 +46,13 @@
        	return{
        		tableSelect:[],
        		tableData:{
+       			selectShow:true,
        			update:new Date(),
        			searchMessage:{},
        			selectMessage:{},
        			urlMessage:{
        				productName:null,
-        			status:'',
+        			status:'1',
 	   				pageIndex:'1',
 	   				pageSize:'20'
        			},
@@ -59,12 +60,11 @@
        			listConfig:[
        				{
        					lable:'商品名称',
-       					width:'120',
        					prop:'name'
        				},
        				{
        					lable:'标签',
-       					width:'250',
+       					width:'120',
        					prop:'label'
        				},
        				{
@@ -160,6 +160,7 @@
 		       		}
        			}
        		},
+       		selectDefaultVal:'1',
        		selectMessage:[
        			{ value: '',
 		          label: '全部'
@@ -187,40 +188,40 @@
 //     		console.log(a.b)
 //     	},
 //		列表信息返回
- 		tableRes(data){
- 			this.tableSelect = data;
- 			var able = [];
- 			var disable = [];
- 			this.btnMessage.disable.disable = true;
- 			this.btnMessage.able.disable = true;
-// 			if(data.length == 0 || data.length>1){
-// 				this.btnMessage.disable.disable = true;
-// 				this.btnMessage.able.disable = true;
-// 			}
-	 			for(let i = 0;i<data.length;i++){
-	   					if(data[i].status == 4){
-	   						disable.push(data[i]);
-	   					};
-	   					if(data[i].status == 2 || data[i].status == 6){
-	   						able.push(data[i]);
-	   					};
-//	   					console.log(disable.length);
-	   					if(disable.length>0 && able.length>0){
-	   						this.btnMessage.disable.disable = true;
-	   						this.btnMessage.able.disable = true;
-	   					}else{
-	   						if(disable.length == 1){
-	   							this.btnMessage.disable.disable = false;
-	   						}else{
-	   							this.btnMessage.disable.disable = true;
-		   					};
-		   					if(able.length == 1){
-		   							this.btnMessage.able.disable = false;
-		   						}else{
-		   							this.btnMessage.able.disable = true;
-		   					};
-	   					}
-	 			}
+ 		tableRes(data,back){
+// 			this.tableSelect = data;
+// 			var able = [];
+// 			var disable = [];
+// 			this.btnMessage.disable.disable = true;
+// 			this.btnMessage.able.disable = true;
+//// 			if(data.length == 0 || data.length>1){
+//// 				this.btnMessage.disable.disable = true;
+//// 				this.btnMessage.able.disable = true;
+//// 			}
+//	 			for(let i = 0;i<data.length;i++){
+//	   					if(data[i].status == 4){
+//	   						disable.push(data[i]);
+//	   					};
+//	   					if(data[i].status == 2 || data[i].status == 6){
+//	   						able.push(data[i]);
+//	   					};
+////	   					console.log(disable.length);
+//	   					if(disable.length>0 && able.length>0){
+//	   						this.btnMessage.disable.disable = true;
+//	   						this.btnMessage.able.disable = true;
+//	   					}else{
+//	   						if(disable.length == 1){
+//	   							this.btnMessage.disable.disable = false;
+//	   						}else{
+//	   							this.btnMessage.disable.disable = true;
+//		   					};
+//		   					if(able.length == 1){
+//		   							this.btnMessage.able.disable = false;
+//		   						}else{
+//		   							this.btnMessage.able.disable = true;
+//		   					};
+//	   					}
+//	 			}
  		},
 // 		弹框信息返回
  		dialogRes(data){

@@ -13,14 +13,17 @@
 		    @selection-change="handleSelectionChange">
 		    <el-table-column
 		      type="selection"
-		      width="55">
+		      width="55" v-if="message.selectShow">
 		    </el-table-column>
+		     <!--<el-table-column>
+		    </el-table-column>-->
 		    <el-table-column 
 		      label="序号"
 		      type="index"
-		      width="50">
+		      width="70">
 		    </el-table-column>
-		    <el-table-column v-for="(item, index) in message.listConfig" :key="index" 
+		    <el-table-column v-for="(item, index) in message.listConfig" :key="index"
+		      :width="item.width"
 		      :label="item.lable"
 		      show-overflow-tooltip>
 		      <template slot-scope="props">
@@ -39,6 +42,26 @@
 		        		<span style="color: gray;" v-else-if="props.row[item.prop] == 5">已下架</span>
 		        		<span style="color: gray;" v-else-if="props.row[item.prop] == 6">暂歇停</span>
 		        	</span>
+		        	<span v-else-if="item.lable =='订单状态'">
+		        		<span v-if="props.row[item.prop] == -1" style="color: red;">已删除</span>
+		        		<span style="color: red;" v-else-if="props.row[item.prop] == 1">已取消</span>
+		        		<span style="color: red;" v-else-if="props.row[item.prop] == 2">待支付</span>
+		        		<span style="color: gray;" v-else-if="props.row[item.prop] == 3">支付成功</span>
+		        		<span style="color: gray;" v-else-if="props.row[item.prop] == 4">支付失败</span>
+		        		<span style="color: gray;" v-else-if="props.row[item.prop] == 5">已确认</span>
+		        		<span style="color: gray;" v-else-if="props.row[item.prop] == 6">退款中</span>
+		        		<span style="color: gray;" v-else-if="props.row[item.prop] == 7">退款成功</span>
+		        		<span style="color: gray;" v-else-if="props.row[item.prop] == 8">已发货</span>
+		        		<span style="color: gray;" v-else-if="props.row[item.prop] == 9">待收货</span>
+		        		<span style="color: gray;" v-else-if="props.row[item.prop] == 10">已收货</span>
+		        		<span style="color: gray;" v-else-if="props.row[item.prop] == 11">已删除</span>
+		        		<span style="color: gray;" v-else-if="props.row[item.prop] == 12">已关闭</span>
+		        		<span style="color: gray;" v-else-if="props.row[item.prop] == 13">更换中</span>
+		        		<span style="color: gray;" v-else-if="props.row[item.prop] == 14">拒绝更换</span>
+		        		<span style="color: gray;" v-else-if="props.row[item.prop] == 15">同意更换</span>
+		        		<span style="color: gray;" v-else-if="props.row[item.prop] == 16">已沟通</span>
+		        		<span style="color: gray;" v-else-if="props.row[item.prop] == 17">已更换</span>
+		        	</span>
 		        	<span v-else>
 		        		<span v-if="props.row[item.prop] == 0 " style="color: green;">启用</span>
 		        		<span v-else style="color: red;">禁用</span>
@@ -49,10 +72,10 @@
 		        	<span v-else-if="props.row[item.prop] == 1 ">女</span>
 		        	<span v-else>保密</span>
 		        </span>
-		        <span v-else-if="!props.row[item.prop]">
+		        <span v-else-if="!props.row[item.prop] && props.row[item.prop] != 0">
 		        	————
 		        </span>
-		        <span v-else-if="item.prop =='weight'">
+		        <span v-else-if="item.prop =='level'">
 		        	{{transformationLevel(props.row[item.prop])}}
 		        </span>
 		        <span v-else-if="item.prop =='registerTime'">
@@ -70,8 +93,10 @@
 		     <el-table-column label="操作" v-if="message.listBtnConfig">
 		      <template slot-scope="scope">
 		      	<div style="display: inline-block;" v-if="message.listBtnConfig.btn">
-		      		<div v-for="(item, index) in message.listBtnConfig.btn" :key="index" style="margin: 0 5px;">
-			      			<i :class="item.iconClass" :title="item.title" v-on:click="btn(item.privateName,scope.row)" style="cursor: pointer;"></i>
+		      		<div v-for="(item, index) in message.listBtnConfig.btn" :key="index">
+			      			<div v-if="item.privateName =='productLookChild' && scope.row.hasChild">
+			      				<i :class="item.iconClass" :title="item.title" v-on:click="btn(item.privateName,scope.row)" style="cursor: pointer;padding-left: 10px;"></i>
+			      			</div>
 			      	</div>
 		      	</div>
 		      	<div style="display: inline-block;" v-if="message.listBtnConfig.linkTo">
@@ -93,7 +118,7 @@
 		  	 <div style="position: absolute;left: 50%;transform: translate(-50%,0);">
 		  	 	 <div style="margin-top: 30px;position: relative;height: 50px;width: 1000px;">
 				    <v-pagination v-on:pageChange="pagination" :message="pageinationMessage"></v-pagination>
-				   <!-- <span style="cursor: pointer;position: absolute;right: 130px;top: -11px;color: #1888f7;" v-on:click="refresh()">刷新</span>-->
+				    <span style="cursor: pointer;position: absolute;right: 130px;top: -11px;color: #1888f7;" v-on:click="backPage()">返回</span>
 				  </div>
 		  	 </div>
 		  </div>
@@ -106,7 +131,7 @@
 	import vPagination from '../pagination/pagination';
 	export default {
 	  name: 'vtable',
-	  props: ['message','searchMessage','selectMessage','updateMessage'],
+	  props: ['message','searchMessage','selectMessage','updateMessage','backParent'],
 	  components:{
 	  	vDialog,vPagination
 	  },
@@ -117,6 +142,8 @@
         multipleSelection: [],
         update:[],
         MessageUpdate:'',
+        oldPage:[],
+        backStatu:true,
         pageinationMessage:{
         	pageNum:1,
         	pageSize:20,
@@ -147,6 +174,13 @@
 //			this.closeUp = this.message.selectMessage;
 //   	}
 //   },
+//	mounted: function () {
+//		  		this.$nextTick(function () {
+//					setTimeout(()=>{
+//						
+//					})
+//				  })
+//		},
      watch: {
 		    searchMessage: function (){
 		      //每当str的值改变则发送事件update:word , 并且把值传过去\
@@ -162,6 +196,12 @@
 		    updateMessage:function(){
 		    	this.update = this.message.update;
      			this.getList(this.message.listUrl)
+		    },
+		    'backParent.time':function(){
+		    	this.pageMessage.parentId = this.backParent.id;
+		    	this.pageMessage.pageIndex = '1';
+		    	this.pageMessage.pageSize = '20';
+		    	this.getList(this.message.listUrl)
 		    }
 		},
 	 methods: {
@@ -195,13 +235,20 @@
 	           },
 //	        获取列表数据
 			getList(src){
-//				this.pageMessage.condition= this.message.searchMessage.condition;
-//				this.pageMessage.state = ;
+				if(this.backStatu){
+					var data  = {};
+					for(let i in this.pageMessage){
+							data[i] = this.pageMessage[i]
+					}
+					this.oldPage.push(data);
+				}
 				var content=this.pageMessage;
 				this.$axios.get(src, {params:content},this.getMyWeb.axios.aAjaxConfig).then((res)=>{
 					 if(res.data.state === '000000'){
 					 	var data = res.data.data.list;
 						this.listData =  data;
+//						this.listData.level = 'mmp'
+						this.getParentID()
 						this.pageinationMessage.total = res.data.data.total;
 						this.pageinationMessage.pageSize = res.data.data.pageSize;
 						this.pageinationMessage.pageNum = res.data.data.pageNum;
@@ -218,6 +265,7 @@
 //				判断是否属于私有
 				if(name == 'productLookChild'){
 					this.pageMessage.parentId = row.id;
+					this.$emit('tableRes',{productCategoryParent:row});
 					this.getList(this.message.listUrl);
 				}
 			},
@@ -230,6 +278,7 @@
 						}
 					}
 				}
+				this.backStatu = true;
 				this.getList(src);
 			},
 //			按类查询
@@ -241,10 +290,11 @@
 						}
 					}
 				}
+				this.backStatu = true;
 				this.getList(src);
 			},
 	        dialogMessage(a){
-       				console.log(a.b)
+       				console.log(a.b);
        				this.getList(this.message.listUrl);
        		},
 //     		_url拼接
@@ -265,13 +315,30 @@
 //			转换级别
 			transformationLevel(num){
 				var level = '';
-				var cnum = ['零', '一', '二', '三', '四', '五', '六', '七', '八', '九'];
-				level = cnum[num]+'级';
+				var cnum = ['初', '一', '二', '三', '四', '五', '六', '七', '八', '九'];
+				level = cnum[num+1]+'级';
 				return level;
 			},
-//			刷新
-			refresh(){
-				this.getList(this.message.listUrl);
+//			返回
+			backPage(){
+				this.backStatu = false;
+				if(this.oldPage.length>=2){
+					var len = this.oldPage.length;
+					var index = this.oldPage.length - 2;
+					this.pageMessage = this.oldPage[index];
+					this.getList(this.message.listUrl);
+//					his.$emit('tableRes',{back:this.pageMessage});\
+					var start = len-2;
+					var a = this.oldPage.splice(start,1);
+					console.log(this.oldPage)
+				}else{
+					this.$message.error('记录少于2，无法返回');
+				}
+			},
+//			页面创建完成获取parentID(只给商品分类列表用)
+			getParentID(){
+				var data = this.listData[0];
+				this.$emit('tableRes',{productCategory:data});
 			}
 	    },
 	}
