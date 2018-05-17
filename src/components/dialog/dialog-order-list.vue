@@ -31,12 +31,11 @@
 		  <div style="display: flex;flex-direction: row;">
 		  	<i class="el-icon-warning" style="color: #f7ba2a;font-size: 30px;margin-top: -5px;"></i>
 			<div style="flex: 1;margin-left: 10px;">
-			  	你正在关闭【
+			  	功能在开发中
 				<span v-if="id" style="line-height: 20px;">{{chooseOne[config.name]}}</span>
 				<span style="width: 100%;overflow: hidden;word-wrap:break-word;word-break:break-all;padding: 5px 0;line-height: 20px;" v-else>
 				  <span v-for="item in tableSelect">&nbsp;{{item[config.name]}}&nbsp;</span>
 				</span>
-				】
 			</div>
 		  </div>
 		  <span slot="footer" class="dialog-footer">

@@ -1,26 +1,35 @@
 <template>
-	<div class="product-list">
+	<div class="merchant">
 		<div class="application-content">
 			<div style="overflow: hidden;padding: 30px 0;background: #eff4f7;">
-				<div class="btn-box-default" :class="{btnActive:!btnMessage.disable.disable}" style="margin-left: 17px;">
+				<div class="btn-box">
+					<router-link to='merchant/addMerchant'  style="display:block;">
+						<v-button :message="btnMessage.add"></v-button>	  	
+					</router-link>
+				</div>
+				<div class="btn-box">
+					<v-button :message="btnMessage.delete" style="cursor: pointer;"></v-button>
+					<v-dialog :config="btnMessage.delete.formConfig" class="page-dialog" :tableSelect='tableSelect' v-on:send="dialogRes"></v-dialog>
+				</div>
+				<div class="btn-box-default" :class="{btnActive:!btnMessage.disable.disable}">
 					<el-button class="btn-elm-box" :disabled='btnMessage.disable.disable'>
 					<i :class="btnMessage.disable.icon"></i>
-					下架
+					禁止
 					</el-button>
 					<v-dialog :config="btnMessage.disable.formConfig" class="page-dialog" :tableSelect='tableSelect' v-on:send="dialogRes" v-if="!btnMessage.disable.disable"></v-dialog>
 				</div>
 				<div class="btn-box-default" :class="{btnActive:!btnMessage.able.disable}">
 					<el-button class="btn-elm-box" :disabled='btnMessage.able.disable'>
 					<i :class="btnMessage.able.icon"></i>
-					上架
+					启用
 					</el-button>
 					<v-dialog :config="btnMessage.able.formConfig" class="page-dialog" :tableSelect='tableSelect' v-on:send="dialogRes" v-if="!btnMessage.able.disable"></v-dialog>
 				</div>
 			</div>
 			<div style="width: 100%;overflow: hidden;background: #eff4f7;padding-bottom: 10px;">
-				<select-button :message="selectMessage" :placeholder="'商品状态'" :defaultVal="selectDefaultVal" class="application-select" v-on:select="selectRes"></select-button>
+				<select-button :message="selectMessage" :placeholder="'应用状态'" :defaultVal="selectDefaultVal" class="application-select" v-on:select="selectRes"></select-button>
 				<div style="display:inline-block;margin-left:420px;">
-					<search-bar :name="'productName'" v-on:search="searchRes" :placeholder="'请输入商品名称'"></search-bar>
+					<search-bar :name="'condition'" v-on:search="searchRes" :placeholder="'输入clientkey查询'"></search-bar>
 				</div>
 			</div>
 			<div style="padding-bottom:50px ;overflow: hidden;">
@@ -51,35 +60,47 @@
        			searchMessage:{},
        			selectMessage:{},
        			urlMessage:{
-       				productName:null,
-        			status:'1',
+       				username:'',
+       				mobile:'',
+       				shopName:'',
+        			status:'',
 	   				pageIndex:'1',
 	   				pageSize:'20'
        			},
-       			listUrl:'/ucenter/admin/v1/product',
+       			listUrl:'/ucenter/admin/v1/sys/merchant',
        			listConfig:[
        				{
-       					lable:'商品名称',
-       					prop:'name'
+       					lable:'账号名称',
+       					prop:'username'
        				},
        				{
-       					lable:'标签',
+       					lable:'账号手机',
+       					width:'140',
+       					prop:'mobile'
+       				},
+       				{
+       					lable:'商户名称',
        					width:'120',
-       					prop:'label'
+       					prop:'shopName'
+       				},
+       				{
+       					lable:'联系人',
+       					prop:'contacts'
+       				},
+       				{
+       					lable:'联系电话',
+       					prop:'contactNumber'
+       				},
+       				{
+       					lable:'联系地址',
+       					prop:'contactAddress'
        				},
        				{
        					lable:'创建时间',
-       					width:'250',
        					prop:'ctime'
        				},
        				{
-       					lable:'审核时间',
-       					width:'250',
-       					prop:'auditTime'
-       				},
-       				{
-       					lable:'商品状态',
-       					width:'120',
+       					lable:'状态',
        					prop:'status'
        				}
        			],
@@ -87,114 +108,109 @@
        				pageMessage:{
        					idName:'id'
        				},
-//     				linkTo:[
-//	       				{
-//	       					name:'审核',
-//	       					src:'/lookClient',
-//	       					iconClass:'table-icon iconfont icon-el-icon-karakal-slideBar-shenhe'
-//	       				},
-//	       				{
-//	       					name:'修改',
-//	       					src:'/client/modify',
-//	       					iconClass:'table-icon iconfont icon-el-icon-karakal-xiugai'
-//	       				},
-//     				],
+       				linkTo:[
+	       				{
+	       					name:'查看',
+	       					src:'/merchant/add',
+	       					iconClass:'table-icon iconfont icon-el-icon-karakal-chakan'
+	       				},
+	       				{
+	       					name:'修改',
+	       					src:'/client/modify',
+	       					iconClass:'table-icon iconfont icon-el-icon-karakal-xiugai'
+	       				},
+       				],
        				dialog:[
-       					{
-				       		name:"name",
-				       		title:'审核',
-				       		privateName:'product',
-				       		idName:'id',
-				       		urlSearch:'productId',
-				       		type:"productExamine",
-				       		src:"/ucenter/admin/v1/product/audit",
-				       		classType:'danger',
-				       		style:'icon',
-				       		iconClass:'table-icon iconfont icon-el-icon-karakal-slideBar-shenhe'
-				       },
 				       	{
-				       		adress:'producDelete',
-				       		name:"name",
+				       		name:"clientName",
 				       		title:'删除',
-				       		idName:'id',
-				       		urlSearch:'productId',
+				       		idName:'clientId',
+				       		urlSearch:'clientIds',
 				       		type:"delete",
-				       		src:"/ucenter/admin/v1/product",
+				       		src:"/ucenter/admin/client",
 				       		classType:'danger',
 				       		style:'icon',
 				       		iconClass:'table-icon iconfont icon-el-icon-karakal-iconfontshanchu5'
-				       	},
-				       	{
-				       		name:"name",
-				       		title:'审核记录',
-				       		privateName:'product',
-				       		idName:'id',
-				       		urlSearch:'productId',
-				       		type:"productExamineRcord",
-				       		src:"/ucenter/admin/v1/product/auditRecord",
-				       		classType:'danger',
-				       		style:'icon',
-				       		iconClass:'table-icon iconfont icon-el-icon-karakal-slideBar-jilu'
 				       	}
 	       			]
        			}
        		},
        		btnMessage:{
+       			add:{
+       				name:"增加",
+		       		type:"add",
+		       		icon:"button-icon iconfont icon-el-icon-karakal-zengjia",
+		       		formConfig:{
+		       			name:"增加",
+		       			type:"add",
+		       			classType:'',
+		       			style:'button'
+		       		}
+       			},
+       			delete:{
+       				name:"删除",
+		       		type:"delete",
+		       		icon:"button-icon iconfont icon-el-icon-karakal-iconfontshanchu5",
+		       		formConfig:{
+		       			idNames:'clientId',
+		       			urlSearch:'clientIds',
+		       			src:"/ucenter/admin/client",
+		       			name:"clientName",
+		       			type:"delete",
+		       			classType:'',
+		       			style:''
+		       		}
+       			},
        			disable:{
-       				name:"下架提示",
+       				name:"禁用",
 		       		type:"disable",
 		       		disable:true,
 		       		icon:"button-icon iconfont icon-el-icon-karakal-jinyong",
 		       		formConfig:{
-		       			title:'下架提示',
-		       			idName:'id',
-		       			urlSearch:'productId',
-		       			src:"/ucenter/admin/v1/product/unpublish",
-		       			name:"name",
+		       			title:'禁用提示',
+		       			idName:'clientId',
+		       			urlSearch:'clientIds',
+		       			src:"/ucenter/admin/client/disable",
+		       			name:"clientName",
 		       			type:"disable",
 		       			classType:'',
 		       			style:''
 		       		}
        			},
        			able:{
-       				name:"上架提示",
+       				name:"启用",
 		       		type:"able",
 		       		disable:true,
 		       		icon:"button-icon iconfont icon-el-icon-karakal-qiyong",
 		       		formConfig:{
-		       			title:'上架提示',
-		       			idName:'id',
-		       			urlSearch:'productId',
-		       			src:"/ucenter/admin/v1/product/publish",
-		       			name:"name",
+		       			title:'启用提示',
+		       			idName:'clientId',
+		       			urlSearch:'clientIds',
+		       			src:"/ucenter/admin/client/enable",
+		       			name:"clientName",
 		       			type:"able",
 		       			classType:'',
 		       			style:''
 		       		}
        			}
        		},
-       		selectDefaultVal:'1',
+       		selectDefaultVal:'-1',
        		selectMessage:[
-       			{ value: '',
+		        { value: '-1',
 		          label: '全部'
 		        },
 		        { value: '0',
-		          label: '待编辑'
+		          label: '启用'
 		        },
 		        { value: '1',
-		          label: '待审核'
-		        },
-		        { value: '2',
-		          label: '已通过'
-		        },
-		        { value: '3',
-		          label: '不通过'
+		          label: '禁用'
 		        },
        		],
 	        isActive:false
        	}
        },
        created(){
+       	
        },
        methods:{
 //     	sendFrom(a){
@@ -202,39 +218,42 @@
 //     	},
 //		列表信息返回
  		tableRes(data){
-   			this.tableSelect = data;
-   			var able = [];
-   			var disable = [];
-   			this.btnMessage.disable.disable = true;
-   			this.btnMessage.able.disable = true;
-// 			if(data.length == 0 || data.length>1){
-// 				this.btnMessage.disable.disable = true;
-// 				this.btnMessage.able.disable = true;
-// 			}
+ 			if(data){
+ 				this.tableSelect = data;
+// 			重置select值
+//			this.selectDefaultVal = 
+ 			var able = [];
+ 			var disable = [];
+ 			if(data.length == 0){
+ 				this.btnMessage.disable.disable = true;
+ 				this.btnMessage.able.disable = true;
+ 			}
 	 			for(let i = 0;i<data.length;i++){
-	   					if(data[i].status == 4){
+	 			for(let index in data[i]){
+	   					if(data[i].state == 0){
 	   						disable.push(data[i]);
 	   					};
-	   					if(data[i].status == 2 || data[i].status == 6){
+	   					if(data[i].state == 1){
 	   						able.push(data[i]);
 	   					};
-//	   					console.log(disable.length);
 	   					if(disable.length>0 && able.length>0){
 	   						this.btnMessage.disable.disable = true;
 	   						this.btnMessage.able.disable = true;
 	   					}else{
-	   						if(disable.length == 1){
+	   						if(disable.length != 0){
 	   							this.btnMessage.disable.disable = false;
 	   						}else{
 	   							this.btnMessage.disable.disable = true;
 		   					};
-		   					if(able.length == 1){
+		   					if(able.length != 0){
 		   							this.btnMessage.able.disable = false;
 		   						}else{
 		   							this.btnMessage.able.disable = true;
 		   					};
 	   					}
+	   				}
 	 			}
+ 			}
  		},
 // 		弹框信息返回
  		dialogRes(data){
@@ -242,7 +261,6 @@
  		},
 // 		搜索信息
  		searchRes(data){
- 			console.log(data)
  			if(Object.keys(data).length != 0){
  				this.tableData.searchMessage = data;
 // 				setTimeout(()=>{
@@ -252,11 +270,19 @@
  		},
 // 		选择信息
 		selectRes(data){
+				if(data){
 					this.tableData.selectMessage={
-						status:data
+						state:data
 					};
+				}
 			}
-	 	}
+	 	},
+//	 	列表后退
+		backList(data){
+			console.log(data);
+			this.selectDefaultVal = data.state;
+		}
+       
     }
 </script>
 

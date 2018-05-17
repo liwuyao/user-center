@@ -113,6 +113,23 @@
 		    <el-button type="primary"  v-on:click="add('addCategory')">确 定</el-button>
 		  </span>
 		</el-dialog>
+<!--		审核记录-->
+		<el-dialog
+		  title="审核记录"
+		  :visible.sync="dialogExamineRecord"
+		  width="60%"
+		  >
+		  <el-table :data="examineRecordList">
+		    <el-table-column v-for="(item, index) in examineTable" :key="index"
+		    	:property="item.prop" 
+		    	:label="item.label" 
+		    	show-overflow-tooltip>
+		    </el-table-column>
+		  </el-table>
+		  <span slot="footer" class="dialog-footer">
+		    <el-button type="primary" @click="dialogExamineRecord = false">确 定</el-button>
+		  </span>
+		</el-dialog>
 	</div>
 </template>
 
@@ -122,6 +139,7 @@
 		data() {
 	      return {
 	      	dialogExamine:false,
+	      	dialogExamineRecord:false,
 	      	dialogAddCategoryNext:false,
 	      	dialogAddCategory:false,
 	      	examineMessage:{
@@ -134,6 +152,29 @@
 	      		parentId:'',
 	      		weight:''
 	      	},
+	      	examineRecordList:[],
+	      	examineTable:[
+	      		{
+	      			label:'审核人',
+	      			prop:'auditUserId'
+	      		},
+	      		{
+	      			label:'提交时间',
+	      			prop:'ctime'
+	      		},
+	      		{
+	      			label:'审核时间',
+	      			prop:'auditTime'
+	      		},
+	      		{
+	      			label:'审核状态',
+	      			prop:'status'
+	      		},
+	      		{
+	      			label:'审核详情',
+	      			prop:'auditNote'
+	      		},
+	      	],
 	      	rules: {
 		          operation: [
 		            { required: true, message: '请选择', trigger: 'blur' },
@@ -175,6 +216,10 @@
 		     	setTimeout(()=>{
 		     		this.$refs['addCategory'].resetFields();
 		     	},0)
+		     }
+		     if(this.config.type == 'productExamineRcord'){
+		     	this.getExaminList();
+		     	this.dialogExamineRecord = true;
 		     }
 		    }
 		},
@@ -245,9 +290,56 @@
 					    })
 					});
 				},
+//			获取审核列表
+			getExaminList(){
+				var content = {
+					productId:this.id,
+					pageIndex:'1',
+					pageSize:'20'
+				}
+				this.$axios.get(this.config.src, {params:content},this.getMyWeb.axios.aAjaxConfig).then((res)=>{
+					 if(res.data.state === '000000'){
+					 	var data = res.data.data.list;
+						this.examineRecordList =  data;
+						for(let i=0;i<this.examineRecordList.length;i++){
+							for(let j in this.examineRecordList[i]){
+								if(j == 'auditTime'){
+									let time1 = this.examineRecordList[i].auditTime;
+									this.examineRecordList[i].auditTime = this.transformationTime(time1)
+								}
+								if(j == 'ctime'){
+									let time2 = this.examineRecordList[i].ctime;
+									this.examineRecordList[i].ctime = this.transformationTime(time2)
+								}
+								if(j == 'status'){
+									let state = this.examineRecordList[i].status;
+									if(state ==1){
+										this.examineRecordList[i].status = '未通过'
+									}
+									if(state ==2 || state ==4){
+										this.examineRecordList[i].status = '通过'
+									}
+									if(state ==3){
+										this.examineRecordList[i].status = '不通过'
+									}
+								}
+							}
+						}
+					 }else{
+					 	this.$message.error(res.data.data);
+					 }
+		      	}).catch((err)=>{
+//		                    this.$message.error('接口请求出错');
+		                    console.error(err);
+		        })
+			},
 //			返送信息
 			returnMessage(item){
 				this.$emit('send',{b:item})
+			},
+//			转换时间
+			transformationTime(date){
+                return (new Date(date)).format("yyyy-MM-dd hh:mm");
 			},
 		}
 	}

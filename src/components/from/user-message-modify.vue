@@ -94,7 +94,7 @@
 					    	<div class="pass-message">
 					<!--			<h1>此功能尚未开放</h1>-->
 								<el-form :model="passMessage" :rules="rules2" ref="passMessage" label-width="100px" class="demo-ruleForm" style="margin-top: 20px;">
-									<el-form-item label="当前密码" prop="currentMemberPassword">
+									<el-form-item label="管理员密码" prop="currentMemberPassword">
 									    <el-input type="password" v-model="passMessage.currentMemberPassword"  style="width: 400px;" ></el-input>
 									</el-form-item>
 									<el-form-item label="新密码" prop="newPassword">

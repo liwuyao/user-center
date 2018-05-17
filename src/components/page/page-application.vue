@@ -213,8 +213,7 @@
 //     		console.log(a.b)
 //     	},
 //		列表信息返回
- 		tableRes(data,back){
- 			console.log(back);
+ 		tableRes(data){
  			if(data){
  				this.tableSelect = data;
 // 			重置select值

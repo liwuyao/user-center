@@ -20,7 +20,7 @@
 		    <el-table-column 
 		      label="序号"
 		      type="index"
-		      width="70">
+		     >
 		    </el-table-column>
 		    <el-table-column v-for="(item, index) in message.listConfig" :key="index"
 		      :width="item.width"
@@ -84,6 +84,9 @@
 		        <span v-else-if="item.prop =='createTime'">
 		        	{{transformationTime(props.row[item.prop])}}
 		        </span>
+		        <span v-else-if="item.prop =='auditTime'">
+		        	{{transformationTime(props.row[item.prop])}}
+		        </span>
 		        <span v-else-if="item.prop =='ctime'">
 		        	{{transformationTime(props.row[item.prop])}}
 		        </span>
@@ -118,7 +121,7 @@
 		  	 <div style="position: absolute;left: 50%;transform: translate(-50%,0);">
 		  	 	 <div style="margin-top: 30px;position: relative;height: 50px;width: 1000px;">
 				    <v-pagination v-on:pageChange="pagination" :message="pageinationMessage"></v-pagination>
-				    <span style="cursor: pointer;position: absolute;right: 130px;top: -11px;color: #1888f7;" v-on:click="backPage()">返回</span>
+		<!--		    <span style="cursor: pointer;position: absolute;right: 130px;top: -11px;color: #1888f7;" v-on:click="backPage()">返回</span>-->
 				  </div>
 		  	 </div>
 		  </div>

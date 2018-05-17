@@ -7,7 +7,7 @@
 					<i :class="btnMessage.disable.icon"></i>
 					关闭
 					</el-button>
-					<v-dialog :config="btnMessage.disable.formConfig" class="page-dialog" :tableSelect='tableSelect' v-on:send="dialogRes"></v-dialog>
+					<v-dialog :config="btnMessage.disable.formConfig" class="page-dialog" :tableSelect='tableSelect' v-on:send="dialogRes" v-if="!btnMessage.disable.disable"></v-dialog>
 				</div>
 				<!--<div class="btn-box">
 					<v-button :message="btnMessage.disable"></v-button>

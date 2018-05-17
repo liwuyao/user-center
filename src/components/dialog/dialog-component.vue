@@ -120,13 +120,29 @@
 	      };
 	    },
 		created(){
-//			上架按钮的判断
+//			按钮是否隐藏
 			if(this.message){
+//				商品审核按钮
 				if(this.config.type == 'productExamine'){
 					if(this.message.status != 1) {
 						this.show = false;
 					}
+					if(this.message.status == -1) {
+						this.show = false;
+					}
 				}
+//				商品删除按钮
+				if(this.config.adress == 'producDelete'){
+					if(this.message.status == -1) {
+						this.show = false;
+					}
+				}
+//				商品审核记录按钮
+//				if(this.config.type == 'productExamineRcord'){
+//					if(this.message.status == -1 || this.message.status == 0) {
+//						this.show = false;
+//					}
+//				}
 				if(this.config.type == 'lookChildCategory'){
 					if(!this.message.hasChild) {
 						this.show = false;
@@ -155,6 +171,16 @@
 						this.show = false;
 					}
 				}
+		    	if(this.config.adress == 'producDelete'){
+					if(this.message.status == -1) {
+						this.show = false;
+					}
+				}
+//		    	if(this.config.type == 'productExamineRcord'){
+//					if(this.message.status == -1 || this.message.status == 0 || this.message.status == 0) {
+//						this.show = false;
+//					}
+//				}
 		    },
 		},
 		methods:{

@@ -1,112 +1,69 @@
 <template>
 	<div class="client-message">
 		<header style="padding: 20px  0 20px 55px;border-bottom:1px solid gainsboro;box-shadow: 0px 2px 10px -8px #888888;">
-			<h3>应用中心</h3>
+			<h3>增加商户</h3>
 		</header>
 		<div style="width: 100%;overflow: hidden;">
 			<div class="client-message-content-box">
 				<div style="padding: 30px 0;">
 					<el-breadcrumb separator="/">
 					  <el-breadcrumb-item :to="{ path: '/home' }">用户中心</el-breadcrumb-item>
-					  <el-breadcrumb-item :to="{ path: '/home' }">应用管理</el-breadcrumb-item>
+					  <el-breadcrumb-item :to="{ path: '/merchantList' }">商户管理</el-breadcrumb-item>
 					  <el-breadcrumb-item><span style="color: #74b8fa;">{{linkMessage}}</span></el-breadcrumb-item>
 					</el-breadcrumb>
 				</div>
 				<div class="client-message-content">
+					<!--<div style="padding: 22px 35px;border-bottom: 1px solid gainsboro;margin-bottom: 20px;">
+							<h4>增加商户</h4>
+					</div>-->
 					<el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
-						<div style="padding: 22px 35px;border-bottom: 1px solid gainsboro;margin-bottom: 20px;">
-							<h4>基本信息</h4>
-						</div>
-						<el-form-item label="应用名称" prop="clientName">
-						    <el-input v-model="ruleForm.clientName" style="width: 400px;"  placeholder="请输入应用名称（3-50字符）"></el-input>
+						<el-form-item label="账户名" prop="username">
+						    <el-input v-model="ruleForm.username" style="width: 400px;"  placeholder="请输入账户名"></el-input>
 						</el-form-item>
-						<el-form-item label="clientKey" prop="clientKey">
-						    <el-input style="width: 400px;"  v-model="ruleForm.clientKey"  placeholder="请输入clientKey（5-50字符，包含字母和数字）"></el-input>
+						<el-form-item label="账户手机号" prop="mobile">
+						    <el-input v-model="ruleForm.mobile" style="width: 400px;"  placeholder="请输入账户手机号"></el-input>
 						</el-form-item>
-						<el-form-item label="应用类型" prop="clientType">
-						    <el-radio-group v-model="ruleForm.clientType">
-						        <el-radio label="COMMON_CLIENT">互联网</el-radio>
-						        <el-radio label="SYSTEM_CLIENT">系统应用</el-radio>
-						    </el-radio-group>
+						<el-form-item label="商户名称" prop="shopName">
+						    <el-input v-model="ruleForm.shopName" style="width: 400px;"  placeholder="请输入商户名称"></el-input>
 						</el-form-item>
-						<div v-if="clientSecretStatu"><span style="padding-left:20px ;color: skyblue;">ClientSecret:</span><span style="padding: 10px;">{{clientSecret}}</span></div>
-						<el-form-item label="钥密" v-if="disabled">
-							<span v-if="resetWord" style="color: green;">{{resetWord}}</span>
-						    <span class="resetPassWord" v-on:click="dialogReset = true">
-						    	重置钥密
-						    </span>
-						    <p style="color: skyblue;font-size: 12px;">注：clientSecret是校验应用开发者身份的钥密，具有极高的安全性，切记勿把密码直接交给第三方开发者或直接储存在代码中</p>
+						<el-form-item label="联系人" prop="contacts">
+						    <el-input v-model="ruleForm.contacts" style="width: 400px;"  placeholder="请输入联系人"></el-input>
 						</el-form-item>
-						 <el-form-item label="应用描述" prop="clientContent" style="margin-top: 30px;">
-						    <el-input type="textarea" v-model="ruleForm.clientContent" placeholder="请输入应用描述" style="width: 990px;"></el-input>
-						 </el-form-item>
-						 <!--<div style="padding: 22px 35px;border-bottom: 1px solid gainsboro;margin-bottom: 20px;">
-							<h4>安全信息</h4>
-						</div>
-						<el-form-item label="授权类型">
-						    <el-radio-group v-model="ruleForm.authType">
-						        <el-radio label="密码模式"></el-radio>
-						        <el-radio label="授权码模式"></el-radio>
-						    </el-radio-group>
+						<el-form-item label="联系人电话" prop="contactNumber">
+						    <el-input v-model="ruleForm.contactNumber" style="width: 400px;"  placeholder="请输入联系人电话"></el-input>
 						</el-form-item>
-						<el-form-item label="钥密">
-						    <el-input style="width: 400px;" :disabled='true' :placeholder="ruleForm.passWord"></el-input>
-						    <span class="resetPassWord">重置钥密</span>
-						    <p style="color: skyblue;font-size: 12px;">注：clientSecret是校验应用开发者身份的钥密，具有极高的安全性，切记勿把密码直接交给第三方开发者或直接储存在代码中</p>
+						<el-form-item label="联系人地址" prop="contactAddress">
+						    <el-input v-model="ruleForm.contactAddress" style="width: 400px;"  placeholder="请输入联系人地址"></el-input>
 						</el-form-item>
-						<el-form-item label="有效期" >
-						    <el-input v-model="ruleForm.termOfValidity" style="width: 315px;"></el-input>
-						    <div style="display: inline-block;margin-left: 125px;">
-						    	<span>RefreshToken有效期</span>
-						    	<el-input  style="width: 315px;margin-left: 25px;" placeholder="30天"></el-input>
-						    </div>
+						<el-form-item label="ID">
+						    <el-input v-model="ruleForm.id" style="width: 400px;"  placeholder="请输入ID(不填将自动生成)"></el-input>
 						</el-form-item>
-						<el-form-item label="行业选择" >
-						    <el-select v-model="ruleForm.region" placeholder="请选择应用类型">
-						      <el-option label="互联网" value="shanghai"></el-option>
-						      <el-option label="现代物业" value="beijing"></el-option>
-						      <el-option label="电子商务业" value="beijing"></el-option>
-						    </el-select>
-					  	</el-form-item>-->
-					  <!--	<img :src="ruleForm.thumbnail" title="头像" style="position: absolute;top: 85px;right: 170px;width: 50px;"/>-->
-					  	<div style="position: absolute;top: 85px;right: 120px;width: 235px;">
-							<el-upload
-								  class="avatar-uploader"
-								  action="http://192.168.1.220:9201/ucenter/upload/common/image"
-								  name ="uploadFile"
-								  :data="updateMessage"
-								  :show-file-list="false"
-								  :on-success="handleAvatarSuccess"
-								  :before-upload="beforeAvatarUpload">
-								  <img v-if="imageUrl" :src="imageUrl" class="avatar">
-								  <i v-else class="el-icon-plus avatar-uploader-icon"></i>
-								</el-upload>
-							<p style="font-size: 12px;color: gainsboro;">平台图为非必上传，点击可完成上传，只支持PNG，JPG格式，文件不能超过2M</p>
-					  	</div>
 					  	<div style="height: 50px;position: relative;">
-					  		<el-button type="primary" style="position: absolute;right: 70px;" v-if="htmlId == 'addClient'" v-on:click="sendClientMessage('ruleForm')">确认增加</el-button>
+					  		<el-button type="primary" style="position: absolute;right: 70px;" v-if="htmlId == 'addMerchant'" v-on:click="sendClientMessage('ruleForm')">确认增加</el-button>
 					  		<el-button type="primary" style="position: absolute;right: 70px;" v-if="htmlId == 'modify'" v-on:click="modifyMessage('ruleForm')">确认修改</el-button>
 					  	</div>
 					</el-form>
+					<template>
+					  <el-select
+					    v-model="value9"
+					    multiple
+					    filterable
+					    remote
+					    reserve-keyword
+					    placeholder="请输入关键词"
+					    :remote-method="remoteMethod"
+					    :loading="loading">
+					    <el-option
+					      v-for="item in options4"
+					      :key="item.value"
+					      :label="item.label"
+					      :value="item.value">
+					    </el-option>
+					  </el-select>
+					</template>
 				</div>
 			</div>
 		</div>
-<!--		重置钥密弹框-->
-		<el-dialog
-		  title="提示"
-		  :visible.sync="dialogReset"
-		  width="30%"
-		  >
-		  <div style="display: flex;flex-direction: row;">
-		  	<i class="el-icon-warning" style="color: #f7ba2a;font-size: 30px;margin-top: -5px;"></i>
-			<div style="flex: 1;margin-left: 10px;">
-			  确定要重置钥密吗？重置后之前钥密将作废
-			</div>
-		  </div>
-		  <span slot="footer" class="dialog-footer">
-		    <el-button type="primary" @click="resetPassWord()">确 定</el-button>
-		  </span>
-		</el-dialog>
 	</div>
 </template>
 
@@ -117,17 +74,14 @@
            vDialog
        },
 		 data() {
-		 	   	var validatePass = (rule, value, callback) => {
-		 	   	var reg = new RegExp(/^(?![^a-zA-Z]+$)(?!\D+$)/);
-			        if (value === '') {
-			          callback(new Error('请输入clientKey'));
-			        } else if(!reg.test(value)){
-			          	callback(new Error('密码为数字和字母组成'));
-
-			        }else{
-			            callback();
-			        }
-			      };
+		 	   	 var validateMobile = (rule, value, callback) => {
+			 	   	var reg = new RegExp(/^[1][3,4,5,7,8][0-9]{9}$/);
+				        if(!reg.test(value)){
+				          	callback(new Error('请输入正确的手机号'));
+				        }else{
+				            callback();
+				        }
+				      };
 		    return {
 		    	clientSecretStatu:false,
 		    	clientSecret:'',
@@ -140,14 +94,16 @@
 		    	htmlId:'',
 		    	userId:'',
 		    	disabled:false,
-		    	linkMessage:'增加应用',
+		    	linkMessage:'增加商户',
 		    	resetWord:'',
 		        ruleForm: {
-		          clientName: '',
-		          clientKey: '',
-		          thumbnail:null,
-		          clientType:'',
-		          clientContent: ''
+		          username: '',
+		          mobile:'',
+		          shopName: '',
+		          contacts: '',
+		          contactNumber:'',
+		          contactAddress:'',
+		          id:''
 		        },
 		        dialogConfig:{
 				       		message:'clientSecret已重置',
@@ -156,23 +112,49 @@
 				       		state:false
 				       },
 		        rules: {
-		          clientName: [
-		            { required: true, message: '请输入应用名称', trigger: 'blur' },
-		            { min: 3, max: 50, message: '长度在 3 到 5 个字符', trigger: 'blur' }
+		          username: [
+		            { required: true, message: '账户名不能为空', trigger: 'blur' },
 		          ],
-		          clientKey: [
-		            { required: true, message: '请输入clientKey', trigger: 'blur' },
-		            { min: 5, max: 50, message: '长度在 3 到 5 个字符', trigger: 'blur' },
-		            { validator: validatePass, trigger: 'blur' }
+		          mobile: [
+		            { required: true, message: '手机号不能为空', trigger: 'blur' },
+		            {validator: validateMobile, trigger: 'blur',required: true}
 		          ],
-		          clientContent: [
-		            { required: true, message: '请填写应用描述', trigger: 'blur' }
+		          shopName: [
+		            { required: true, message: '商户名不能为空', trigger: 'blur' },
 		          ],
-		          clientType: [
-		          	{ required: true, message: '请选择类型', trigger: 'blur' }
-		          ]
-		        }
-		      }
+		          contacts: [
+		            { required: true, message: '联系人不能为空', trigger: 'blur' },
+		          ],
+		          contactNumber: [
+		            { required: true, message: '联系人电话不能为空', trigger: 'blur' },
+		            { min: 8, max: 11, message: '联系电话格式不对', trigger: 'blur' },
+		          ],
+		          contactAddress: [
+		            { required: true, message: '联系人地址不能为空', trigger: 'blur' },
+		          ],
+		        },
+		         options4: [],
+		        value9: [],
+		        list: [],
+		        loading: false,
+		        states: ["Alabama", "Alaska", "Arizona",
+		        "Arkansas", "California", "Colorado",
+		        "Connecticut", "Delaware", "Florida",
+		        "Georgia", "Hawaii", "Idaho", "Illinois",
+		        "Indiana", "Iowa", "Kansas", "Kentucky",
+		        "Louisiana", "Maine", "Maryland",
+		        "Massachusetts", "Michigan", "Minnesota",
+		        "Mississippi", "Missouri", "Montana",
+		        "Nebraska", "Nevada", "New Hampshire",
+		        "New Jersey", "New Mexico", "New York",
+		        "North Carolina", "North Dakota", "Ohio",
+		        "Oklahoma", "Oregon", "Pennsylvania",
+		        "Rhode Island", "South Carolina",
+		        "South Dakota", "Tennessee", "Texas",
+		        "Utah", "Vermont", "Virginia",
+		        "Washington", "West Virginia", "Wisconsin",
+		        "Wyoming"]
+		    }
     	},
     	created(){
 //  		获取id
@@ -253,16 +235,10 @@
 			          if (valid) {
 			          	    this.ruleForm.thumbnail = this.getMyWeb.url.headerUrl;
 			            	let content = this.ruleForm;
-					    	var send = this.Qs.stringify(content)
-						    this.$axios.post('/ucenter/admin/client',send,this.getMyWeb.axios.aAjaxConfig).then((res)=>{
+					    	var send = this.Qs.stringify(content);
+						    this.$axios.post('/ucenter/admin/v1/sys/merchant',send,this.getMyWeb.axios.aAjaxConfig).then((res)=>{
 									if(res.data.state === "000000"){
-										this.clientSecret=res.data.data.clientSecret;
-										this.clientSecretStatu = true;
-										 this.$message({
-									          message: res.data.message,
-									          type: 'success'
-									        });
-//										this.$router.go(-1)
+										this.$router.go(-1)
 									}else{
 										this.$message.error(res.data.message);
 									}

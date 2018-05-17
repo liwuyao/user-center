@@ -28,7 +28,13 @@
 					<div style="flex: 1;padding-left: 30px;border-left: 1px solid gainsboro;">
 						<div style="padding: 7px 0;" v-for="(item, index) in data" :key="index">
 							<span style="font-size: 15px;color: rgb(116, 184, 250);">{{item.lable}}：</span>
-							<span v-if="getData[item.title]" style="padding-left: 10px;color: gray;">{{getData[item.title]}}</span>
+							<span v-if="getData[item.title]" style="padding-left: 10px;color: gray;">
+								<span v-if="item.title == 'clientGrantType'">
+									<span v-if="getData[item.title] == 1">互联网</span>
+									<span v-else>系统应用</span>
+								</span>
+								<span v-else>{{getData[item.title]}}</span>
+							</span>
 							<span v-else style="padding-left: 10px;color: gray;">暂时无相关信息</span>
 						</div>
 					</div>
@@ -65,7 +71,7 @@
         			},
         			{
         				lable:'应用类型',
-        				title:'clientType'
+        				title:'clientGrantType'
         			},
         			{
         				lable:'应用描述',
