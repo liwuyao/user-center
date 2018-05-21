@@ -30,7 +30,6 @@
 	import selectButton from '../button/button-select';
 	import vButton from '../button/button';
 	import searchBar from '../search/search-bar';
-	import vHead from '../home/header';
 	import vTable from '../table/table';
 	export default {
 	  name: 'pageIndex',
@@ -66,12 +65,12 @@
        				},
        				{
        					lable:'排序',
-       					width:'200',
+       					width:'100',
        					prop:'weight'
        				},
        				{
        					lable:'级别',
-       					width:'200',
+       					width:'120',
        					prop:'level'
        				},
        				{

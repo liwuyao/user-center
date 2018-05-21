@@ -42,6 +42,10 @@
 		        		<span style="color: gray;" v-else-if="props.row[item.prop] == 5">已下架</span>
 		        		<span style="color: gray;" v-else-if="props.row[item.prop] == 6">暂歇停</span>
 		        	</span>
+		        	<span v-else-if="item.lable =='商户状态'">
+		        		<span v-if="props.row[item.prop] == 0" style="color: red;">禁用</span>		        
+		        		<span style="color: green;" v-else-if="props.row[item.prop] == 1">启用</span>
+		        	</span>
 		        	<span v-else-if="item.lable =='订单状态'">
 		        		<span v-if="props.row[item.prop] == -1" style="color: red;">已删除</span>
 		        		<span style="color: red;" v-else-if="props.row[item.prop] == 1">已取消</span>
@@ -256,7 +260,7 @@
 						this.pageinationMessage.pageSize = res.data.data.pageSize;
 						this.pageinationMessage.pageNum = res.data.data.pageNum;
 					 }else{
-					 	this.$message.error(res.data.data);
+					 	this.$message.error(res.data.message);
 					 }
 		      	}).catch((err)=>{
 //		                    this.$message.error('接口请求出错');

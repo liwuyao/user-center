@@ -17,6 +17,8 @@ import merchantMessage from '@/components/from/merchant-message.vue'
 
 import lookUpClinet from '@/components/look-up/look-up-client-message.vue'
 import lookUpUser from '@/components/look-up/look-up-user-message.vue'
+import lookUpMerchant from '@/components/look-up/look-up-merchant-message.vue'
+import lookUpOrderReplace from '@/components/look-up/look-up-order-replace-message.vue'
 //import Silde from '@/components/home/slide-bar.vue'
 
 Vue.use(Router)
@@ -54,6 +56,14 @@ export default new Router({
     {
       path: '/merchant/:id',
       component: merchantMessage
+    },
+    {
+      path: '/lookMerchant',
+      component: lookUpMerchant
+    },
+    {
+      path: '/lookOrderReplace',
+      component: lookUpOrderReplace
     },
     {
       path: '/home',

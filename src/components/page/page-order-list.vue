@@ -69,7 +69,7 @@
        					prop:'id'
        				},
        				{
-       					lable:'订单价格',
+       					lable:'价格/元',
        					width:'120',
        					prop:'price'
        				},
@@ -88,32 +88,27 @@
        				pageMessage:{
        					idName:'id'
        				},
-//     				linkTo:[
-//	       				{
-//	       					name:'查看',
-//	       					src:'/lookClient',
-//	       					iconClass:'table-icon iconfont icon-el-icon-karakal-chakan'
-//	       				},
-//	       				{
-//	       					name:'修改',
-//	       					src:'/client/modify',
-//	       					iconClass:'table-icon iconfont icon-el-icon-karakal-xiugai'
-//	       				},
-//     				],
-       				dialog:[
-				       	{
-				       		name:"id",
-				       		title:'查看退换记录',
-				       		privateName:'orderList',
-				       		idName:'id',
-				       		urlSearch:'productId',
-				       		type:"backList",
-				       		src:"/ucenter/admin/v1/order/replace/record",
-				       		classType:'danger',
-				       		style:'icon',
-				       		iconClass:'table-icon iconfont icon-el-icon-karakal-slideBar-shenhe'
-				       },
-	       			]
+       				linkTo:[
+	       				{
+	       					name:'查看订单更换记录',
+	       					src:'/lookOrderReplace',
+	       					iconClass:'table-icon iconfont icon-el-icon-karakal-chakan'
+	       				},
+       				],
+//     				dialog:[
+//				       	{
+//				       		name:"id",
+//				       		title:'查看退换记录',
+//				       		privateName:'orderList',
+//				       		idName:'id',
+//				       		urlSearch:'productId',
+//				       		type:"backList",
+//				       		src:"/ucenter/admin/v1/order/replace/record",
+//				       		classType:'danger',
+//				       		style:'icon',
+//				       		iconClass:'table-icon iconfont icon-el-icon-karakal-slideBar-shenhe'
+//				       },
+//	       			]
        			}
        		},
        		btnMessage:{

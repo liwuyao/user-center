@@ -4,7 +4,7 @@
 			<h3>增加商户</h3>
 		</header>
 		<div style="width: 100%;overflow: hidden;">
-			<div class="client-message-content-box">
+			<div class="client-message-content-box" style="padding-bottom: 40px;">
 				<div style="padding: 30px 0;">
 					<el-breadcrumb separator="/">
 					  <el-breadcrumb-item :to="{ path: '/home' }">用户中心</el-breadcrumb-item>
@@ -12,56 +12,114 @@
 					  <el-breadcrumb-item><span style="color: #74b8fa;">{{linkMessage}}</span></el-breadcrumb-item>
 					</el-breadcrumb>
 				</div>
-				<div class="client-message-content">
-					<!--<div style="padding: 22px 35px;border-bottom: 1px solid gainsboro;margin-bottom: 20px;">
-							<h4>增加商户</h4>
-					</div>-->
-					<el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
-						<el-form-item label="账户名" prop="username">
-						    <el-input v-model="ruleForm.username" style="width: 400px;"  placeholder="请输入账户名"></el-input>
-						</el-form-item>
-						<el-form-item label="账户手机号" prop="mobile">
-						    <el-input v-model="ruleForm.mobile" style="width: 400px;"  placeholder="请输入账户手机号"></el-input>
-						</el-form-item>
-						<el-form-item label="商户名称" prop="shopName">
-						    <el-input v-model="ruleForm.shopName" style="width: 400px;"  placeholder="请输入商户名称"></el-input>
-						</el-form-item>
-						<el-form-item label="联系人" prop="contacts">
-						    <el-input v-model="ruleForm.contacts" style="width: 400px;"  placeholder="请输入联系人"></el-input>
-						</el-form-item>
-						<el-form-item label="联系人电话" prop="contactNumber">
-						    <el-input v-model="ruleForm.contactNumber" style="width: 400px;"  placeholder="请输入联系人电话"></el-input>
-						</el-form-item>
-						<el-form-item label="联系人地址" prop="contactAddress">
-						    <el-input v-model="ruleForm.contactAddress" style="width: 400px;"  placeholder="请输入联系人地址"></el-input>
-						</el-form-item>
-						<el-form-item label="ID">
-						    <el-input v-model="ruleForm.id" style="width: 400px;"  placeholder="请输入ID(不填将自动生成)"></el-input>
-						</el-form-item>
-					  	<div style="height: 50px;position: relative;">
-					  		<el-button type="primary" style="position: absolute;right: 70px;" v-if="htmlId == 'addMerchant'" v-on:click="sendClientMessage('ruleForm')">确认增加</el-button>
-					  		<el-button type="primary" style="position: absolute;right: 70px;" v-if="htmlId == 'modify'" v-on:click="modifyMessage('ruleForm')">确认修改</el-button>
-					  	</div>
-					</el-form>
-					<template>
-					  <el-select
-					    v-model="value9"
-					    multiple
-					    filterable
-					    remote
-					    reserve-keyword
-					    placeholder="请输入关键词"
-					    :remote-method="remoteMethod"
-					    :loading="loading">
-					    <el-option
-					      v-for="item in options4"
-					      :key="item.value"
-					      :label="item.label"
-					      :value="item.value">
-					    </el-option>
-					  </el-select>
-					</template>
+				<div v-if="!switchPage">
+					<div style="padding: 15px 0 15px 44px;">
+						<template>
+						  <el-radio v-model="radio" label="1">已有账号</el-radio>
+						  <el-radio v-model="radio" label="2">无账号</el-radio>
+						</template>
+						<p style="font-size: 12px;color: gainsboro;padding: 5px 0;">注：商户账号必须为互联网有效会员用户，如果新增商户已存在乐听云账号，请选择已有账号；如果当前没有乐听云账号，请选择无账号</p>
+					</div>
+					<div class="client-message-content" v-if="radio == 1">
+						<div>
+							<div>
+								<div style="border: 1px solid gainsboro;display: inline-block;border-radius: 5px;height: 35px;margin-top:20px ;">
+									<search-bar :name="'keyword'" v-on:search="searchRes" :placeholder="'输入手机号或用户名查询'" :config="searchConfig"></search-bar>
+								</div>
+							</div>
+						</div>
+						<div>
+							<h5 style="color: red;font-size: 12px;">{{errMessage}}</h5>
+						</div>
+						<div style="border-top: 1px solid gainsboro;margin-top: 20px;">
+							<h3 style="margin: 10px 0;">填写信息</h3>
+							<el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
+			
+							<div style="padding-left:48px ;">
+								<span style="font-size: 14px;">用户名</span>
+								<span v-if="ruleForm.username" style="padding-left: 7px;font-size: 14px;">{{ruleForm.username}}</span>
+								<span v-else style="padding-left: 7px;font-size: 14px;color: gainsboro;">请查询用户名</span>
+							</div>
+							<div style="padding-left:20px ;margin: 10px 0 30px 0">
+								<span style="font-size: 14px;">用户手机号</span>
+								<span v-if="ruleForm.mobile" style="padding-left: 7px;font-size: 14px">{{ruleForm.mobile}}</span>
+								<span v-else style="padding-left: 7px;color: gainsboro;font-size: 14px">请查询用户手机号</span>
+							</div>
+							<el-form-item label="商铺名称" prop="shopName">
+							    <el-input v-model="ruleForm.shopName" style="width: 400px;"  placeholder="请输入商户名称"></el-input>
+							</el-form-item>
+							<el-form-item label="联系人" prop="contacts">
+							    <el-input v-model="ruleForm.contacts" style="width: 400px;"  placeholder="请输入联系人"></el-input>
+							</el-form-item>
+							<el-form-item label="联系人电话" prop="contactNumber">
+							    <el-input v-model="ruleForm.contactNumber" style="width: 400px;"  placeholder="请输入联系人电话"></el-input>
+							</el-form-item>
+							<el-form-item label="联系人地址" prop="contactAddress">
+							    <el-input v-model="ruleForm.contactAddress" style="width: 400px;"  placeholder="请输入联系人地址"></el-input>
+							</el-form-item>
+							</el-form>
+						</div>
+					</div>
+					<div v-if="radio == 2" style="border-top: 1px solid gainsboro;margin-top: 20px;">
+						<h3 style="margin: 10px 0;">填写信息</h3>
+							<el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
+							<el-form-item label="用户名" prop="username">
+							    <el-input v-model="ruleForm.username" style="width: 400px;"  placeholder="请输入账户名" :disabled='disabled'></el-input>
+							</el-form-item>
+							<el-form-item label="用户手机号" prop="mobile">
+							    <el-input v-model="ruleForm.mobile" style="width: 400px;"  placeholder="请输入账户手机号" :disabled='disabled'></el-input>
+							</el-form-item>
+							<el-form-item label="密码" prop="password">
+							    <el-input v-model="ruleForm.password" style="width: 400px;"  placeholder="请输入密码"></el-input>
+							</el-form-item>
+							<el-form-item label="确认密码" prop="passwordConfirm">
+							    <el-input v-model="ruleForm.passwordConfirm" style="width: 400px;"  placeholder="请确认密码"></el-input>
+							</el-form-item>
+							<el-form-item label="商铺名称" prop="shopName">
+							    <el-input v-model="ruleForm.shopName" style="width: 400px;"  placeholder="请输入商户名称"></el-input>
+							</el-form-item>
+							<el-form-item label="联系人" prop="contacts">
+							    <el-input v-model="ruleForm.contacts" style="width: 400px;"  placeholder="请输入联系人"></el-input>
+							</el-form-item>
+							<el-form-item label="联系人电话" prop="contactNumber">
+							    <el-input v-model="ruleForm.contactNumber" style="width: 400px;"  placeholder="请输入联系人电话"></el-input>
+							</el-form-item>
+							<el-form-item label="联系人地址" prop="contactAddress">
+							    <el-input v-model="ruleForm.contactAddress" style="width: 400px;"  placeholder="请输入联系人地址"></el-input>
+							</el-form-item>
+							</el-form>
+					</div>
 				</div>
+<!--				修改部分-->
+				<div v-if="switchPage">
+					<div style="border-bottom: 1px solid gainsboro;margin-bottom: 20px;">
+						<h3 style="margin: 10px 0;">修改信息</h3>
+					</div>
+							<el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
+							<el-form-item label="账户名">
+							    <el-input v-model="ruleForm.username" style="width: 400px;"  placeholder="请输入账户名" disabled=true></el-input>
+							</el-form-item>
+							<el-form-item label="账户手机号">
+							    <el-input v-model="ruleForm.mobile" style="width: 400px;"  placeholder="请输入账户手机号" disabled=true></el-input>
+							</el-form-item>
+							<el-form-item label="商户名称" prop="shopName">
+							    <el-input v-model="ruleForm.shopName" style="width: 400px;"  placeholder="请输入商户名称"></el-input>
+							</el-form-item>
+							<el-form-item label="联系人" prop="contacts">
+							    <el-input v-model="ruleForm.contacts" style="width: 400px;"  placeholder="请输入联系人"></el-input>
+							</el-form-item>
+							<el-form-item label="联系人电话" prop="contactNumber">
+							    <el-input v-model="ruleForm.contactNumber" style="width: 400px;"  placeholder="请输入联系人电话"></el-input>
+							</el-form-item>
+							<el-form-item label="联系人地址" prop="contactAddress">
+							    <el-input v-model="ruleForm.contactAddress" style="width: 400px;"  placeholder="请输入联系人地址"></el-input>
+							</el-form-item>
+						</el-form>
+				</div>
+				<div style="height: 50px;position: relative;">
+					  		<el-button type="primary" style="position: absolute;right: 120px;" v-if="htmlId == 'addMerchant'" v-on:click="sendClientMessage('ruleForm')">确认增加</el-button>
+					  		<el-button type="primary" style="position: absolute;right: 120px;" v-if="htmlId == 'modify'" v-on:click="modifyMessage('ruleForm')">确认修改</el-button>
+			    </div>
 			</div>
 		</div>
 	</div>
@@ -69,9 +127,10 @@
 
 <script>
 	import vDialog from '../dialog/dialog-component';
+	import searchBar from '../search/search-bar';
 	export default {
 		components:{
-           vDialog
+           vDialog,searchBar
        },
 		 data() {
 		 	   	 var validateMobile = (rule, value, callback) => {
@@ -82,35 +141,55 @@
 				            callback();
 				        }
 				      };
+//				/     		密码验证
+       		var validatePass = (rule, value, callback) => {
+		        if (value === '') {
+		          callback(new Error('请输入密码'));
+		        } else if (value.length < 6){
+		          callback(new Error('密码至少6位数'));
+		        }else {
+		          if (this.ruleForm.passwordConfirm !== '') {
+		            this.$refs.ruleForm.validateField('passwordConfirm');
+		          }
+		          callback();
+		        }
+		      };
+//		     确认密码验证
+		    var validatePass2 = (rule, value, callback) => {
+		        if (value === '') {
+		          callback(new Error('请再次输入密码'));
+		        } else if (value !== this.ruleForm.password) {
+		          callback(new Error('两次输入密码不一致!'));
+		        }else {
+		          callback();
+		        }
+		      };
 		    return {
-		    	clientSecretStatu:false,
-		    	clientSecret:'',
-		    	updateMessage:{
-		    		objType:'0101'
-		    	},
-		    	dialogReset:false,
-		    	test:false,
-		    	imageUrl: '',
+		    	radio:'1',
 		    	htmlId:'',
 		    	userId:'',
+		    	merchantId:'',
 		    	disabled:false,
 		    	linkMessage:'增加商户',
 		    	resetWord:'',
+		    	haveMessage:false,
+		    	switchPage:false,
+		    	errMessage:'',
 		        ruleForm: {
 		          username: '',
 		          mobile:'',
+		          password:'',
+		          passwordConfirm:'',
 		          shopName: '',
 		          contacts: '',
 		          contactNumber:'',
 		          contactAddress:'',
 		          id:''
 		        },
-		        dialogConfig:{
-				       		message:'clientSecret已重置',
-				       		type:'prompt',
-				       		style:'',
-				       		state:false
-				       },
+		        searchConfig:{
+		        	clear:true,
+		        	changeTime:'',
+		        },
 		        rules: {
 		          username: [
 		            { required: true, message: '账户名不能为空', trigger: 'blur' },
@@ -132,28 +211,14 @@
 		          contactAddress: [
 		            { required: true, message: '联系人地址不能为空', trigger: 'blur' },
 		          ],
+		          password: [
+	            	{ validator: validatePass, trigger: 'blur',required: true},
+	            	{ min: 6, message: '密码长度不小于6', trigger: 'blur' }
+		            ],
+		            passwordConfirm: [
+		            	{ validator: validatePass2, trigger: 'blur',required: true}
+		            ],
 		        },
-		         options4: [],
-		        value9: [],
-		        list: [],
-		        loading: false,
-		        states: ["Alabama", "Alaska", "Arizona",
-		        "Arkansas", "California", "Colorado",
-		        "Connecticut", "Delaware", "Florida",
-		        "Georgia", "Hawaii", "Idaho", "Illinois",
-		        "Indiana", "Iowa", "Kansas", "Kentucky",
-		        "Louisiana", "Maine", "Maryland",
-		        "Massachusetts", "Michigan", "Minnesota",
-		        "Mississippi", "Missouri", "Montana",
-		        "Nebraska", "Nevada", "New Hampshire",
-		        "New Jersey", "New Mexico", "New York",
-		        "North Carolina", "North Dakota", "Ohio",
-		        "Oklahoma", "Oregon", "Pennsylvania",
-		        "Rhode Island", "South Carolina",
-		        "South Dakota", "Tennessee", "Texas",
-		        "Utah", "Vermont", "Virginia",
-		        "Washington", "West Virginia", "Wisconsin",
-		        "Wyoming"]
 		    }
     	},
     	created(){
@@ -168,63 +233,70 @@
 			theRequest[strs[i].split("=")[0]]=unescape(strs[i].split("=")[1]); 
 			} 
 //			通过url查询id
-			this.userId = theRequest.id;
+			this.merchantId = theRequest.id;
 //			if(this.htmlId =='look'){
 //				this.linkMessage = "查看应用"
 //				this.getUserMessage();
 //				this.disabled = true;
 //			}
 			if(this.htmlId == 'modify'){
-				this.disabled = true;
-				this.linkMessage = "修改应用";
-				this.getUserMessage();
+				this.switchPage = true;
+				this.linkMessage = "修改商户";
+				this.getMerchantMessage()
 			};
     	},
-    	 methods: {
-	      handleAvatarSuccess(res, file) {
-	        this.imageUrl = URL.createObjectURL(file.raw);
-	       	 this.$message({
-	          message: '头像上传成功',
-	          type: 'success'
-	        });
-	      },
-	      beforeAvatarUpload(file) {
-	        const isJPG = file.type === 'image/jpeg';
-	        const isPNG = file.type === 'image/png';
-	        const isLt2M = file.size / 1024 / 1024 < 2;
-	
-	        if (!isJPG && !isPNG) {
-	          this.$message.error('上传头像图片只能是 JPG或PNG格式!');
-	        }
-	        if (!isLt2M) {
-	          this.$message.error('上传头像图片大小不能超过 2MB!');
-	        }
-	        return isJPG && isLt2M;
-	      },
-	      
-//	      	获取数据
-	        getUserMessage(){
-				this.$axios.get('/ucenter/admin/client/'+this.userId,this.getMyWeb.axios.aAjaxConfig).then((res)=>{
+    	watch: {
+    		radio:function(){
+    			if(this.radio == '2'){
+    				this.disabled = false;
+    				this.haveMessage = false;
+    				this.errMessage = "";
+    				for(let i in this.ruleForm){
+    					this.ruleForm[i] = ""
+    				}
+    			}
+    		}
+    	},
+    	 methods: {	      
+//	      	获取数据用户
+	       getUserMessage(){
+				this.$axios.get('/ucenter/admin/member/querySimpleMemberForBase',{params:this.userId},this.getMyWeb.axios.aAjaxConfig).then((res)=>{
 					if(res.data.state === "000000"){
 						var data = res.data.data;
-						this.ruleForm = data;
-						for(let i in data){
-							if(i == 'clientGrantType'){
-								if(data.clientGrantType == 1){
-									this.ruleForm.clientType = 'COMMON_CLIENT';
-								}
-								if(data.clientGrantType == 3){
-									this.ruleForm.clientType = 'SYSTEM_CLIENT';
-								}
+							if(data){
+								this.ruleForm.username = data.memberName;
+								this.ruleForm.mobile = data.mobile;
+								this.ruleForm.id = data.memberId;
+//								this.haveMessage = true;
+								this.errMessage = '';
+//								this.disabled = true;
 							}else{
-								this.ruleForm[i] = data[i];
+								this.haveMessage = false;
+								this.errMessage = "没有此用户"
 							}
-						}
-						this.imageUrl = this.ruleForm.thumbnail;
 					}else{
-						this.$message.error(res.data.messag);
+						this.ruleForm.username ='';
+								this.ruleForm.mobile = '';
+								this.ruleForm.id = '';
+						this.errMessage = res.data.message
+//						this.$message.error(res.data.message);
 					}
-		      	}).catch(function(err){
+		      	}).catch((err)=>{
+		                    this.$message.error('接口请求出错');
+		                    console.error(err);
+		        })
+			},
+//		获取商户信息
+			getMerchantMessage(){
+				this.$axios.get('/ucenter/admin/v1/sys/merchant/'+this.merchantId,this.getMyWeb.axios.aAjaxConfig).then((res)=>{
+					if(!res) return;
+					if(res.data.state === "000000"){
+						this.ruleForm = res.data.data;
+					}else{
+						this.errMessage = res.data.message
+//						this.$message.error(res.data.message);
+					}
+		      	}).catch((err)=>{
 		                    this.$message.error('接口请求出错');
 		                    console.error(err);
 		        })
@@ -238,7 +310,14 @@
 					    	var send = this.Qs.stringify(content);
 						    this.$axios.post('/ucenter/admin/v1/sys/merchant',send,this.getMyWeb.axios.aAjaxConfig).then((res)=>{
 									if(res.data.state === "000000"){
-										this.$router.go(-1)
+										 this.$message({
+									          message: res.data.message,
+									          type: 'success'
+									        });
+									        this.$refs['ruleForm'].resetFields();
+									        this.ruleForm.username = '';
+									        this.ruleForm.mobile = '';
+									        this.searchConfig.changeTime = new Date();
 									}else{
 										this.$message.error(res.data.message);
 									}
@@ -257,14 +336,18 @@
 		    	 this.$refs[formName].validate((valid) => {
 			          if (valid) {
 			            	var content = {};
-					    	     content.clientKey = this.ruleForm.clientKey;
-					    	     content.clientName = this.ruleForm.clientName;
-					    	     content.clientId = this.ruleForm.clientId;
+			            		for(let i in this.ruleForm){
+			            			if(i != 'status' && i != 'ctime'){
+			            				content[i] = this.ruleForm[i];
+			            			}
+			            		}
 					    	var send = "?"+this.Qs.stringify(content);
-					    	   	console.log(send);
-					    	this.$axios.put('/ucenter/admin/client/'+send,this.getMyWeb.axios.aAjaxConfig).then((res)=>{
+					    	this.$axios.put('/ucenter/admin/v1/sys/merchant'+send,this.getMyWeb.axios.aAjaxConfig).then((res)=>{
 					    		if(res.data.state === "000000"){
-					    			this.ruleForm = res.data.data;
+					    			this.$message({
+									          message: res.data.message,
+									          type: 'success'
+									        });
 									this.$router.go(-1)
 					    		}else{
 					    			this.$message.error(res.data.messag);
@@ -279,32 +362,25 @@
 			          }
 			       });
 		    },
-//		    重置钥密
-			resetPassWord(){
-				var content = {
-					clientId:this.userId
-				}
-				var send = "?"+this.Qs.stringify(content);
-				this.$axios.put('/ucenter/admin/client/secretReset/'+send,this.getMyWeb.axios.aAjaxConfig).then((res)=>{
-								if(res.data.state === "000000"){
-									this.resetWord = res.data.message;
-									this.dialogReset = false;
-								}else{
-									 this.$message.error(res.data.messag);
-								}
-					      	}).catch((err)=>{
-					                    this.$message.error('接口请求出错');
-					        })
-			},
-//			测试
-//			test2(){
-//				console.log(2)
-//				this.$axios.post('/updata/upload/common/image',this.getMyWeb.axios.aAjaxConfig).then((res)=>{
-//								console.log(res)
-//					      	}).catch((err)=>{
-//					                    this.$message.error('接口请求出错');
-//					        })
-//			},
+//			remoteMethod(query) {
+//				console.log(query);
+//		        if (query !== '') {
+//		          this.loading = true;
+//		          setTimeout(() => {
+//		            this.loading = false;
+//		            this.options4 = this.list.filter(item => {
+//		              return item.label.toLowerCase()
+//		                .indexOf(query.toLowerCase()) > -1;
+//		            });
+//		          }, 200);
+//		        } else {
+//		          this.options4 = [];
+//		        }
+//		      },
+		    searchRes(data){
+ 					this.userId = data;
+ 					this.getUserMessage();
+ 			},
 			uperror(){
 				console.log('mmp')
 			}

@@ -82,14 +82,14 @@
 		  width="30%"
 		  >
 		  <div style="display: flex;flex-direction: row;">
-		  	<i class="el-icon-warning" style="color: #f7ba2a;font-size: 30px;margin-top: -5px;"></i>
+		 <!-- 	<i class="el-icon-warning" style="color: #f7ba2a;font-size: 30px;margin-top: -5px;"></i>-->
 			<div style="flex: 1;margin-left: 10px;">
-			  	你正在增加【
+			  	<!--你正在增加【
 				<span v-if="id" style="line-height: 20px;">{{chooseOne[config.name]}}</span>
 				<span style="width: 100%;overflow: hidden;word-wrap:break-word;word-break:break-all;padding: 5px 0;line-height: 20px;" v-else>
 				  <span v-for="item in tableSelect">&nbsp;{{item[config.name]}}&nbsp;</span>
 				</span>
-				】同级类别
+				】同级类别-->
 				<div style="padding-top:5px;">
 					<el-form :model="addCategory" :rules="rules2" ref="addCategory" label-width="0" class="demo-ruleForm">
 					<el-form-item  prop="name">
@@ -130,6 +130,51 @@
 		    <el-button type="primary" @click="dialogExamineRecord = false">确 定</el-button>
 		  </span>
 		</el-dialog>
+<!--		上架下架-->
+		<!--禁用-->
+		<el-dialog
+		  :title="config.title"
+		  :visible.sync="dialogDisable"
+		  width="30%"
+		  >
+		  <div style="display: flex;flex-direction: row;">
+		  	<i class="el-icon-warning" style="color: #f7ba2a;font-size: 30px;margin-top: -5px;"></i>
+			<div style="flex: 1;margin-left: 10px;">
+			  	你正在下架【
+				<span v-if="id" style="line-height: 20px;">{{chooseOne[config.name]}}</span>
+				<span style="width: 100%;overflow: hidden;word-wrap:break-word;word-break:break-all;padding: 5px 0;line-height: 20px;" v-else>
+				  <span v-for="item in tableSelect">&nbsp;{{item[config.name]}}&nbsp;</span>
+				</span>
+				 】是否继续？
+			</div>
+		  </div>
+		  <span slot="footer" class="dialog-footer">
+		    <el-button @click="dialogDisable = false">取 消</el-button>
+		    <el-button type="primary" @click="disableMessage()">确 定</el-button>
+		  </span>
+		</el-dialog>
+		<!--		  启用弹框-->
+		<el-dialog
+		  :title="config.title"
+		  :visible.sync="dialogAble"
+		  width="30%"
+		  >
+		  <div style="display: flex;flex-direction: row;">
+		  	<i class="el-icon-warning" style="color: #f7ba2a;font-size: 30px;margin-top: -5px;"></i>
+			<div style="flex: 1;margin-left: 10px;">
+			  	你正在上架【
+				<span v-if="id" style="line-height: 20px;">{{chooseOne[config.name]}}</span>
+				<span style="width: 100%;overflow: hidden;word-wrap:break-word;word-break:break-all;padding: 5px 0;line-height: 20px;" v-else>
+				  <span v-for="item in tableSelect">&nbsp;{{item[config.name]}}&nbsp;</span>
+				</span>
+				】是否继续？
+			</div>
+		  </div>
+		  <span slot="footer" class="dialog-footer">
+		    <el-button @click="dialogAble = false">取 消</el-button>
+		    <el-button type="primary" @click="ableMessage()">确 定</el-button>
+		  </span>
+		</el-dialog>
 	</div>
 </template>
 
@@ -138,6 +183,8 @@
 		props:['id','config','tableSelect','chooseOne','openDialog','change','message'],
 		data() {
 	      return {
+	      	dialogDisable:false,
+	      	dialogAble:false,
 	      	dialogExamine:false,
 	      	dialogExamineRecord:false,
 	      	dialogAddCategoryNext:false,
@@ -220,6 +267,12 @@
 		     if(this.config.type == 'productExamineRcord'){
 		     	this.getExaminList();
 		     	this.dialogExamineRecord = true;
+		     }
+		     if(this.config.type == 'productAble'){
+		     	this.dialogAble = true;
+		     }
+		     if(this.config.type == 'productDisable'){
+		     	this.dialogDisable = true;
 		     }
 		    }
 		},
@@ -332,6 +385,39 @@
 //		                    this.$message.error('接口请求出错');
 		                    console.error(err);
 		        })
+			},
+			//			禁用
+			disableMessage(){
+				var content = '?'+this.config.urlSearch+'=' + this.ids.join();
+				var _url = this.config.src+content;
+				this.$axios.put(_url,this.getMyWeb.axios.aAjaxConfig).then((res)=>{
+					if(res.data.state === "000000"){
+						this.returnMessage('禁用成功');
+					 	this.dialogDisable = false;
+					}else{
+						this.$message.error(res.data.data);
+					}
+				}).catch((err)=>{
+			                    this.$message.error('接口请求出错');
+			                    console.error(err);
+			    })
+			},
+//			启用
+			ableMessage(){
+				var content = '?'+this.config.urlSearch+'=' + this.ids.join();
+				var _url = this.config.src+content;
+				console.log(_url)
+				this.$axios.put(_url,this.getMyWeb.axios.aAjaxConfig).then((res)=>{
+					if(res.data.state === "000000"){
+						this.returnMessage('启用成功');
+					 	this.dialogAble = false;
+					}else{
+						this.$message.error(res.data.data);
+					}
+				}).catch((err)=>{
+			                    this.$message.error('接口请求出错');
+			                    console.error(err);
+			    })
 			},
 //			返送信息
 			returnMessage(item){

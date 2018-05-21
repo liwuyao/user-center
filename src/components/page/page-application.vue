@@ -81,22 +81,22 @@
        				},
        				{
        					lable:'clientKey',
-       					width:'140',
+       					width:'200',
        					prop:'clientKey'
        				},
        				{
        					lable:'注册用户',
-       					width:'250',
+       					width:'150',
        					prop:'createMemberName'
        				},
        				{
        					lable:'注册时间',
-       					width:'250',
+       					width:'150',
        					prop:'createTime'
        				},
        				{
        					lable:'状态',
-       					width:'120',
+       					width:'100',
        					prop:'state'
        				}
        			],

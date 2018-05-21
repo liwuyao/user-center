@@ -53,6 +53,10 @@
 								{
 									title:'商品分类',
 									index:'/productCategory'
+								},
+								{
+									title:'商户列表',
+									index:'/merchantList'
 								}
 							]
 						},
@@ -64,17 +68,6 @@
 								{
 									title:'订单列表',
 									index:'/orderList'
-								}
-							]
-						},
-						{
-							icon:'iconfont icon-el-icon-karakal-slideBar-dingdan slide-bar2-icon',
-							name:'商户管理',
-							index:'',
-							child:[
-								{
-									title:'商户列表',
-									index:'/merchantList'
 								}
 							]
 						},

@@ -7,29 +7,11 @@
 						<v-button :message="btnMessage.add"></v-button>	  	
 					</router-link>
 				</div>
-				<div class="btn-box">
-					<v-button :message="btnMessage.delete" style="cursor: pointer;"></v-button>
-					<v-dialog :config="btnMessage.delete.formConfig" class="page-dialog" :tableSelect='tableSelect' v-on:send="dialogRes"></v-dialog>
-				</div>
-				<div class="btn-box-default" :class="{btnActive:!btnMessage.disable.disable}">
-					<el-button class="btn-elm-box" :disabled='btnMessage.disable.disable'>
-					<i :class="btnMessage.disable.icon"></i>
-					禁止
-					</el-button>
-					<v-dialog :config="btnMessage.disable.formConfig" class="page-dialog" :tableSelect='tableSelect' v-on:send="dialogRes" v-if="!btnMessage.disable.disable"></v-dialog>
-				</div>
-				<div class="btn-box-default" :class="{btnActive:!btnMessage.able.disable}">
-					<el-button class="btn-elm-box" :disabled='btnMessage.able.disable'>
-					<i :class="btnMessage.able.icon"></i>
-					启用
-					</el-button>
-					<v-dialog :config="btnMessage.able.formConfig" class="page-dialog" :tableSelect='tableSelect' v-on:send="dialogRes" v-if="!btnMessage.able.disable"></v-dialog>
-				</div>
 			</div>
 			<div style="width: 100%;overflow: hidden;background: #eff4f7;padding-bottom: 10px;">
 				<select-button :message="selectMessage" :placeholder="'应用状态'" :defaultVal="selectDefaultVal" class="application-select" v-on:select="selectRes"></select-button>
 				<div style="display:inline-block;margin-left:420px;">
-					<search-bar :name="'condition'" v-on:search="searchRes" :placeholder="'输入clientkey查询'"></search-bar>
+					<search-bar :name="'mobile'" v-on:search="searchRes" :placeholder="'输入手机号码查询'"></search-bar>
 				</div>
 			</div>
 			<div style="padding-bottom:50px ;overflow: hidden;">
@@ -70,37 +52,38 @@
        			listUrl:'/ucenter/admin/v1/sys/merchant',
        			listConfig:[
        				{
-       					lable:'账号名称',
+       					lable:'用户名',
        					prop:'username'
        				},
        				{
-       					lable:'账号手机',
-       					width:'140',
+       					lable:'手机号',
+       					width:'150',
        					prop:'mobile'
        				},
        				{
-       					lable:'商户名称',
-       					width:'120',
+       					lable:'商铺名',
+       					width:'250',
        					prop:'shopName'
        				},
-       				{
-       					lable:'联系人',
-       					prop:'contacts'
-       				},
-       				{
-       					lable:'联系电话',
-       					prop:'contactNumber'
-       				},
-       				{
-       					lable:'联系地址',
-       					prop:'contactAddress'
-       				},
+//     				{
+//     					lable:'联系人',
+//     					prop:'contacts'
+//     				},
+//     				{
+//     					lable:'联系电话',
+//     					prop:'contactNumber'
+//     				},
+//     				{
+//     					lable:'联系地址',
+//     					prop:'contactAddress'
+//     				},
        				{
        					lable:'创建时间',
        					prop:'ctime'
        				},
        				{
-       					lable:'状态',
+       					lable:'商户状态',
+       					width:'100',
        					prop:'status'
        				}
        			],
@@ -111,28 +94,15 @@
        				linkTo:[
 	       				{
 	       					name:'查看',
-	       					src:'/merchant/add',
+	       					src:'/lookMerchant',
 	       					iconClass:'table-icon iconfont icon-el-icon-karakal-chakan'
 	       				},
 	       				{
 	       					name:'修改',
-	       					src:'/client/modify',
+	       					src:'/merchant/modify',
 	       					iconClass:'table-icon iconfont icon-el-icon-karakal-xiugai'
 	       				},
        				],
-       				dialog:[
-				       	{
-				       		name:"clientName",
-				       		title:'删除',
-				       		idName:'clientId',
-				       		urlSearch:'clientIds',
-				       		type:"delete",
-				       		src:"/ucenter/admin/client",
-				       		classType:'danger',
-				       		style:'icon',
-				       		iconClass:'table-icon iconfont icon-el-icon-karakal-iconfontshanchu5'
-				       	}
-	       			]
        			}
        		},
        		btnMessage:{
@@ -147,63 +117,17 @@
 		       			style:'button'
 		       		}
        			},
-       			delete:{
-       				name:"删除",
-		       		type:"delete",
-		       		icon:"button-icon iconfont icon-el-icon-karakal-iconfontshanchu5",
-		       		formConfig:{
-		       			idNames:'clientId',
-		       			urlSearch:'clientIds',
-		       			src:"/ucenter/admin/client",
-		       			name:"clientName",
-		       			type:"delete",
-		       			classType:'',
-		       			style:''
-		       		}
-       			},
-       			disable:{
-       				name:"禁用",
-		       		type:"disable",
-		       		disable:true,
-		       		icon:"button-icon iconfont icon-el-icon-karakal-jinyong",
-		       		formConfig:{
-		       			title:'禁用提示',
-		       			idName:'clientId',
-		       			urlSearch:'clientIds',
-		       			src:"/ucenter/admin/client/disable",
-		       			name:"clientName",
-		       			type:"disable",
-		       			classType:'',
-		       			style:''
-		       		}
-       			},
-       			able:{
-       				name:"启用",
-		       		type:"able",
-		       		disable:true,
-		       		icon:"button-icon iconfont icon-el-icon-karakal-qiyong",
-		       		formConfig:{
-		       			title:'启用提示',
-		       			idName:'clientId',
-		       			urlSearch:'clientIds',
-		       			src:"/ucenter/admin/client/enable",
-		       			name:"clientName",
-		       			type:"able",
-		       			classType:'',
-		       			style:''
-		       		}
-       			}
        		},
-       		selectDefaultVal:'-1',
+       		selectDefaultVal:'',
        		selectMessage:[
-		        { value: '-1',
+		        { value: '',
 		          label: '全部'
 		        },
 		        { value: '0',
-		          label: '启用'
+		          label: '禁用'
 		        },
 		        { value: '1',
-		          label: '禁用'
+		          label: '启用'
 		        },
        		],
 	        isActive:false
@@ -270,11 +194,9 @@
  		},
 // 		选择信息
 		selectRes(data){
-				if(data){
 					this.tableData.selectMessage={
-						state:data
+						status:data
 					};
-				}
 			}
 	 	},
 //	 	列表后退

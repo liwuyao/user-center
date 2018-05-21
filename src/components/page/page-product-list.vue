@@ -63,23 +63,38 @@
        					prop:'name'
        				},
        				{
+       					lable:'分类名称',
+       					width:'120',
+       					prop:'categoryName'
+       				},
+       				       				{
+       					lable:'商铺',
+       					width:'120',
+       					prop:'merchantShopName'
+       				},
+       				       				{
+        				lable:'商铺账号',
+        				width:'120',
+        				prop:'merchantMobile'
+        			},
+       				{
        					lable:'标签',
        					width:'120',
        					prop:'label'
        				},
        				{
        					lable:'创建时间',
-       					width:'250',
+       					width:'150',
        					prop:'ctime'
        				},
        				{
        					lable:'审核时间',
-       					width:'250',
+       					width:'150',
        					prop:'auditTime'
        				},
        				{
        					lable:'商品状态',
-       					width:'120',
+       					width:'100',
        					prop:'status'
        				}
        			],
@@ -87,18 +102,6 @@
        				pageMessage:{
        					idName:'id'
        				},
-//     				linkTo:[
-//	       				{
-//	       					name:'审核',
-//	       					src:'/lookClient',
-//	       					iconClass:'table-icon iconfont icon-el-icon-karakal-slideBar-shenhe'
-//	       				},
-//	       				{
-//	       					name:'修改',
-//	       					src:'/client/modify',
-//	       					iconClass:'table-icon iconfont icon-el-icon-karakal-xiugai'
-//	       				},
-//     				],
        				dialog:[
        					{
 				       		name:"name",
@@ -146,17 +149,19 @@
 		       		disable:true,
 		       		icon:"button-icon iconfont icon-el-icon-karakal-jinyong",
 		       		formConfig:{
+		       			privateName:'product',
 		       			title:'下架提示',
 		       			idName:'id',
 		       			urlSearch:'productId',
 		       			src:"/ucenter/admin/v1/product/unpublish",
 		       			name:"name",
-		       			type:"disable",
+		       			type:"productDisable",
 		       			classType:'',
 		       			style:''
 		       		}
        			},
        			able:{
+       				privateName:'product',
        				name:"上架提示",
 		       		type:"able",
 		       		disable:true,
@@ -167,7 +172,7 @@
 		       			urlSearch:'productId',
 		       			src:"/ucenter/admin/v1/product/publish",
 		       			name:"name",
-		       			type:"able",
+		       			type:"productAble",
 		       			classType:'',
 		       			style:''
 		       		}

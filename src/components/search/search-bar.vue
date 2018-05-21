@@ -13,10 +13,18 @@
 <script>
 	export default {
 	  name: 'searchBar',
-	  props: ['name','placeholder'],
+	  props: ['name','placeholder','config'],
 	  data(){
 	  	return{
 	  		inputMessage:"",
+	  	}
+	  },
+	  watch: {
+	  	'config.changeTime':function(){
+	  		console.log('clear')
+	  		if(this.config.clear){
+	  			this.inputMessage = '';
+	  		}
 	  	}
 	  },
 	  methods:{
