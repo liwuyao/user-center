@@ -102,6 +102,13 @@
        				pageMessage:{
        					idName:'id'
        				},
+       				linkTo:[
+	       				{
+	       					name:'查看',
+	       					src:'/lookProductDetail',
+	       					iconClass:'table-icon iconfont icon-el-icon-karakal-chakan'
+	       				}
+	       				],	       				
        				dialog:[
        					{
 				       		name:"name",
@@ -208,6 +215,7 @@
 //		列表信息返回
  		tableRes(data){
    			this.tableSelect = data;
+   			console.log(this.tableSelect);
    			var able = [];
    			var disable = [];
    			this.btnMessage.disable.disable = true;

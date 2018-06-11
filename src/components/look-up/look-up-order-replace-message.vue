@@ -62,7 +62,11 @@
 							<p style="padding: 5px 0;">{{item.refuseReason}}</p>
 						</div>-->
 						<div style="padding-top:15px ;">
-							<span style="color: gainsboro;font-size:13px;">更换前文件地址：{{item.originalUrl}}</span>
+							<span style=";font-size:15px;">
+								更换前铃音试听
+								<i :class="playIcon" style="color: red;font-size: 17px;" v-on:click="orderPlay()"></i>
+							</span>
+							<audio :src="item.originalUrl" id="orderAudio"></audio>
 						</div>
 					</div>
 <!--					<div style="text-align: right;"><span>完成时间：{{transformationTime(item.finishTime)}}</span></div>-->
@@ -105,47 +109,10 @@
         			title:''
         		},
         		headerUrl:'',
-        		getData:{
-        			clientName:'hello',
-        			clientKey:'11',
-        			clientType:'互联网',
-        			clientContent:''
-        		},
+        		getData:{},
         		id:'',
-        		data:[
-        			{
-        				lable:'账户名',
-        				title:'username'
-        			},
-        			{
-        				lable:'手机号',
-        				title:'mobile'
-        			},
-        			{
-        				lable:'商户名',
-        				title:'shopName'
-        			},
-        			{
-        				lable:'联系人',
-        				title:'contacts'
-        			},
-        			{
-        				lable:'联系电话',
-        				title:'contactNumber'
-        			},
-        			{
-        				lable:'联系地址',
-        				title:'contactAddress'
-        			},
-        			{
-        				lable:'创建时间',
-        				title:'ctime'
-        			},
-        			{
-        				lable:'商户状态',
-        				title:'status'
-        			},
-        		]
+        		playIcon:'iconfont icon-el-icon-karakal-slideBar-bofang',
+        		playState:true,
         	}
         },
         created(){
@@ -201,7 +168,7 @@
 					src = '/ucenter/admin/v1/order/replace/offline/communicated'
 				}
 				if(this.dialogMessage.name == 'agree'){
-					src = 'ucenter/admin/v1/order/replace/admin/pass'
+					src = '/ucenter/admin/v1/order/replace/admin/pass'
 				}
 				var content = {
 					recordId: this.dialogMessage.id
@@ -225,6 +192,18 @@
 			transformationTime(date){
                 return (new Date(date)).format("yyyy-MM-dd hh:mm");
 			},
+//			试听播放键
+			orderPlay(){
+				var aido = document.getElementById('orderAudio');
+				if(this.playState){
+					this.playIcon = 'iconfont icon-el-icon-karakal-slideBar-zantin';
+						aido.play();
+				}else{
+					this.playIcon = 'iconfont icon-el-icon-karakal-slideBar-bofang';
+						aido.pause();
+				}
+				this.playState = !this.playState;
+			}
         }
 	}
 </script>

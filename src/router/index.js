@@ -19,6 +19,8 @@ import lookUpClinet from '@/components/look-up/look-up-client-message.vue'
 import lookUpUser from '@/components/look-up/look-up-user-message.vue'
 import lookUpMerchant from '@/components/look-up/look-up-merchant-message.vue'
 import lookUpOrderReplace from '@/components/look-up/look-up-order-replace-message.vue'
+import lookUpPruductDetail from '@/components/look-up/look-up-product-detail.vue'
+
 //import Silde from '@/components/home/slide-bar.vue'
 
 Vue.use(Router)
@@ -64,6 +66,10 @@ export default new Router({
     {
       path: '/lookOrderReplace',
       component: lookUpOrderReplace
+    },
+    {
+      path: '/lookProductDetail',
+      component: lookUpPruductDetail
     },
     {
       path: '/home',

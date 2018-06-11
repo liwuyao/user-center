@@ -304,7 +304,6 @@
 				}
 			},
 			closeRight(){
-				console.log(this.slideRight)
 				if(this.slideRight){
 					this.slideRightChild = false;
 					if(!this.open){

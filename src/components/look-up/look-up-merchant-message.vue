@@ -51,7 +51,7 @@
         				title:'mobile'
         			},
         			{
-        				lable:'商户名',
+        				lable:'商铺名',
         				title:'shopName'
         			},
         			{
@@ -88,7 +88,6 @@
 			} 
 //			通过url查询id
 			this.id = theRequest.id;
-			console.log(this.id);
         	this.getMerchantMessage();
         },
         methods:{
