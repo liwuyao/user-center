@@ -29,10 +29,6 @@
                         <!--<el-button type="primary" size="mini">预览</el-button>-->
                         <el-button-group>
                             <el-button size="small" @click="lookingFor">预览</el-button>
-                            <el-button size="small" @click="toEdit" v-if="isEditor">
-                            	编辑
-                            <v-dialog :config="btnMessage.disable.formConfig" class="page-dialog" :tableSelect='tableSelect' v-on:send="dialogRes" v-if="!btnMessage.disable.disable"></v-dialog>
-                            </el-button>
                             <el-button size="small" v-on:click="dialogExamine=true" v-if="message.status === 1">审核</el-button>
                             <el-button size="small" @click="upStand" v-if="message.status === 2">上架</el-button>
                             <el-button size="small" @click="downStand" v-if="message.status === 4">下架</el-button>
@@ -148,7 +144,8 @@
                                 <el-table-column v-if="goodsSku.length!=0" label="样品铃音">
                                     <template slot-scope="scope">
                                         <span v-if="scope.row.样品铃音 != null">
-                                            <el-button type="primary" size="mini" v-if="scope.row.isPlaying" name="play" @click.native="tryPlayMusic(scope.row,scope.$index)">播放</el-button>
+                                          <!--  <el-button type="primary" size="mini" v-if="scope.row.isPlaying" name="play" @click.native="tryPlayMusic(scope.row,scope.$index)" :data='scope.row.isPlaying'>播放</el-button>-->
+                                            <el-button type="primary" size="mini" v-if="scope.row.isPlaying" name="play" v-on:click="tryPlayMusic(scope.row,scope.$index)" :data="scope.row.isPlaying">播放</el-button>
                                             <el-button type="warning" size="mini" v-else name="pause" @click.native="pauseMusic(scope.row)">暂停</el-button>
                                             <a :href="scope.row.样品铃音[0]" download class="download-btn">下载</a>
                                         </span>
@@ -169,7 +166,7 @@
                                 </h3>
                             </div>
                             <el-row :gutter="20">
-                                <el-col :span="6" v-for="img in tableData.picUrls" :key="img">
+                                <el-col :span="6" v-for="(img,index) in tableData.picUrls" :key="index">
                                     <img class="photo-group" title="点击放大" :src="img" style="width: 100%;height: 200px"
                                          @click="bigImg($event)">
                                 </el-col>
@@ -217,6 +214,7 @@
                         </el-card>
                     </div>
                 </el-main>
+                <el-button @click="ceshi">22222</el-button>
             </el-container>
         </el-main>
         <!--		审核弹框-->
@@ -257,6 +255,7 @@
 </template>
 
 <script>
+	import Vue from 'vue'
 	import vHeader from '../home/header.vue'
     export default {
     	components:{
@@ -289,6 +288,8 @@
                 richInfo: '',
                 id:'',
                 message:'',
+                test:'',
+                change: false,
                 rules: {
 		          operation: [
 		            { required: true, message: '请选择', trigger: 'blur' },
@@ -300,6 +301,10 @@
             }
 
         },
+        created() {
+            this.getData();
+            this. getRecord();
+        },
         methods: {
             closeThisPage() {
                 this.$router.go(-1);
@@ -308,43 +313,44 @@
             getData() {
                 var recordId = this.$route.query.id;   //获取订单ID
                 this.id = recordId;
-                var _this = this;
+//              var _this = this;
                 this.$axios({
                     method: "GET",
                     url: '/ucenter/admin/v1/product/' + recordId,
-                }).then(function (res) {
+                }).then((res)=> {
                     var data = res.data.data;
-                    _this.message = data;
+                    this.message = data;
 //                    商品详情
-                    _this.richInfo = data.content;
+                    this.richInfo = data.content;
 //                  sku
- 					if (data.skus.length == 0) {
-                            _this.goodsSku2 = [];
-                        } else {
-                            for (let item of data.skus) {
+   					if (data.skus) {
+                             for (let item of data.skus) {
                                 item.售价 = item.售价 / 100;
                                 item.isPlaying = true;
-                                _this.goodsSku.push(item);
-                                let obj2 = _this.copy(item);
+                                this.goodsSku.push(item);
+                                let obj2 = this.copy(item);
                                 delete obj2.样品铃音;
                                 delete obj2.isPlaying;
-                                _this.goodsSku2.push(obj2);
+                                this.goodsSku2.push(obj2);
                             }
-                            _this.goodsSku3 = [];
-                            for (let x in _this.goodsSku2[0]) {
-                                _this.goodsSku3.push(x)
+//                          _this.goodsSku[0].isPlaying = false;
+                            this.goodsSku3 = [];
+                            for (let x in this.goodsSku2[0]) {
+                                this.goodsSku3.push(x)
                             }
+                        } else {
+         					this.goodsSku2 = [];
                         }
 //                    背景音  
 					  for (let url of data.backgroundMusicDOS) {
-                            _this.goodsBgm.push({
+                            this.goodsBgm.push({
                                 id: url.id,
                                 name: url.name,
                                 url: url.url,
                                 isPlaying: true,
                             })
                         }
-                    _this.tableData = {};   //清空数据
+                    this.tableData = {};   //清空数据
                     let whitchStatus;
                     // 商品状态 -1-已删除，0-初始状态；1-待审核；2-审核通过；3-审核不通过；4-发布上架；5-下架；6-暂歇销售
                     switch (data.status) {
@@ -353,59 +359,63 @@
                             break;
                         case 0:
                             whitchStatus = "编辑中";
-                            _this.isAuditing = true;
-                            _this.isEditor = true;
+                            this.isAuditing = true;
+                            this.isEditor = true;
                             break;
                         case 1:
                             whitchStatus = "待审核";
                             break;
                         case 2:
                             whitchStatus = "审核通过";
-                            _this.isUpStand = true;
+                            this.isUpStand = true;
                             break;
                         case 3:
                             whitchStatus = "审核不通过";
                             break;
                         case 4:
                             whitchStatus = "已上架";
-                            _this.isDownStand = true;
+                            this.isDownStand = true;
                             break;
                         case 5:
                             whitchStatus = "已下架";
-                            _this.isEditor = true;
+                            this.isEditor = true;
                             break;
                         case 6:
                             whitchStatus = "暂歇销售";
-                            _this.isUpStand = true;
+                            this.isUpStand = true;
                             break;
                         default:
                             whitchStatus = "未知";
                             break;
                     }
                     ;
-                    _this.nowStatus = whitchStatus;
-                    _this.tableData.id = data.id;
-                    _this.tableData.merchantShopName = data.merchantShopName;
-                    _this.tableData.ctime = _this.transformationTime(data.ctime);
-                    _this.tableData.categoryName = data.categoryName;
-                    _this.tableData.name = data.name;
-                    _this.tableData.subTitle = data.subTitle;
-                    _this.tableData.description = data.description;
-                    _this.tableData.label = data.label;
-                    _this.tableData.labelArr = data.label.split(",");
-                    _this.tableData.picUrls = data.picUrls;
+                    this.nowStatus = whitchStatus;
+                    this.tableData.id = data.id;
+                    this.tableData.merchantShopName = data.merchantShopName;
+                    this.tableData.ctime = this.transformationTime(data.ctime);
+                    this.tableData.categoryName = data.categoryName;
+                    this.tableData.name = data.name;
+                    this.tableData.subTitle = data.subTitle;
+                    this.tableData.description = data.description;
+                    this.tableData.label = data.label;
+                    this.tableData.labelArr = data.label.split(",");
+                    this.tableData.picUrls = data.picUrls;
 
 					
                     // 获取审核记录
-                
-                    _this.$axios({
+                });
+            },
+            getRecord(){
+            	 var recordId = this.$route.query.id;  
+            	 this.$axios({
                         method: "GET",
                         url: '/ucenter/admin/v1/product/auditRecord?productId=' + recordId + '&pageIndex=1&pageSize=20'
-                    }).then(function (res) {
+                    }).then((res) =>{
                         var data = res.data.data.list;
+                     		
                         if (data.length != 0) {
                             for (let item of data) {
-                                _this.auditingData = [];   //清空数据
+                                this.auditingData = [];   //清空数据
                                 let whitchStatus;
                                 // 商品状态 -1-已删除，0-初始状态；1-待审核；2-审核通过；3-审核不通过；4-发布上架；5-下架；6-暂歇销售
                                 switch (item.status) {
@@ -426,8 +436,8 @@
                                         break;
                                 }
                                 ;
-                                _this.auditingData.push({
-                                    "auditTime": _this.transformationTime(item.auditTime),
+                                this.auditingData.push({
+                                    "auditTime": this.transformationTime(item.auditTime),
                                     "auditUserId": item.auditUserId,
                                     "status": whitchStatus,
                                     "auditNote": item.auditNote,
@@ -435,53 +445,11 @@
                             }
 
                         } else {
-                            _this.auditingData = []
+                            this.auditingData = []
                         }
                     });
-
-                    // 获取sku信息
-//                  _this.$axios({
-//                      method: "GET",
-//                      url: '/manage/v1/merchant/product/' + recordId + '/sku'
-//                  }).then(function (res) {
-//                      let data = res.data.data;
-//                      if (data.length == 0) {
-//                          _this.goodsSku2 = [];
-//                      } else {
-//                          for (let item of data) {
-//                              item.售价 = item.售价 / 100;
-//                              item.isPlaying = true;
-//                              _this.goodsSku.push(item);
-//                              let obj2 = _this.copy(item);
-//                              delete obj2.样品铃音;
-//                              delete obj2.isPlaying;
-//                              _this.goodsSku2.push(obj2);
-//                          }
-//                          _this.goodsSku3 = [];
-//                          for (let x in _this.goodsSku2[0]) {
-//                              _this.goodsSku3.push(x)
-//                          }
-//                      }
-//
-//                  });
-                    // 获取背景音乐
-//                  _this.$axios({
-//                      method: "GET",
-//                      url: '/manage/v1/merchant/product/bgm/available'
-//                  }).then(function (res) {
-//                      let msg = res.data.data;
-//                  });
-                    // 获取商品详情
-//                  _this.$axios({
-//                      method: "GET",
-//                      url: '/manage/v1/merchant/product/details/' + recordId
-//                  }).then(function (res) {
-//                      let data = res.data.data;
-//                      _this.richInfo = data;
-//                  });
-                });
             },
-              transformationTime(date){
+            transformationTime(date){
                        return (new Date(date)).format("yyyy-MM-dd hh:mm");
 			      },
             playMusic(row,index) {
@@ -491,6 +459,12 @@
                 }
                 for(let n of this.goodsSku){
                     n.isPlaying = true;
+                    if(typeof(n.售价) == 'number'){
+                    	n.售价 = String(n.售价)
+                    }else{
+                    	n.售价 = Number(n.售价)
+                    }
+//                  this.set(this.goodsSku, index, this.goodsSku[index]);
                 }
                 // 当前选择的这个按钮变成暂停
                 this.goodsBgm[index].isPlaying = false;
@@ -513,13 +487,16 @@
                     n.isPlaying = true;
                 }
                 this.goodsSku[index].isPlaying = false;
-                // row.isPlaying = !row.isPlaying;
+                Vue.set(this.goodsSku, index, this.goodsSku[index]);
                 let audio = document.getElementById("commonAudio");
-                if (row.样品铃音.length != 0) {
+                if (row.样品铃音.length !== 0) {
                     this.audioSrc = row.样品铃音[0];
                 }
                 audio.load();
                 audio.play();
+            },
+            ceshi(){
+            	console.log(this.goodsSku)
             },
             downLoadMusic(url) {
                 var $eleForm = $("<form method='get'></form>");
@@ -551,27 +528,6 @@
                     }
                 });
             },
-            // 送审相关
-//          lookThrough() {
-//              var _this = this;
-//              this.$confirm('是否送审？', '提示', {
-//                  confirmButtonText: '确定',
-//                  cancelButtonText: '取消',
-//                  type: 'warning'
-//              }).then(() => {
-//                  this.$axios({           //请求：是否送审
-//                      method: "put",
-//                      url: '/manage/v1/merchant/product/' + this.$route.query.id + '/submitAudit',
-//                  }).then(function (res) {
-//                      _this.$message({
-//                          type: 'success',
-//                          message: "送审" + res.data.msg + "！"
-//                      });
-//                  })
-//              }).catch(() => {
-//
-//              });
-//          },
             upStand() {
                 var _this = this
                 this.$confirm('是否上架？', '提示', {
@@ -658,10 +614,7 @@
 				    })
 				});
 			},
-        },
-        mounted() {
-            this.getData();
-        }
+       },
     }
 </script>
 

@@ -70,10 +70,10 @@
 							    <el-input v-model="ruleForm.mobile" style="width: 400px;"  placeholder="请输入账户手机号" :disabled='disabled'></el-input>
 							</el-form-item>
 							<el-form-item label="密码" prop="password">
-							    <el-input v-model="ruleForm.password" style="width: 400px;"  placeholder="请输入密码"></el-input>
+							    <el-input v-model="ruleForm.password" style="width: 400px;"  placeholder="请输入密码" type="password"></el-input>
 							</el-form-item>
 							<el-form-item label="确认密码" prop="passwordConfirm">
-							    <el-input v-model="ruleForm.passwordConfirm" style="width: 400px;"  placeholder="请确认密码"></el-input>
+							    <el-input v-model="ruleForm.passwordConfirm" style="width: 400px;"  placeholder="请确认密码" type="password"></el-input>
 							</el-form-item>
 							<el-form-item label="商铺名称" prop="shopName">
 							    <el-input v-model="ruleForm.shopName" style="width: 400px;"  placeholder="请输入商户名称"></el-input>
