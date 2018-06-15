@@ -28,7 +28,7 @@
                         <!--<el-button type="primary" size="mini">预览</el-button>-->
                         <!--<el-button type="primary" size="mini">预览</el-button>-->
                         <el-button-group>
-                            <el-button size="small" @click="lookingFor">预览</el-button>
+                       <!--     <el-button size="small" @click="lookingFor">预览</el-button>-->
                             <el-button size="small" v-on:click="dialogExamine=true" v-if="message.status === 1">审核</el-button>
                             <el-button size="small" @click="upStand" v-if="message.status === 2">上架</el-button>
                             <el-button size="small" @click="downStand" v-if="message.status === 4">下架</el-button>
