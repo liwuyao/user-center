@@ -175,6 +175,44 @@
 		    <el-button type="primary" @click="ableMessage()">确 定</el-button>
 		  </span>
 		</el-dialog>
+<!--		新增属性-->
+		<el-dialog
+		  :title="config.title"
+		  :visible.sync="dialogAttribute"
+		  width="50%"
+		  >
+		  <el-form ref="attributeMessage" :model="attributeMessage" label-width="150px" label-position="left">
+		  	  <el-form-item label="属性名">
+			    <el-input v-model="attributeMessage.name"></el-input>
+			  </el-form-item>
+			  <el-form-item label="是否必选">
+				  <el-radio-group v-model="attributeMessage.required">
+				    <el-radio label="0">非必选</el-radio>
+				    <el-radio label="1">必选</el-radio>
+				  </el-radio-group>
+  			  </el-form-item>
+  			  <el-form-item label="属性值可选值列表">
+  			  	<div style="overflow: hidden;">
+  			  		<div class="attribute-value" v-for="item in attributeValues">
+  			  			{{item}}
+  			  			<i class="el-icon-close attribute-value-delete" v-on:click="deleteAttribute(item)"></i>
+  			  		</div>
+  			  	</div>
+			    <div>
+			    	<el-input v-model="attributeMessage.attrValues" style="width: 80%;"></el-input>
+			    	<el-button type="primary" v-on:click="addAttribute()">添加</el-button>
+			    </div>
+			  </el-form-item>
+			  <el-form-item label="属性排序">
+			    <el-input v-model="attributeMessage.weight"></el-input>
+			    <p style="color: gray;">数值越高显示越前面</p>
+			  </el-form-item>
+		  </el-form>
+		  <span slot="footer" class="dialog-footer">
+		    <el-button @click="dialogAttribute = false">取 消</el-button>
+		    <el-button type="primary" @click="ableMessage()">确 定</el-button>
+		  </span>
+		</el-dialog>
 	</div>
 </template>
 
@@ -189,6 +227,7 @@
 	      	dialogExamineRecord:false,
 	      	dialogAddCategoryNext:false,
 	      	dialogAddCategory:false,
+	      	dialogAttribute:false,
 	      	examineMessage:{
 	      		productId:'',
 	      		operation:'',
@@ -199,6 +238,14 @@
 	      		parentId:'',
 	      		weight:''
 	      	},
+	      	attributeMessage:{
+	      		categoryId: '',
+	      		name:'',
+	      		required: '',
+	      		weight: '',
+	      		attrValues: '',		
+	      	},
+	      	attributeValues:[],
 	      	examineRecordList:[],
 	      	examineTable:[
 	      		{
@@ -222,6 +269,7 @@
 	      			prop:'auditNote'
 	      		},
 	      	],
+	      	attributeId:'我日',
 	      	rules: {
 		          operation: [
 		            { required: true, message: '请选择', trigger: 'blur' },
@@ -241,6 +289,7 @@
 	      }
 	   },
 	   created(){
+	   	this.attributeId = this.message.id
 	   },
 	   watch: {
 //			var a = this.openDialog;
@@ -274,6 +323,9 @@
 		     if(this.config.type == 'productDisable'){
 		     	this.dialogDisable = true;
 		     }
+		     if(this.config.type == 'productCategoryAttribute'){
+		     	this.dialogAttribute = true;
+		     }
 		    }
 		},
 		methods:{
@@ -297,7 +349,6 @@
 //			新增分类
 			addProductCategory(formName){
 				this.$refs[formName].validate((valid) => {
-					console.log(this.message);
 					this.addCategory.parentId = this.message.id;
 					var content = this.addCategory;
 					var send = this.Qs.stringify(content)
@@ -419,6 +470,18 @@
 			                    console.error(err);
 			    })
 			},
+//			新增属性值
+			addAttribute(){
+				if(this.attributeMessage.attrValues){
+					this.attributeValues.push(this.attributeMessage.attrValues);
+					this.attributeMessage.attrValues = '';
+				}
+			},
+//			删除属性值
+			deleteAttribute(item){
+				let index = this.attributeValues.indexOf(item);
+					this.attributeValues.splice(index,1);
+			},
 //			返送信息
 			returnMessage(item){
 				this.$emit('send',{b:item})
@@ -441,4 +504,19 @@
 		border-bottom: 1px solid gainsboro;
 		outline: none;
 	}
+	.attribute-value{
+		display: inline-block;
+		padding: 8px 25px 8px 10px;
+		margin-right: 10px;
+		border: 1px solid gainsboro;
+		line-height: 15px !important;
+		margin-bottom: 10px;
+		position: relative;
+	}
+	.attribute-value-delete{
+		position: absolute;
+		right: 5px;
+		top: 50%;
+		transform: translate(0,-50%);
+	}	
 </style>

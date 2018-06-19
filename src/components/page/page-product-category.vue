@@ -83,18 +83,13 @@
        				pageMessage:{
        					idName:'id'
        				},
-//     				linkTo:[
-//	       				{
-//	       					name:'审核',
-//	       					src:'/lookClient',
-//	       					iconClass:'table-icon iconfont icon-el-icon-karakal-slideBar-shenhe'
-//	       				},
-//	       				{
-//	       					name:'修改',
-//	       					src:'/client/modify',
-//	       					iconClass:'table-icon iconfont icon-el-icon-karakal-xiugai'
-//	       				},
-//     				],
+       				linkTo:[
+	       				{
+	       					name:'属性列表',
+	       					src:'/attributeList',
+	       					iconClass:'table-icon iconfont icon-el-icon-karakal-liebiao'
+	       				},
+       				],
 					btn:[
 						{
 				       		title:'查看下级',
@@ -103,10 +98,19 @@
 				       		urlSearch:'productId',
 				       		type:"lookChildCategory",
 				       		src:"/ucenter/admin/v1/product/audit",
-				       		classType:'danger',
 				       		style:'icon',
 				       		iconClass:'table-icon iconfont icon-el-icon-karakal-slideBar-xiaji'
 				       },
+//				       {
+//				       		title:'属性列表',
+//				       		privateName:'lookeCategoryList',
+//				       		idName:'id',
+//				       		urlSearch:'productId',
+//				       		type:"lookeCategoryList",
+//				       		src:"/ucenter/admin/v1/product/audit",
+//				       		style:'icon',
+//				       		iconClass:'table-icon iconfont icon-el-icon-karakal-liebiao'
+//				       },
 					],
        				dialog:[
        					{
@@ -173,23 +177,6 @@
        	}
        },
        created(){
-//     	获取分类信息
-//			getcateGory('ucenter/admin/v1/product/category'){
-//				this.$axios.get(src,this.getMyWeb.axios.aAjaxConfig).then((res)=>{
-//					 if(res.data.state === '000000'){
-//					 	var data = res.data.data.list;
-//						this.listData =  data;
-//						this.pageinationMessage.total = res.data.data.total;
-//						this.pageinationMessage.pageSize = res.data.data.pageSize;
-//						this.pageinationMessage.pageNum = res.data.data.pageNum;
-//					 }else{
-//					 	this.$message.error(res.data.data);
-//					 }
-//		      	}).catch((err)=>{
-////		                    this.$message.error('接口请求出错');
-//		                    console.error(err);
-//		        })
-//			},
        },
        methods:{
 //     	sendFrom(a){
@@ -201,7 +188,6 @@
  				this.tableSelect[0] = res.productCategory;
  			}
 			if(res.productCategoryParent){
-//				this.parentMessage = res.productCategoryParent;
 				this.parentName = res.productCategoryParent.name;
 				var id = res.productCategoryParent.id
 				var name = res.productCategoryParent.name;
@@ -230,7 +216,6 @@
  		},
  		//			返回
 		backPage(){
-				console.log(this.parents.length);
 				if(this.parents.length>0){
 					var len = this.parents.length;
 					var index = this.parents.length - 2;
@@ -241,7 +226,6 @@
 						this.parentName ="初始类"
 					}
 					this.parentId.time = new Date();
-//					his.$emit('tableRes',{back:this.pageMessage});\
 					var start = len-1;
 					this.parents.splice(start,1);
 					this.parentNames.splice(start,1);

@@ -9,6 +9,7 @@ import productList from '@/components/page/page-product-list.vue'
 import productCategory from '@/components/page/page-product-category.vue'
 import orderList from '@/components/page/page-order-list.vue'
 import merchantList from '@/components/page/page-merchant-list.vue'
+import attributeList from '@/components/page/page-category-attribute.vue'
 
 import applicationMessage from '@/components/from/application-message.vue'
 import userMessage from '@/components/from/user-message.vue'
@@ -98,6 +99,10 @@ export default new Router({
         {
           path: '/merchantList',
           component: merchantList
+        },
+        {
+          path: '/attributeList',
+          component: attributeList
         }
       ]
     }

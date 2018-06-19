@@ -100,11 +100,14 @@
 		     <el-table-column label="操作" v-if="message.listBtnConfig">
 		      <template slot-scope="scope">
 		      	<div style="display: inline-block;" v-if="message.listBtnConfig.btn">
-		      		<div v-for="(item, index) in message.listBtnConfig.btn" :key="index">
-			      			<div v-if="item.privateName =='productLookChild' && scope.row.hasChild">
-			      				<i :class="item.iconClass" :title="item.title" v-on:click="btn(item.privateName,scope.row)" style="cursor: pointer;padding-left: 10px;"></i>
-			      			</div>
-			      	</div>
+		      		<span v-for="(item, index) in message.listBtnConfig.btn" :key="index">
+			      			<span v-if="item.privateName =='productLookChild' && scope.row.hasChild">
+			      				<i :class="item.iconClass" :title="item.title" v-on:click="btn(item.privateName,scope.row)" style="cursor: pointer;padding-left: 5px;"></i>
+			      			</span>
+			      			<!--<span v-if="item.privateName =='lookeCategoryList' && scope.row.hasChild">
+			      				<i :class="item.iconClass" :title="item.title" v-on:click="btn(item.privateName,scope.row)" style="cursor: pointer;padding-left: 5px;"></i>
+			      			</span>-->
+			      	</span>
 		      	</div>
 		      	<div style="display: inline-block;" v-if="message.listBtnConfig.linkTo">
 			      		<router-link v-for="(item, index) in message.listBtnConfig.linkTo" :key="index" :to="src(item.src,scope.row[message.listBtnConfig.pageMessage.idName])" style="margin: 0 5px;">
@@ -125,7 +128,7 @@
 		  	 <div style="position: absolute;left: 50%;transform: translate(-50%,0);">
 		  	 	 <div style="margin-top: 30px;position: relative;height: 50px;width: 1000px;">
 				    <v-pagination v-on:pageChange="pagination" :message="pageinationMessage"></v-pagination>
-		<!--		    <span style="cursor: pointer;position: absolute;right: 130px;top: -11px;color: #1888f7;" v-on:click="backPage()">返回</span>-->
+			<!--	    <span style="cursor: pointer;position: absolute;right: 130px;top: -11px;color: #1888f7;" v-on:click="backPage()">返回</span>-->
 				  </div>
 		  	 </div>
 		  </div>
@@ -158,36 +161,14 @@
         	size:20,
         	total:26
         },
-        pageMessage:{}
-        }
+        pageMessage:{},
+        oldPageMessage:{}
+      }
      },
      created(){
      	 this.pageMessage= this.message.urlMessage;
 		 this.getList(this.message.listUrl)
     	},
-//   updated(){
-//   	if(this.message.update && this.message.update != this.update){
-//   		this.update = this.message.update;
-//   		this.getList(this.message.listUrl)
-//   	}
-//   	if(Object.keys(this.message.searchMessage).length != 0){
-//   		if(this.closeUp == this.message.searchMessage) return;
-//			this.search(this.message.listUrl);
-//			this.closeUp = this.message.searchMessage
-//   	}
-//   	if(Object.keys(this.message.selectMessage).length != 0){
-//   		if(this.closeUp == this.message.selectMessage) return;
-//			this.select(this.message.listUrl);
-//			this.closeUp = this.message.selectMessage;
-//   	}
-//   },
-//	mounted: function () {
-//		  		this.$nextTick(function () {
-//					setTimeout(()=>{
-//						
-//					})
-//				  })
-//		},
      watch: {
 		    searchMessage: function (){
 		      //每当str的值改变则发送事件update:word , 并且把值传过去\
@@ -223,14 +204,6 @@
 		        },
 		    handleSelectionChange(val) {
 		        this.multipleSelection = val;
-//		        var ids = [];
-//		        for(let i = 0 ;i<this.multipleSelection.length;i++){
-//		        	for(let index in this.multipleSelection[i]){
-//		        		if(index == this.message.listBtnConfig.pageMessage.idName){
-//		        			ids.push(this.multipleSelection[i][index]);
-//		        		}
-//		        	}
-//		        }
 		        this.$emit('tableRes',this.multipleSelection);
 		        },
 		    tableRowClassName({row, rowIndex}) {
@@ -252,7 +225,12 @@
 				var content=this.pageMessage;
 				this.$axios.get(src, {params:content},this.getMyWeb.axios.aAjaxConfig).then((res)=>{
 					 if(res.data.state === '000000'){
-					 	var data = res.data.data.list;
+					 	var data;
+					 	if(this.message.tableName === 'attribute'){
+					 		data = res.data.data
+					 	}else{
+					 		data = res.data.data.list
+					 	}
 						this.listData =  data;
 //						this.listData.level = 'mmp'
 						this.getParentID()
@@ -275,6 +253,13 @@
 					this.$emit('tableRes',{productCategoryParent:row});
 					this.getList(this.message.listUrl);
 				}
+//				if(name == 'lookeCategoryList'){
+//					console.log(row);
+//					this.pageMessage = {
+//     				  categoryId:row.id,
+//     			   },
+//				   this.getList('/ucenter/admin/v1/product/attr/listProductAttrs');
+//				}
 			},
 //			搜索
 			search(src){
