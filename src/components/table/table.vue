@@ -76,6 +76,10 @@
 		        	<span v-else-if="props.row[item.prop] == 1 ">女</span>
 		        	<span v-else>保密</span>
 		        </span>
+		        <span v-else-if="item.prop == 'required' && item.lable =='是否必填写'">
+		        	<span v-if="props.row[item.prop] == 0 ">非必选</span>
+		        	<span v-else-if="props.row[item.prop] == 1 ">必选</span>
+		        </span>
 		        <span v-else-if="!props.row[item.prop] && props.row[item.prop] != 0">
 		        	————
 		        </span>
@@ -124,7 +128,7 @@
 		      </template>
     		</el-table-column>
 		  </el-table>
-		  <div style="position: relative;">
+		  <div style="position: relative;" v-if="pagenationState">
 		  	 <div style="position: absolute;left: 50%;transform: translate(-50%,0);">
 		  	 	 <div style="margin-top: 30px;position: relative;height: 50px;width: 1000px;">
 				    <v-pagination v-on:pageChange="pagination" :message="pageinationMessage"></v-pagination>
@@ -154,6 +158,7 @@
         MessageUpdate:'',
         oldPage:[],
         backStatu:true,
+        pagenationState: true,
         pageinationMessage:{
         	pageNum:1,
         	pageSize:20,
@@ -168,6 +173,12 @@
      created(){
      	 this.pageMessage= this.message.urlMessage;
 		 this.getList(this.message.listUrl)
+		 if(this.message.tableName === 'attribute'){
+		 	this.pagenationState = false;
+		 }else{
+		 	this.pagenationState = true;
+		 }
+		 console.log(this.message.listBtnConfig.pageMessage.idName)
     	},
      watch: {
 		    searchMessage: function (){
@@ -253,13 +264,6 @@
 					this.$emit('tableRes',{productCategoryParent:row});
 					this.getList(this.message.listUrl);
 				}
-//				if(name == 'lookeCategoryList'){
-//					console.log(row);
-//					this.pageMessage = {
-//     				  categoryId:row.id,
-//     			   },
-//				   this.getList('/ucenter/admin/v1/product/attr/listProductAttrs');
-//				}
 			},
 //			搜索
 			search(src){
@@ -296,6 +300,7 @@
        		},
 //     		按页查询
        		pagination(data){
+       			console.log('mmp')
        			this.pageMessage.pageIndex = data.pageIndex;
        			this.pageMessage.pageSize = data.pageSize;
        			this.getList(this.message.listUrl)
@@ -329,8 +334,10 @@
 			},
 //			页面创建完成获取parentID(只给商品分类列表用)
 			getParentID(){
-				var data = this.listData[0];
-				this.$emit('tableRes',{productCategory:data});
+				if(this.message.tableName === 'productCategory'){
+					var data = this.listData[0];
+				    this.$emit('tableRes',{productCategory:data});
+				}
 			}
 	    },
 	}

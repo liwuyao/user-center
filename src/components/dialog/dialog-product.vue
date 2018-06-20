@@ -175,14 +175,15 @@
 		    <el-button type="primary" @click="ableMessage()">确 定</el-button>
 		  </span>
 		</el-dialog>
-<!--		新增属性-->
+<!--		新增/编辑属性-->
 		<el-dialog
 		  :title="config.title"
 		  :visible.sync="dialogAttribute"
 		  width="50%"
 		  >
-		  <el-form ref="attributeMessage" :model="attributeMessage" label-width="150px" label-position="left">
-		  	  <el-form-item label="属性名">
+		  <div style="padding: 0 35px;">
+		  	<el-form ref="attributeMessage" :model="attributeMessage" :rules="attributeRule" label-width="150px" label-position="left">
+		  	  <el-form-item label="属性名" prop="name">
 			    <el-input v-model="attributeMessage.name"></el-input>
 			  </el-form-item>
 			  <el-form-item label="是否必选">
@@ -194,12 +195,12 @@
   			  <el-form-item label="属性值可选值列表">
   			  	<div style="overflow: hidden;">
   			  		<div class="attribute-value" v-for="item in attributeValues">
-  			  			{{item}}
+  			  			{{item.value}}
   			  			<i class="el-icon-close attribute-value-delete" v-on:click="deleteAttribute(item)"></i>
   			  		</div>
   			  	</div>
 			    <div>
-			    	<el-input v-model="attributeMessage.attrValues" style="width: 80%;"></el-input>
+			    	<el-input v-model="attributeMessage.attrValues" style="width: 74%;"></el-input>
 			    	<el-button type="primary" v-on:click="addAttribute()">添加</el-button>
 			    </div>
 			  </el-form-item>
@@ -207,10 +208,11 @@
 			    <el-input v-model="attributeMessage.weight"></el-input>
 			    <p style="color: gray;">数值越高显示越前面</p>
 			  </el-form-item>
-		  </el-form>
+		    </el-form>
+		  </div>
 		  <span slot="footer" class="dialog-footer">
 		    <el-button @click="dialogAttribute = false">取 消</el-button>
-		    <el-button type="primary" @click="ableMessage()">确 定</el-button>
+		    <el-button type="primary" @click="saveAttribute('attributeMessage')">确 定</el-button>
 		  </span>
 		</el-dialog>
 	</div>
@@ -249,15 +251,15 @@
 	      	examineRecordList:[],
 	      	examineTable:[
 	      		{
-	      			label:'审核人',
-	      			prop:'auditUserId'
+	      			label:'属性名称',
+	      			prop:'name'
 	      		},
 	      		{
-	      			label:'提交时间',
+	      			label:'创建时间',
 	      			prop:'ctime'
 	      		},
 	      		{
-	      			label:'审核时间',
+	      			label:'',
 	      			prop:'auditTime'
 	      		},
 	      		{
@@ -285,11 +287,16 @@
 		          weight: [
 		            { required: true, message: '序号不能为空', trigger: 'blur' },
 		          ]
+	      	},
+	      	attributeRule: {
+		          name: [
+		            { required: true, message: '属性名不能为空', trigger: 'blur' },
+		            {min: 2, max: 50, message: '属性名为2-50个字', trigger: 'blur' },
+		          ]
 	      	}
 	      }
 	   },
 	   created(){
-	   	this.attributeId = this.message.id
 	   },
 	   watch: {
 //			var a = this.openDialog;
@@ -324,7 +331,30 @@
 		     	this.dialogDisable = true;
 		     }
 		     if(this.config.type == 'productCategoryAttribute'){
+		     	setTimeout(()=>{
+		     		this.$refs['attributeMessage'].resetFields()
+		     	})
 		     	this.dialogAttribute = true;
+		        this.attributeId = this.config.attributeCategoryId;
+		       if(!Array.isArray(this.message)){
+		       		this.$axios.get('/ucenter/admin/v1/product/attr/' + this.message.id,this.getMyWeb.axios.aAjaxConfig).then((res)=>{
+		       				console.log(res);
+		       				if(res.data.state === '000000'){
+		       					this.attributeValues = res.data.data.attrValues;
+		       				}
+		       		})
+		       		if(this.message.name){
+		       			for(let i in this.attributeMessage){
+		       				if(i !== 'attrValues'){
+		       					if(i === 'required'){
+		       						this.attributeMessage[i] = String(this.message[i]);
+		       					}else{
+		       						this.attributeMessage[i] = this.message[i];
+		       					}
+		       				}
+		       			}
+		       		}
+		       }
 		     }
 		    }
 		},
@@ -373,25 +403,29 @@
 			//			新增分类
 			add(formName){
 				this.$refs[formName].validate((valid) => {
-					this.addCategory.parentId = this.tableSelect[0].parentId;
-					var content = this.addCategory;
-					var send = this.Qs.stringify(content)
-					this.$axios.post(this.config.src,send,this.getMyWeb.axios.aAjaxConfig).then((res)=>{
-						if(res.data.state === "000000"){
-							this.dialogAddCategoryNext = false;
-							this.dialogAddCategory = false;
-							this.returnMessage('增加成功');
-							this.$message({
-						          message: res.data.message,
-						          type: 'success'
-						        });
+					if(valid){
+						this.addCategory.parentId = this.tableSelect[0].parentId;
+						var content = this.addCategory;
+						var send = this.Qs.stringify(content)
+						this.$axios.post(this.config.src,send,this.getMyWeb.axios.aAjaxConfig).then((res)=>{
+							if(res.data.state === "000000"){
+								this.dialogAddCategoryNext = false;
+								this.dialogAddCategory = false;
+								this.returnMessage('增加成功');
+								this.$message({
+							          message: res.data.message,
+							          type: 'success'
+							        });
+							}else{
+								this.$message.error(res.data.message);
+							}
+						    }).catch((err)=>{
+								this.$message.error('接口请求出错');
+								console.error(err);
+						    })
 						}else{
-							this.$message.error(res.data.message);
+							this.$message.error('表单格式填写不对');
 						}
-					    }).catch((err)=>{
-							this.$message.error('接口请求出错');
-							console.error(err);
-					    })
 					});
 				},
 //			获取审核列表
@@ -470,17 +504,62 @@
 			                    console.error(err);
 			    })
 			},
-//			新增属性值
+//			新增属性值按钮
 			addAttribute(){
 				if(this.attributeMessage.attrValues){
-					this.attributeValues.push(this.attributeMessage.attrValues);
+					let obj = {
+						value: this.attributeMessage.attrValues,
+					}
+					this.attributeValues.push(obj);
 					this.attributeMessage.attrValues = '';
 				}
-			},
-//			删除属性值
+			},			
+//			删除属性值按钮
 			deleteAttribute(item){
 				let index = this.attributeValues.indexOf(item);
 					this.attributeValues.splice(index,1);
+			},
+//			保存属性接口
+			saveAttribute(formName){
+				console.log(formName);
+				this.$refs[formName].validate((valid) => {
+					if(valid){
+						 this.attributeMessage.categoryId = this.attributeId;
+						 let content = {}
+						 let values;
+						 	 for(let i = 0;i<this.attributeValues.length;i++){
+						 	 	let index = 'attrValues[' + i +'].value'
+						 	 	content[index] = this.attributeValues[i].value;
+						 	 	if(this.attributeValues[i].id){
+						 	 		let index2 = 'attrValues[' + i +'].id'
+						 	 		content[index2] = this.attributeValues[i].id;
+						 	 	}
+						 	 }
+						 	 for(let i in this.attributeMessage){
+						 	 	if(i !== 'attrValues'){
+						 	 		content[i] = this.attributeMessage[i]
+						 	 	}
+						 	 }
+						 	console.log(content)
+				    		var send = this.Qs.stringify(content);
+							this.$axios.post('/ucenter/admin/v1/product/attr/saveOrUpdateProductAttrs',send,this.getMyWeb.axios.aAjaxConfig).then((res)=>{
+							        if(res.data.state === '000000'){
+							        	this.returnMessage('属性保存成功');
+							        	this.$message({
+								          message: res.data.message,
+								          type: 'success'
+								        });
+							        	this.dialogAttribute = false;
+							        }else{
+							        	this.$message.error(res.data.message);
+							        }
+					      	}).catch((err)=>{
+					            this.$message.error('接口出错');
+					    })
+					}else{
+						this.$message.error('表单格式不对');
+					}
+				})
 			},
 //			返送信息
 			returnMessage(item){

@@ -1,7 +1,7 @@
 <template>
-	<div class="application">
+	<div class="category-attribute">
 		<div class="application-content">
-			<div style="overflow: hidden;padding: 30px 0;background: #eff4f7;">
+			<div style="overflow: hidden;padding: 30px 0;background: #eff4f7;position: relative;">
 				<!--<div class="btn-box">
 					<router-link to='client/addClient'  style="display:block;">
 						<v-button :message="btnMessage.add"></v-button>	  	
@@ -12,19 +12,22 @@
 					<i :class="btnMessage.add.icon"></i>
 					新增
 					</el-button>
-					<v-dialog :config="btnMessage.add.formConfig" class="page-dialog" :tableSelect='tableSelect' :message="dailogMessage" v-on:send="dialogRes"></v-dialog>
+					<v-dialog :config="btnMessage.add.formConfig" class="page-dialog" :tableSelect='tableSelect' :message="tableSelect" v-on:send="dialogRes"></v-dialog>
 				</div>
 				<div class="btn-box">
 					<v-button :message="btnMessage.delete" style="cursor: pointer;"></v-button>
 					<v-dialog :config="btnMessage.delete.formConfig" class="page-dialog" :tableSelect='tableSelect' v-on:send="dialogRes"></v-dialog>
 				</div>
+				<div class="back-parent" v-on:click="backPage()">
+					返回上一级
+				</div>
 			</div>
-			<div style="width: 100%;overflow: hidden;background: #eff4f7;padding-bottom: 10px;">
+			<!--<div style="width: 100%;overflow: hidden;background: #eff4f7;padding-bottom: 10px;">
 				<select-button :message="selectMessage" :placeholder="'应用状态'" :defaultVal="selectDefaultVal" class="application-select" v-on:select="selectRes"></select-button>
 				<div style="display:inline-block;margin-left:420px;">
 					<search-bar :name="'condition'" v-on:search="searchRes" :placeholder="'输入clientkey查询'"></search-bar>
 				</div>
-			</div>
+			</div>-->
 			<div style="padding-bottom:50px ;overflow: hidden;">
 				<v-table :message='tableData' v-on:tableRes="tableRes" :searchMessage="tableData.searchMessage" :selectMessage="tableData.selectMessage" :updateMessage="tableData.update"></v-table>
 			</div>
@@ -47,9 +50,9 @@
        data(){
        	return{
        		tableSelect:[],
-       		dailogMessage:{
-       			id:''
-       		},
+//     		dailogMessage:{
+//     			id:''
+//     		},
        		tableData:{
        			tableName:'attribute',
        			selectShow:true,
@@ -66,42 +69,51 @@
 			      			prop:'name'
 			      		},
 			      		{
-			      			lable:'创建时间',
-			      			prop:'ctime'
+			      			lable:'分类名称',
+			      			prop:'categoryName'
+			      		},
+			      		{
+			      			lable:'排列序号',
+			      			prop:'weight'
 			      		},
 			      		{
 			      			lable:'是否必填写',
 			      			prop:'required'
 			      		},
 			      		{
-			      			lable:'排列序号',
-			      			prop:'weight'
+			      			lable:'描述',
+			      			prop:'remark'
+			      		},
+			      		{
+			      			lable:'创建时间',
+			      			prop:'ctime'
 			      		},
        			],
        			listBtnConfig:{
        				pageMessage:{
-       					idName:'categoryId'
+       					idName:'id'
        				},
-       				linkTo:[
-	       				{
-	       					name:'查看',
-	       					src:'/lookClient',
-	       					iconClass:'table-icon iconfont icon-el-icon-karakal-chakan'
-	       				},
-	       				{
-	       					name:'修改',
-	       					src:'/client/modify',
-	       					iconClass:'table-icon iconfont icon-el-icon-karakal-xiugai'
-	       				},
-       				],
        				dialog:[
+       				    {
+				       		name:"name",
+				       		title:'编辑属性',
+				       		privateName:'product',
+				       		idName:'id',
+				       		urlSearch:'id',
+				       		attributeCategoryId:'',
+				       		type:"productCategoryAttribute",
+				       		src:"/ucenter/admin/v1/product/category",
+				       		classType:'danger',
+				       		style:'icon',
+				       		iconClass:'table-icon iconfont icon-el-icon-karakal-xiugai'
+				        },
 				       	{
-				       		name:"clientName",
+				       		name:"name",
 				       		title:'删除',
-				       		idName:'clientId',
-				       		urlSearch:'clientIds',
+				       		idName:'id',
+				       		urlSearch:'',
 				       		type:"delete",
-				       		src:"/ucenter/admin/client",
+				       		src:"/ucenter/admin/v1/product/attr",
 				       		classType:'danger',
 				       		style:'icon',
 				       		iconClass:'table-icon iconfont icon-el-icon-karakal-iconfontshanchu5'
@@ -118,6 +130,7 @@
 				       		name:"name",
 				       		title:'新增属性',
 				       		privateName:'product',
+				       		attributeCategoryId:'',
 				       		idName:'id',
 				       		urlSearch:'productId',
 				       		type:"productCategoryAttribute",
@@ -129,10 +142,10 @@
 		       		type:"delete",
 		       		icon:"button-icon iconfont icon-el-icon-karakal-iconfontshanchu5",
 		       		formConfig:{
-		       			idNames:'clientId',
-		       			urlSearch:'clientIds',
-		       			src:"/ucenter/admin/client",
-		       			name:"clientName",
+		       			idName:'id',
+		       			urlSearch:'',
+		       			src:"/ucenter/admin/v1/product/attr",
+		       			name:"name",
 		       			type:"delete",
 		       			classType:'',
 		       			style:''
@@ -155,8 +168,10 @@
        	}
        },
        created(){
-       		this.dailogMessage.id = this.$route.query.id;
+//     		this.dailogMessage.id = this.$route.query.id;
        		this.tableData.urlMessage.categoryId = this.$route.query.id;
+       		this.btnMessage.add.formConfig.attributeCategoryId = this.$route.query.id;
+       		this.tableData.listBtnConfig.dialog[0].attributeCategoryId = this.$route.query.id;
        },
        methods:{
 //     	sendFrom(a){
@@ -164,42 +179,7 @@
 //     	},
 //		列表信息返回
  		tableRes(data){
- 			if(data){
  				this.tableSelect = data;
-// 			重置select值
-//			this.selectDefaultVal = 
- 			var able = [];
- 			var disable = [];
- 			if(data.length == 0){
- 				this.btnMessage.disable.disable = true;
- 				this.btnMessage.able.disable = true;
- 			}
-	 			for(let i = 0;i<data.length;i++){
-	 			for(let index in data[i]){
-	   					if(data[i].state == 0){
-	   						disable.push(data[i]);
-	   					};
-	   					if(data[i].state == 1){
-	   						able.push(data[i]);
-	   					};
-	   					if(disable.length>0 && able.length>0){
-	   						this.btnMessage.disable.disable = true;
-	   						this.btnMessage.able.disable = true;
-	   					}else{
-	   						if(disable.length != 0){
-	   							this.btnMessage.disable.disable = false;
-	   						}else{
-	   							this.btnMessage.disable.disable = true;
-		   					};
-		   					if(able.length != 0){
-		   							this.btnMessage.able.disable = false;
-		   						}else{
-		   							this.btnMessage.able.disable = true;
-		   					};
-	   					}
-	   				}
-	 			}
- 			}
  		},
 // 		弹框信息返回
  		dialogRes(data){
@@ -221,19 +201,17 @@
 						state:data
 					};
 				}
-			}
-	 	},
-//	 	列表后退
-		backList(data){
-			console.log(data);
-			this.selectDefaultVal = data.state;
+		},
+		backPage(){
+			this.$router.go(-1)
 		}
+	},
        
     }
 </script>
 
 <style scoped>
-	.application{
+	.category-attribute{
 		display: flex;
 		flex-direction: column;
 		height: 100%;
@@ -291,5 +269,16 @@
 	.btnActive:hover .btn-elm-box{
 				background: #1888f7 !important;
 				color: white;
+	}
+	.category-attribute .back-parent{
+		cursor: pointer;
+/*		color: #7db4f3 !important;*/
+		color: #407DC0;
+		position: absolute;
+		top:55px;
+		right: 157px;
+	}
+	.category-attribute .back-parent:hover{
+		color: #7db4f3;
 	}
 </style>

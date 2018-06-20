@@ -186,8 +186,7 @@
 		methods:{
 			open2(){
 //				公用弹框
-				console.log(this.id);
-				if(!this.id && this.tableSelect.length == 0 && !this.config.privateName){
+ 				if(!this.id && this.tableSelect.length == 0 && !this.config.privateName){
 					this.$message.error('请选择要操作对象') 
 				}else if(!this.id && this.tableSelect.length != 0){
 					var ids = [];
@@ -225,6 +224,7 @@
 //			删除
 			deleteMessage(){
 				var content;
+				console.log(this.id)
 				if(this.id){
 						if(this.config.urlSearch){
 							content  = '?'+this.config.urlSearch+'=' + this.id
@@ -232,7 +232,11 @@
 							content = '/'+this.id;
 						}
 				}else{
-					content  = '?'+this.config.urlSearch+'=' + this.ids.join()
+					if(this.config.urlSearch){
+						content  = '?'+this.config.urlSearch+'=' + this.ids.join()
+					}else{
+						content = '/'+ this.ids.join()
+					}
 				}
 				var _url = this.config.src + content;
 				this.$axios.delete(_url,this.getMyWeb.axios.aAjaxConfig).then((res)=>{
