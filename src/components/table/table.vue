@@ -178,7 +178,6 @@
 		 }else{
 		 	this.pagenationState = true;
 		 }
-		 console.log(this.message.listBtnConfig.pageMessage.idName)
     	},
      watch: {
 		    searchMessage: function (){
@@ -248,6 +247,9 @@
 						this.pageinationMessage.total = res.data.data.total;
 						this.pageinationMessage.pageSize = res.data.data.pageSize;
 						this.pageinationMessage.pageNum = res.data.data.pageNum;
+						if(this.message.tableName === 'productCategory'){
+							this.$emit('tableRes',{productCategoryParent:data[0]});
+						}
 					 }else{
 					 	this.$message.error(res.data.message);
 					 }
@@ -290,7 +292,6 @@
 				this.getList(src);
 			},
 	        dialogMessage(a){
-       				console.log(a.b);
        				this.getList(this.message.listUrl);
        		},
 //     		_url拼接
@@ -300,7 +301,6 @@
        		},
 //     		按页查询
        		pagination(data){
-       			console.log('mmp')
        			this.pageMessage.pageIndex = data.pageIndex;
        			this.pageMessage.pageSize = data.pageSize;
        			this.getList(this.message.listUrl)

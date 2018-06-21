@@ -48,6 +48,7 @@
        		},
        		parents:[],
        		tableData:{
+       			tableName:'productCategory',
        			selectShow:false,
        			update:new Date(),
        			searchMessage:{},

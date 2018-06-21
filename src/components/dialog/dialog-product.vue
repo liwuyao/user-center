@@ -194,19 +194,24 @@
   			  </el-form-item>
   			  <el-form-item label="属性值可选值列表">
   			  	<div style="overflow: hidden;">
-  			  		<div class="attribute-value" v-for="item in attributeValues">
-  			  			{{item.value}}
-  			  			<i class="el-icon-close attribute-value-delete" v-on:click="deleteAttribute(item)"></i>
+  			  		<div class="attribute-value" v-for="item in attributeValues" draggable="true">
+  			  		<!--	{{item.value}}-->
+  			  			<input type="text" :value="item.value" class="attribute-value-text" v-on:input="computeWidth(item,$event)" v-on:blur="attriInputShow ='';attrValueUpdate = true"/>
+  			  			<div class="attriShow" v-if="attriInputShow !== item" v-on:click="attriInputShow = item;attrValueUpdate = true"></div>
+  			  			<i class="el-icon-close attribute-value-delete" v-on:click="deleteAttribute(item,$event)"></i>
   			  		</div>
   			  	</div>
 			    <div>
-			    	<el-input v-model="attributeMessage.attrValues" style="width: 74%;"></el-input>
-			    	<el-button type="primary" v-on:click="addAttribute()">添加</el-button>
+			    	<el-input v-model="attributeMessage.attrValues" style="width: 74%;" id="attrValueAdd"></el-input>
+			    	<div v-on:click="addAttribute()" v-on:mousedown="attrValueUpdate = true" class="attri-value-add">添加</div>
 			    </div>
 			  </el-form-item>
 			  <el-form-item label="属性排序">
 			    <el-input v-model="attributeMessage.weight"></el-input>
 			    <p style="color: gray;">数值越高显示越前面</p>
+			  </el-form-item>
+			  <el-form-item label="属性描述">
+			    <el-input v-model="attributeMessage.remark"></el-input>
 			  </el-form-item>
 		    </el-form>
 		  </div>
@@ -245,9 +250,15 @@
 	      		name:'',
 	      		required: '',
 	      		weight: '',
-	      		attrValues: '',		
+	      		attrValues: '',	
+	      		id: '',
+	      		remark: ''
 	      	},
 	      	attributeValues:[],
+	      	attributeAddbtn:'添加',
+	      	attriInputShow: '',
+	      	attrChoose: '',
+	      	attrValueUpdate: false,
 	      	examineRecordList:[],
 	      	examineTable:[
 	      		{
@@ -271,7 +282,7 @@
 	      			prop:'auditNote'
 	      		},
 	      	],
-	      	attributeId:'我日',
+	      	attributeId:'',
 	      	rules: {
 		          operation: [
 		            { required: true, message: '请选择', trigger: 'blur' },
@@ -298,6 +309,28 @@
 	   },
 	   created(){
 	   },
+	   updated(){
+	   	if(this.attrValueUpdate){
+	   	    let elms = document.querySelectorAll('.attribute-value-text');
+		    for(let i =0;i<elms.length;i++){
+		    	let val = elms[i].value;
+				let num = val.length;
+				let width = num * 15;
+			    elms[i].style.width = width + 'px';
+			    let children = elms[i].parentNode.children;
+			    	for(let j =0;j<children.length;j++){
+			    		if(children[j].className === 'attriShow'){
+			    			 children[j].style.width = width + 'px';
+			    		}
+			    	}
+		    }
+		    this.attrValueUpdate = false;
+	   	}
+	   },
+	   mounted: function () {
+		  this.$nextTick(function () {
+		  })
+		},
 	   watch: {
 //			var a = this.openDialog;
 		    change: function (){
@@ -331,29 +364,59 @@
 		     	this.dialogDisable = true;
 		     }
 		     if(this.config.type == 'productCategoryAttribute'){
-		     	setTimeout(()=>{
-		     		this.$refs['attributeMessage'].resetFields()
-		     	})
 		     	this.dialogAttribute = true;
+		     	setTimeout(()=>{
+//		     		this.$refs['attributeMessage'].resetFields()
+		     		this.attributeMessage = {
+			      		categoryId: '',
+			      		name:'',
+			      		required: '',
+			      		weight: '',
+			      		attrValues: '',	
+			      		id: '',
+			      		remark: ''
+			      	}
+		     		this.attributeValues = [];
+		     		let elm = document.getElementById('attrValueAdd');
+			  		elm.onkeydown=(e)=>{
+			   			var event = event || e;
+			   			if(event.keyCode == 13){
+			   				this.addAttribute();
+			   				this.attrValueUpdate = true;
+			   			}
+			   		}
+		     	})
 		        this.attributeId = this.config.attributeCategoryId;
 		       if(!Array.isArray(this.message)){
 		       		this.$axios.get('/ucenter/admin/v1/product/attr/' + this.message.id,this.getMyWeb.axios.aAjaxConfig).then((res)=>{
-		       				console.log(res);
 		       				if(res.data.state === '000000'){
 		       					this.attributeValues = res.data.data.attrValues;
+		       					setTimeout(()=>{
+		       						 let elms = document.querySelectorAll('.attribute-value-text');
+		    	                        for(let i =0;i<elms.length;i++){
+		    	                        	let val = elms[i].value;
+											let num = val.length;
+										    let width = num * 15;
+										    elms[i].style.width = width + 'px';
+										      let children = elms[i].parentNode.children;
+										    	for(let j =0;j<children.length;j++){
+										    		if(children[j].className === 'attriShow'){
+										    			 children[j].style.width = width + 'px';
+										    		}
+										    	}
+		    	                        }
+		       					},100)
+		       					for(let i in this.attributeMessage){
+				       				if(i !== 'attrValues'){
+				       					if(i === 'required'){
+				       						this.attributeMessage[i] = String(res.data.data[i]);
+				       					}else{
+				       						this.attributeMessage[i] = res.data.data[i];
+				       					}
+				       				}
+				       			}
 		       				}
 		       		})
-		       		if(this.message.name){
-		       			for(let i in this.attributeMessage){
-		       				if(i !== 'attrValues'){
-		       					if(i === 'required'){
-		       						this.attributeMessage[i] = String(this.message[i]);
-		       					}else{
-		       						this.attributeMessage[i] = this.message[i];
-		       					}
-		       				}
-		       			}
-		       		}
 		       }
 		     }
 		    }
@@ -361,43 +424,51 @@
 		methods:{
 			examin(formName){
 				this.$refs[formName].validate((valid) => {
-				this.examineMessage.productId = this.id;
-				var content = this.examineMessage;
-				var send = this.Qs.stringify(content);
-					this.$axios.put(this.config.src+'?'+send,this.getMyWeb.axios.aAjaxConfig).then((res)=>{
-						if(res.data.state == '000000'){
-							this.dialogExamine = false
-							this.returnMessage('完成审核');
-						}else{
-							this.$message.error(res.data.message);
-						}
-					}).catch((err)=>{
-				                    this.$message.error('接口请求出错');
-				    })
+					if(valid){
+						this.examineMessage.productId = this.id;
+						var content = this.examineMessage;
+						var send = this.Qs.stringify(content);
+							this.$axios.put(this.config.src+'?'+send,this.getMyWeb.axios.aAjaxConfig).then((res)=>{
+								if(res.data.state == '000000'){
+									this.dialogExamine = false
+									this.returnMessage('完成审核');
+								}else{
+									this.$message.error(res.data.message);
+								}
+							}).catch((err)=>{
+						            this.$message.error('接口请求出错');
+						    })
+					}else{
+						this.$message.error('表单填写不对');
+					}
 				});
 			},
 //			新增分类
 			addProductCategory(formName){
 				this.$refs[formName].validate((valid) => {
-					this.addCategory.parentId = this.message.id;
-					var content = this.addCategory;
-					var send = this.Qs.stringify(content)
-					this.$axios.post(this.config.src,send,this.getMyWeb.axios.aAjaxConfig).then((res)=>{
-						if(res.data.state === "000000"){
-							this.dialogAddCategoryNext = false;
-							this.dialogAddCategory = false;
-							this.returnMessage('增加成功');
-							this.$message({
-						          message: res.data.message,
-						          type: 'success'
-						        });
+						if(valid){
+							this.addCategory.parentId = this.message.id;
+							var content = this.addCategory;
+							var send = this.Qs.stringify(content)
+							this.$axios.post(this.config.src,send,this.getMyWeb.axios.aAjaxConfig).then((res)=>{
+								if(res.data.state === "000000"){
+									this.dialogAddCategoryNext = false;
+									this.dialogAddCategory = false;
+									this.returnMessage('增加成功');
+									this.$message({
+								          message: res.data.message,
+								          type: 'success'
+								        });
+								}else{
+									this.$message.error(res.data.message);
+								}
+							    }).catch((err)=>{
+									this.$message.error('接口请求出错');
+									console.error(err);
+							    })
 						}else{
-							this.$message.error(res.data.message);
+							this.$message.error('表单填写不对');
 						}
-					    }).catch((err)=>{
-							this.$message.error('接口请求出错');
-							console.error(err);
-					    })
 					});
 				},
 			//			新增分类
@@ -507,21 +578,48 @@
 //			新增属性值按钮
 			addAttribute(){
 				if(this.attributeMessage.attrValues){
-					let obj = {
-						value: this.attributeMessage.attrValues,
+						let obj = {
+							value: this.attributeMessage.attrValues,
+						}
+						this.attributeValues.push(obj);
 					}
-					this.attributeValues.push(obj);
 					this.attributeMessage.attrValues = '';
-				}
 			},			
 //			删除属性值按钮
-			deleteAttribute(item){
+			deleteAttribute(item,event){
+	             if(document.all){
+	                  event.cancelBubble = true;
+	             }else{
+	                  event.stopPropagation();
+	             }
 				let index = this.attributeValues.indexOf(item);
 					this.attributeValues.splice(index,1);
+					if(item.id){
+						this.$axios.delete('/ucenter/admin/v1/product/attr/atttrValue/' + item.id,this.getMyWeb.axios.aAjaxConfig).then((res)=>{
+							console.log(res);
+					 	})
+					}
+			},
+//			修改属性选择按钮
+//			chooseAttributeValue(item,event){
+//				if(event.detail == 2){
+//					
+//				}
+//				this.chooseValue = item;
+//				this.attributeMessage.attrValues = item.value;
+//				this.attributeAddbtn = '修改';
+//			},
+//			计算宽度
+			computeWidth(item,event){
+				let val = event.target.value;
+				let index = this.attributeValues.indexOf(item);
+					        this.attributeValues[index].value = val;
+				let num = val.length;
+			    let width = num * 15;
+			    event.target.style.width = width + 'px';
 			},
 //			保存属性接口
 			saveAttribute(formName){
-				console.log(formName);
 				this.$refs[formName].validate((valid) => {
 					if(valid){
 						 this.attributeMessage.categoryId = this.attributeId;
@@ -540,7 +638,6 @@
 						 	 		content[i] = this.attributeMessage[i]
 						 	 	}
 						 	 }
-						 	console.log(content)
 				    		var send = this.Qs.stringify(content);
 							this.$axios.post('/ucenter/admin/v1/product/attr/saveOrUpdateProductAttrs',send,this.getMyWeb.axios.aAjaxConfig).then((res)=>{
 							        if(res.data.state === '000000'){
@@ -591,11 +688,53 @@
 		line-height: 15px !important;
 		margin-bottom: 10px;
 		position: relative;
+		cursor: pointer;
 	}
+	/*.attribute-value i{
+		display: none;
+	}
+	.attribute-value:hover i{
+		display: inline-block;
+	}*/
 	.attribute-value-delete{
 		position: absolute;
 		right: 5px;
 		top: 50%;
 		transform: translate(0,-50%);
-	}	
+	}
+	.attribute-value-text{
+		outline: none;
+		border: none;
+		display: inline-block;
+		width: 15px;
+		overflow-y:visible;
+	}
+	.attriShow{
+		position: absolute;
+		background: white;
+		z-index: 2;
+		left: 10px;
+		top: 8px;
+		height: 17px;
+		opacity: 0;
+	}
+	.attri-value-add{
+		padding: 12px 20px;
+		border-radius: 4px;
+		display: inline-block;
+	    line-height: 15px;
+	    font-weight: 600;
+	    color: white;
+	    cursor: pointer;
+	    background-color: #409EFF;
+		border: 1px solid #409eff;
+	}
+	.attri-value-add:active{
+		background: #3a8ee6 !important;
+        border-color: #3a8ee6 !important;
+	}
+	.attri-value-add:hover{
+		background: #66b1ff;
+        border-color: #66b1ff;
+	}
 </style>
