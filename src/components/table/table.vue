@@ -248,7 +248,7 @@
 						this.pageinationMessage.pageSize = res.data.data.pageSize;
 						this.pageinationMessage.pageNum = res.data.data.pageNum;
 						if(this.message.tableName === 'productCategory'){
-							this.$emit('tableRes',{productCategoryParent:data[0]});
+							this.$emit('tableRes',{productCategory:data[0]});
 						}
 					 }else{
 					 	this.$message.error(res.data.message);

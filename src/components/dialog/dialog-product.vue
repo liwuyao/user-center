@@ -181,7 +181,7 @@
 		  :visible.sync="dialogAttribute"
 		  width="50%"
 		  >
-		  <div style="padding: 0 35px;">
+		  <div style="padding: 0 35px;" v-on:dragover="dropOver($event)" v-on:drop="drop($event)">
 		  	<el-form ref="attributeMessage" :model="attributeMessage" :rules="attributeRule" label-width="150px" label-position="left">
 		  	  <el-form-item label="属性名" prop="name">
 			    <el-input v-model="attributeMessage.name"></el-input>
@@ -193,11 +193,11 @@
 				  </el-radio-group>
   			  </el-form-item>
   			  <el-form-item label="属性值可选值列表">
-  			  	<div style="overflow: hidden;">
-  			  		<div class="attribute-value" v-for="item in attributeValues" draggable="true">
+  			  	<div style="overflow: hidden;" id="attrValueBox">
+  			  		<div class="attribute-value" v-for="item in attributeValues" draggable="true" v-on:dragstart='startDrag($event)' ref='attriVal'>
   			  		<!--	{{item.value}}-->
   			  			<input type="text" :value="item.value" class="attribute-value-text" v-on:input="computeWidth(item,$event)" v-on:blur="attriInputShow ='';attrValueUpdate = true"/>
-  			  			<div class="attriShow" v-if="attriInputShow !== item" v-on:click="attriInputShow = item;attrValueUpdate = true"></div>
+  			  			<div class="attriShow" v-if="attriInputShow !== item" v-on:click.stop="attriInputShow = item;attrValueUpdate = true"></div>
   			  			<i class="el-icon-close attribute-value-delete" v-on:click="deleteAttribute(item,$event)"></i>
   			  		</div>
   			  	</div>
@@ -259,7 +259,13 @@
 	      	attriInputShow: '',
 	      	attrChoose: '',
 	      	attrValueUpdate: false,
+	      	valueElms:'',
 	      	examineRecordList:[],
+	      	isMoveSate:false,
+	      	dragMessage:{
+	      		start: '',
+	      		eml: ''
+	      	},
 	      	examineTable:[
 	      		{
 	      			label:'属性名称',
@@ -327,8 +333,8 @@
 		    this.attrValueUpdate = false;
 	   	}
 	   },
-	   mounted: function () {
-		  this.$nextTick(function () {
+	   mounted(){
+		  this.$nextTick(()=>{
 		  })
 		},
 	   watch: {
@@ -405,7 +411,20 @@
 										    		}
 										    	}
 		    	                        }
-		       					},100)
+//		    	                          	document.body.onmousedown=(event)=>{
+//										  		console.log(event.target);
+//										  		if(event.target.className === 'attriShow'){
+//										  			document.body.onmousemove=(event)=>{
+////													console.log(event.clientX);
+//														document.body.onmouseup=()=>{
+//															document.body.onmousemove= '';
+//															console.log('ok')
+//															this.isMoveSate = false;
+//														}
+//													}
+////										  		}
+//										  	}
+		       					},200)
 		       					for(let i in this.attributeMessage){
 				       				if(i !== 'attrValues'){
 				       					if(i === 'required'){
@@ -617,6 +636,76 @@
 				let num = val.length;
 			    let width = num * 15;
 			    event.target.style.width = width + 'px';
+			},
+//			计算位置
+			startDrag(e){
+				var e = e ||  event;
+//				e.preventDefault();
+				console.log(e.clientX);
+				
+				this.dragMessage= {
+					start: e.clientX,
+					elm: e.target
+				}
+			},
+			dropOver(ev){
+				    ev.preventDefault();
+			},
+			drop(ev){
+				ev.preventDefault();
+				var distance = ev.clientX - this.dragMessage.start;
+				var elms=[];
+				var valAry=[];
+				var getelms = this.$refs.attriVal;
+				for(let i = 0 ;i<this.attributeValues.length;i++){
+					valAry.push(this.attributeValues[i]);
+				}
+				for(let j = 0;j<getelms.length;j++){
+					elms.push(getelms[j])
+				}
+				var nowElm = this.dragMessage.elm
+				var stopElm;
+				var startIndex = elms.indexOf(nowElm);
+				var stopIndex;
+				var nowElm;
+				var saveValue = valAry[startIndex];
+				var nextElm = elms[startIndex+1];
+//				this.attributeValues
+				if(distance>nextElm.offsetWidth+10){
+					let emlAry = elms.slice(startIndex);
+					let width = 0;
+						for(let i = 0;i<emlAry.length;i++){
+							width += emlAry[i].offsetWidth + 10;
+							console.log('ok')
+							if(width >= distance){
+								stopElm = emlAry[i];
+								break;
+							}
+						}
+					stopIndex = elms.indexOf(stopElm);
+					let svalAry = valAry.slice(stopIndex);
+						console.log(stopIndex);
+					svalAry.splice(1,0,saveValue);
+					let svalAry2 = valAry.slice(0,stopIndex);
+						svalAry2.splice(startIndex,1)
+					let nuwAr = svalAry2.concat(svalAry);
+//					for(let i = 0;i<valAry.length+1;i++){
+//						if(i == stopIndex){
+//							nuwAr[i] = saveValue;
+//						}else{
+//							nuwAr.push(valAry[i])
+//						}
+//					}
+					console.log(svalAry);
+					this.attributeValues = svalAry;
+//					console.log(nuwAr);
+//					valAry.splice(stopIndex+1,0,saveValue);
+//					console.log(test);
+//					test
+//					console.log(test);
+//					console.log(this.attributeValues);
+				}
+//				console.log(this.dragMessage);
 			},
 //			保存属性接口
 			saveAttribute(formName){
