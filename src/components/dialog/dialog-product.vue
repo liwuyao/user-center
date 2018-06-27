@@ -202,13 +202,15 @@
   			  		</div>
   			  	</div>
 			    <div>
-			    	<el-input v-model="attributeMessage.attrValues" style="width: 74%;" id="attrValueAdd"></el-input>
+			    	<p style="font-size: 12px;line-height: 15px;padding: 3px 0;color: gray;">拖拽属性值到想要位置（方式是插入，不是替换，原来1,2,3，拖拽1到3，顺序就是2,3,1）</p>
+			    	<el-input v-model="attributeMessage.attrValues" style="width: 74%;margin-top: 5px;" id="attrValueAdd"></el-input>
 			    	<div v-on:click="addAttribute()" v-on:mousedown="attrValueUpdate = true" class="attri-value-add">添加</div>
 			    </div>
+			    <p style="color: gray;font-size: 12px;line-height: 13px;margin-top: 10px;">可以用enter按键输入</p>
 			  </el-form-item>
 			  <el-form-item label="属性排序">
 			    <el-input v-model="attributeMessage.weight"></el-input>
-			    <p style="color: gray;">数值越高显示越前面</p>
+			    <p style="color: gray;font-size:12px;line-height: 12px;margin-top: 10px;">数值越高显示越前面</p>
 			  </el-form-item>
 			  <el-form-item label="属性描述">
 			    <el-input v-model="attributeMessage.remark"></el-input>
@@ -322,11 +324,11 @@
 		    	let val = elms[i].value;
 				let num = val.length;
 				let width = num * 15;
-			    elms[i].style.width = width + 'px';
+			    elms[i].style.width = width + 5 + 'px';
 			    let children = elms[i].parentNode.children;
 			    	for(let j =0;j<children.length;j++){
 			    		if(children[j].className === 'attriShow'){
-			    			 children[j].style.width = width + 'px';
+			    			 children[j].style.width = width + 5 + 'px';
 			    		}
 			    	}
 		    }
@@ -403,27 +405,14 @@
 		    	                        	let val = elms[i].value;
 											let num = val.length;
 										    let width = num * 15;
-										    elms[i].style.width = width + 'px';
+										    elms[i].style.width = width + 5 + 'px';
 										      let children = elms[i].parentNode.children;
 										    	for(let j =0;j<children.length;j++){
 										    		if(children[j].className === 'attriShow'){
-										    			 children[j].style.width = width + 'px';
+										    			 children[j].style.width = width + 5 + 'px';
 										    		}
 										    	}
 		    	                        }
-//		    	                          	document.body.onmousedown=(event)=>{
-//										  		console.log(event.target);
-//										  		if(event.target.className === 'attriShow'){
-//										  			document.body.onmousemove=(event)=>{
-////													console.log(event.clientX);
-//														document.body.onmouseup=()=>{
-//															document.body.onmousemove= '';
-//															console.log('ok')
-//															this.isMoveSate = false;
-//														}
-//													}
-////										  		}
-//										  	}
 		       					},200)
 		       					for(let i in this.attributeMessage){
 				       				if(i !== 'attrValues'){
@@ -435,7 +424,9 @@
 				       				}
 				       			}
 		       				}
-		       		})
+		       		}).catch((err)=>{
+						            this.$message.error('数据延迟请重试');
+						})
 		       }
 		     }
 		    }
@@ -561,13 +552,25 @@
 		                    console.error(err);
 		        })
 			},
-			//			禁用
+			//			下架
 			disableMessage(){
-				var content = '?'+this.config.urlSearch+'=' + this.ids.join();
+				var ids = [];
+			        for(let i = 0 ;i<this.tableSelect.length;i++){
+			        	for(let index in this.tableSelect[i]){
+			        		if(index == this.config.idName){
+			        			ids.push(this.tableSelect[i][index]);
+			        		}
+			        	}
+			        };
+				var content = '?'+this.config.urlSearch+'=' + ids.join();
 				var _url = this.config.src+content;
 				this.$axios.put(_url,this.getMyWeb.axios.aAjaxConfig).then((res)=>{
 					if(res.data.state === "000000"){
-						this.returnMessage('禁用成功');
+						this.returnMessage('下架成功');
+						this.$message({
+								        message: res.data.message,
+								        type: 'success'
+								    });
 					 	this.dialogDisable = false;
 					}else{
 						this.$message.error(res.data.data);
@@ -577,14 +580,25 @@
 			                    console.error(err);
 			    })
 			},
-//			启用
+//			上架
 			ableMessage(){
-				var content = '?'+this.config.urlSearch+'=' + this.ids.join();
+				var ids = [];
+			        for(let i = 0 ;i<this.tableSelect.length;i++){
+			        	for(let index in this.tableSelect[i]){
+			        		if(index == this.config.idName){
+			        			ids.push(this.tableSelect[i][index]);
+			        		}
+			        	}
+			        };
+				var content = '?'+this.config.urlSearch+'=' + ids.join();
 				var _url = this.config.src+content;
-				console.log(_url)
 				this.$axios.put(_url,this.getMyWeb.axios.aAjaxConfig).then((res)=>{
 					if(res.data.state === "000000"){
-						this.returnMessage('启用成功');
+						this.returnMessage('上架成功');
+						this.$message({
+								        message: res.data.message,
+								        type: 'success'
+								    });
 					 	this.dialogAble = false;
 					}else{
 						this.$message.error(res.data.data);
@@ -639,10 +653,7 @@
 			},
 //			计算位置
 			startDrag(e){
-				var e = e ||  event;
-//				e.preventDefault();
-				console.log(e.clientX);
-				
+				var e = e ||  event;			
 				this.dragMessage= {
 					start: e.clientX,
 					elm: e.target
@@ -653,7 +664,6 @@
 			},
 			drop(ev){
 				ev.preventDefault();
-				var distance = ev.clientX - this.dragMessage.start;
 				var elms=[];
 				var valAry=[];
 				var getelms = this.$refs.attriVal;
@@ -665,47 +675,32 @@
 				}
 				var nowElm = this.dragMessage.elm
 				var stopElm;
-				var startIndex = elms.indexOf(nowElm);
-				var stopIndex;
-				var nowElm;
-				var saveValue = valAry[startIndex];
-				var nextElm = elms[startIndex+1];
-//				this.attributeValues
-				if(distance>nextElm.offsetWidth+10){
-					let emlAry = elms.slice(startIndex);
-					let width = 0;
-						for(let i = 0;i<emlAry.length;i++){
-							width += emlAry[i].offsetWidth + 10;
-							console.log('ok')
-							if(width >= distance){
-								stopElm = emlAry[i];
-								break;
-							}
-						}
+				if(ev.target.parentNode.className === 'attribute-value'){
+					stopElm = ev.target.parentNode;
+					var startIndex = elms.indexOf(nowElm);
+					var stopIndex;
+					var nowElm;
+					var saveValue = valAry[startIndex];
 					stopIndex = elms.indexOf(stopElm);
-					let svalAry = valAry.slice(stopIndex);
-						console.log(stopIndex);
-					svalAry.splice(1,0,saveValue);
-					let svalAry2 = valAry.slice(0,stopIndex);
-						svalAry2.splice(startIndex,1)
-					let nuwAr = svalAry2.concat(svalAry);
-//					for(let i = 0;i<valAry.length+1;i++){
-//						if(i == stopIndex){
-//							nuwAr[i] = saveValue;
-//						}else{
-//							nuwAr.push(valAry[i])
-//						}
-//					}
-					console.log(svalAry);
-					this.attributeValues = svalAry;
-//					console.log(nuwAr);
-//					valAry.splice(stopIndex+1,0,saveValue);
-//					console.log(test);
-//					test
-//					console.log(test);
-//					console.log(this.attributeValues);
+					if(stopIndex>startIndex){
+						this.attrValueUpdate = true;
+						let svalAry = valAry.slice(startIndex+1);
+						let upelms = elms.slice(startIndex+1);
+						let stop = upelms.indexOf(stopElm);
+						    svalAry.splice(stop+1,0,saveValue);
+						let svalAry2 = valAry.slice(0,startIndex);
+						let nuwAr = svalAry2.concat(svalAry);
+						this.attributeValues = nuwAr;
+					}
+					if(stopIndex<startIndex){
+						this.attrValueUpdate = true;
+						let svalAry = valAry.slice(startIndex+1);
+						let svalAry2 = valAry.slice(0,startIndex);
+						    svalAry2.splice(stopIndex,0,saveValue);
+						let nuwAr = svalAry2.concat(svalAry);
+						this.attributeValues = nuwAr;
+					}
 				}
-//				console.log(this.dragMessage);
 			},
 //			保存属性接口
 			saveAttribute(formName){

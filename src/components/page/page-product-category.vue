@@ -187,7 +187,11 @@
  		tableRes(res){
  			if(res.productCategory){
  				this.tableSelect[0] = res.productCategory;
- 			}
+ 			}else{
+ 				this.tableSelect[0] = {
+ 					parentId:'0'
+ 				}
+ 			};
 			if(res.productCategoryParent){
 				this.parentName = res.productCategoryParent.name;
 				var id = res.productCategoryParent.id

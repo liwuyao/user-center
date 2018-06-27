@@ -168,12 +168,12 @@
 		       		}
        			},
        			able:{
-       				privateName:'product',
        				name:"上架提示",
 		       		type:"able",
 		       		disable:true,
 		       		icon:"button-icon iconfont icon-el-icon-karakal-qiyong",
 		       		formConfig:{
+		       			privateName:'product',
 		       			title:'上架提示',
 		       			idName:'id',
 		       			urlSearch:'productId',
