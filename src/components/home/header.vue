@@ -30,6 +30,10 @@
 			this.headerUrl = localStorage.letingAvatar;
 		},
 		methods:{
+			qiehuan(){
+				this.getMyWeb.queryClientKey = "cdleting_manager_center";
+				console.log(2)
+			},
 			logout(){
 				let content = localStorage.letingUserName;
 		    	let send = this.Qs.stringify(content);

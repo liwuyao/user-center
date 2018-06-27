@@ -2,8 +2,18 @@
 	<div class="slide-bar2">
 		<div class="slide-bar2-box" v-bind:class="{ openActive: isOpenActive }">
 			<div style="float: left;" class="slide-bar2-left">
-				<div v-on:click="sideBarOpen()" style="text-align: center;padding: 20px 0;cursor: pointer;">
-					<i class="iconfont icon-el-icon-karakal-slideBar-open"></i>
+				<div style="text-align: center;padding: 20px 0;cursor: pointer;">
+					<div style='width:60px;text-align: center;display:inline-block'>
+						<i class="iconfont icon-el-icon-karakal-slideBar-open" v-on:click="sideBarOpen()"></i>
+					</div>
+					<el-select v-model="value" placeholder="请选择" v-if="open">
+				    <el-option
+				      v-for="item in options"
+				      :key="item.value"
+				      :label="item.label"
+				      :value="item.value">
+				    </el-option>
+				  </el-select>
 				</div>
 				<div>
 					<div v-for="item in data" v-on:click="choose(item)">
@@ -233,8 +243,26 @@
 				currentNav:'',
 				data:[],
 				rightData:{},
-				chooseNav:''
+				chooseNav:'',
+				options: [{
+          value: '选项1',
+          label: '黄金糕'
+        }, {
+          value: '选项2',
+          label: '双皮奶'
+        }, {
+          value: '选项3',
+          label: '蚵仔煎'
+        }, {
+          value: '选项4',
+          label: '龙须面'
+        }, {
+          value: '选项5',
+          label: '北京烤鸭'
+        }],
+        value: ''
 			}
+			
 		},
 		created(){
 			this.data = this.message

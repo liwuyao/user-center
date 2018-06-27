@@ -20,6 +20,7 @@ export default {
 		        }
 		        return Y+M+D;
 		    },
+		    queryClientKey: 'test-comp1',
             url: {
                 headerUrl:'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1526276043500&di=d1fe99f57b71a30252e74fb1eeee1c52&imgtype=0&src=http%3A%2F%2Fimg.duoziwang.com%2F2016%2F12%2F08%2F17021214412.jpg'
             },
