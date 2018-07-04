@@ -9,10 +9,12 @@ import 'element-ui/lib/theme-chalk/index.css'
 import axios from 'axios'
 import Qs from 'qs'
 import store from './store'
+import hideSelect from 'can-hide-selcet'
 
 
 Vue.use(Qs);
 Vue.prototype.Qs = Qs;
+Vue.use(hideSelect);
 
 Vue.prototype.$axios = axios;
 

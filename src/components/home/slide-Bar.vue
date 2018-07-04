@@ -2,18 +2,19 @@
 	<div class="slide-bar2">
 		<div class="slide-bar2-box" v-bind:class="{ openActive: isOpenActive }">
 			<div style="float: left;" class="slide-bar2-left">
-				<div style="text-align: center;padding: 20px 0;cursor: pointer;">
-					<div style='width:60px;text-align: center;display:inline-block'>
+				<div style="padding: 20px 0;cursor: pointer;" :class="{openActiveBox:!open}" class="silde-bar-head">
+					<div style='width:60px;text-align: center;display:inline-block' :class="{openActive:open}">
 						<i class="iconfont icon-el-icon-karakal-slideBar-open" v-on:click="sideBarOpen()"></i>
 					</div>
-					<el-select v-model="value" placeholder="请选择" v-if="open">
-				    <el-option
+<!--					<el-select v-model="selectValue" placeholder="请选择" v-if="open" style="width: 104px;height: 20px;">-->
+				    <!--<el-option
 				      v-for="item in options"
 				      :key="item.value"
 				      :label="item.label"
 				      :value="item.value">
-				    </el-option>
-				  </el-select>
+				    </el-option>-->
+	<!--			  </el-select>-->
+					<can-hide-select :data="options" :config="selectConfig" v-if="open" v-on:selectVal="selectRes"></can-hide-select>
 				</div>
 				<div>
 					<div v-for="item in data" v-on:click="choose(item)">
@@ -244,25 +245,29 @@
 				data:[],
 				rightData:{},
 				chooseNav:'',
-				options: [{
-          value: '选项1',
-          label: '黄金糕'
-        }, {
-          value: '选项2',
-          label: '双皮奶'
-        }, {
-          value: '选项3',
-          label: '蚵仔煎'
-        }, {
-          value: '选项4',
-          label: '龙须面'
-        }, {
-          value: '选项5',
-          label: '北京烤鸭'
-        }],
-        value: ''
-			}
-			
+				options: [
+					{
+						value:'cdleting_manager_center',
+						lable:'成都乐听运维管理中心'
+					},
+					{
+						value:'test-comp1',
+						lable:'测试集团2'
+					}
+				],
+		        selectValue: '北京烤鸭',
+		        selectConfig:{
+			      	  optionCalssName:'slideBarOptionHover',
+				      selectStyle:'font-size:13px;display:inline-block;width:97px',
+				      valueStyle:'font-size:13px;width:77px;padding-top:0;padding-bottom:0;padding-left:7px',
+				      optionStyle:'font-size:13px;padding:10px 5px;color:black;',
+				      optionOutBoxStyle:'background-color:white;border-radius:3px;',
+				      optionBoxStyle:'',
+				      iconStyle:'top:2px;right:7px',
+				      valueAddPadding:7,
+				      isLable:true,
+		        	}
+				}	
 		},
 		created(){
 			this.data = this.message
@@ -353,6 +358,9 @@
 //			选择一级导航
 			choose(item){
 				this.chooseNav = item;
+			},
+			selectRes(val){
+				console.log(val)
 			}
 		}
 		
@@ -363,7 +371,7 @@
 <style >
 	.slide-bar2{
 		height: 100%;
-		font-size: 15px;
+		font-size: 13px;
 	}
 	.slide-bar2-box{
 		display: flex;
@@ -420,5 +428,24 @@
 	}
 	.chooseFirstNav{
 		background: #0e60b0;
+	}
+	.openActive{
+		text-align: left !important;
+		width: 20px !important;
+		margin-left: 21px;
+	}
+	.openActiveBox{
+		text-align: center;
+	}
+	.silde-bar-head input{
+		height: 16px;
+		background: #1888f7;
+		color: white !important;
+		border: none;
+		padding-right: 26px !important;
+		padding: 0 19px !important;
+	}
+	.silde-bar-head .el-input__suffix-inner i {
+		color: white !important;
 	}
 </style>
