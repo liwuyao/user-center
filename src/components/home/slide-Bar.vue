@@ -245,16 +245,7 @@
 				data:[],
 				rightData:{},
 				chooseNav:'',
-				options: [
-					{
-						value:'cdleting_manager_center',
-						lable:'成都乐听运维管理中心'
-					},
-					{
-						value:'test-comp1',
-						lable:'测试集团2'
-					}
-				],
+				options: [],
 		        selectValue: '北京烤鸭',
 		        selectConfig:{
 			      	  optionCalssName:'slideBarOptionHover',
@@ -271,6 +262,27 @@
 		},
 		created(){
 			this.data = this.message
+        	var obj={
+        		    ondition:null,
+        			state:'',
+	   				pageIndex:'1',
+	   				pageSize:'20'
+	   			};
+        	this.$axios.get('/ucenter/admin/client',{params:obj},this.getMyWeb.axios.aAjaxConfig).then((res)=>{
+        		if(res.data.state === '000000'){
+        			let data = res.data.data.list;
+        				for(let i of data){
+        					let data = {
+        						 value:i.clientKey,
+        						 lable:i.clientName
+        					}
+        					this.options.push(data)
+        				}
+        				this.switchKey(this.options[0].value);
+        		}
+        	}).catch((err)=>{
+		        console.error(err);
+		    })
 		},
 		methods:{
 			sideBarOpen(){
@@ -360,8 +372,11 @@
 				this.chooseNav = item;
 			},
 			selectRes(val){
-				console.log(val)
-			}
+				this.switchKey(val)
+			},
+			switchKey(data){
+				this.getMyWeb.queryClientKey = data;
+			},
 		}
 		
 	}

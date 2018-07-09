@@ -311,6 +311,7 @@
             },
             // 获取数据
             getData() {
+            	this.goodsSku = [];
                 var recordId = this.$route.query.id;   //获取订单ID
                 this.id = recordId;
 //              var _this = this;

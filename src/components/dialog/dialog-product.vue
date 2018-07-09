@@ -270,15 +270,15 @@
 	      	},
 	      	examineTable:[
 	      		{
-	      			label:'属性名称',
-	      			prop:'name'
+	      			label:'商品名称',
+	      			prop:'productName'
 	      		},
 	      		{
 	      			label:'创建时间',
 	      			prop:'ctime'
 	      		},
 	      		{
-	      			label:'',
+	      			label:'审核时间',
 	      			prop:'auditTime'
 	      		},
 	      		{

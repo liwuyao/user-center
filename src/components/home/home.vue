@@ -15,7 +15,12 @@
 		name: 'home',
 		components:{
            vHead,vFoot,vContent 
-        }
+        },
+        data(){
+        	return{
+        		getClientKey: [],
+        	}
+        },
 	}
 </script>
 
