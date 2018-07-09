@@ -6,13 +6,102 @@
 				<el-breadcrumb separator="/">
 					<el-breadcrumb-item :to="{ path: '/home' }">用户中心</el-breadcrumb-item>
 					<el-breadcrumb-item :to="{ path: '/orderList' }">订单管理</el-breadcrumb-item>
-					<el-breadcrumb-item><span style="color: #74b8fa;">商户订单更换记录</span></el-breadcrumb-item>
+					<el-breadcrumb-item><span style="color: #74b8fa;">订单详情</span></el-breadcrumb-item>
 				</el-breadcrumb>
 				<div style="padding: 15px 0;margin-top: 10px;">
-					<h4>订单更换记录</h4>
+					<h4>订单详情</h4>
 				</div>
-				<div style="padding-bottom: 10px;">
+				<!--<div style="padding-bottom: 10px;">
 					<span>订单ID：{{this.id}}</span>
+				</div>-->
+<!--				订单详情-->
+				<div style="width: 900px;border: 1px solid gainsboro;">
+					<div class="orderDetailHead" style="padding-left: 15px;border-bottom: 1px solid gainsboro;font-size: 16px;font-weight: bolder;color: red;">
+						<i class="el-icon-warning" style="color: red;font-size: 16px;"></i>
+							当前状态：
+							<span style="color: red;">{{status(orderDetailMsg.status)}}</span>
+					</div>
+					<div style="padding: 20px;">
+						<div slot="header" class="clearfix" style="text-align: left">
+                                <h3 style="font-size: 20px;height: 25px;line-height: 25px;color: #666">
+                                  <i class="iconfont icon-el-icon-karakal-shuqian" style="font-size: 18px;"></i>
+                                  	   基本信息
+                                </h3>
+                        </div>
+                        <div>
+                        	<div style="display: flex;width: 100%;color: #666;font-size: 14px;padding: 10px 0;">
+                        		<div style="flex: 1;">
+                        			<span style="width: 88px;text-align: right;">订单号：</span>
+                        			<span>{{orderDetailMsg.id}}</span>
+                        		</div>
+                        		<div style="flex: 1;">
+                        			<span style="width: 88px;text-align: right;">售出商户：</span>
+                        			<span>{{orderDetailMsg.merName}}</span>
+                        		</div>
+                        	</div>
+                        	<div style="display: flex;width: 100%;color: #666;font-size: 14px;padding: 10px 0;">
+                        		<div style="flex: 1;">
+                        			<span style="width: 88px;text-align: right;">提交时间：</span>
+                        			<span>{{orderDetailMsg.ctime}}</span>
+                        		</div>
+                        		<div style="flex: 1;">
+                        			<span style="width: 88px;text-align: right;">购买用户：</span>
+                        			<span>{{orderDetailMsg.memberName}}</span>
+                        		</div>
+                        	</div>
+                        	<div style="display: flex;width: 100%;color: #666;font-size: 14px;padding: 10px 0;">
+                        		<div style="flex: 1;">
+                        			<span style="width: 88px;text-align: right;">订单备注：</span>
+                        			<span>{{orderDetailMsg.remark}}</span>
+                        		</div>
+                        	</div>
+                        </div>
+					</div>
+					<div style="padding: 20px;">
+                        <div slot="header" class="clearfix" style="text-align: left">
+                            <h3 style="font-size: 20px;height: 25px;line-height: 25px;color: #666">
+                                <i class="iconfont icon-el-icon-karakal-shuqian" style="font-size: 18px;"></i>
+                                  	   商品信息
+                            </h3>
+                        </div>
+                        <div style="font-size: 14px;color: #666;">
+                        	<div style="display: flex;padding: 10px 0;">
+                        		<span style="flex: 1;text-align: center;">商品</span>
+                        		<span style="width: 140px;text-align: center;">商品编号</span>
+                        		<span style="width: 140px;text-align: center;">价格</span>
+                        	</div>
+                        	<div style="display: flex;padding: 10px 0;">
+                        		<div style="flex: 1;">
+                        			<div style="display: flex;width: 100%;">
+                        				<img :src="detailVo.productPicUrl" style="width: 80px;height: 80px;"/>
+	                        			<div style="flex: 1;padding-left: 15px;">
+	                        				<h3>
+	                        					{{detailVo.title}}
+	                        				</h3>
+	                        				<p style="margin-top:5px ;">{{detailVo.subTitle}}</p>
+	                        				<p style="margin-top:5px ;">背景：{{detailVo.bgm}}&nbsp;{{detailVo.attrValues}}</p>
+	                        			</div>
+                        			</div>
+                        		</div>
+                        		<div style="width: 140px;text-align: center;">
+                        			{{detailVo.productId}}
+                        		</div>
+                        		<div style="width: 140px;text-align: center;">
+                        			{{detailVo.price/100}}元
+                        		</div>
+                        	</div>
+                        	<p>
+                        		<span style="font-weight: bolder;">录制文字:</span>
+                        		{{detailVo.content}}
+                        	</p>
+                        	<p style="margin-top:5px ;">
+                        		<span style=";font-size:14px;">
+									样音试听
+									<i :class="playIcon" style="color: red;font-size: 17px;" v-on:click="orderPlay(detailVo.ringUrl,$event)"></i>
+								</span>
+                        	</p>
+                        </div>
+                    </div>
 				</div>
 				<div v-for="item in getData" style="border: 1px solid gainsboro;width: 900px;margin-bottom: 15px;">
 					<div style="background: gainsboro;padding: 10px 0;position: relative;">
@@ -64,15 +153,18 @@
 						<div style="padding-top:15px ;">
 							<span style=";font-size:15px;">
 								更换前铃音试听
-								<i :class="playIcon" style="color: red;font-size: 17px;" v-on:click="orderPlay()"></i>
+								<i class="iconfont icon-el-icon-karakal-slideBar-bofang" style="color: red;font-size: 17px;" v-on:click="orderPlay(item.originalUrl,$event)"></i>
 							</span>
-							<audio :src="item.originalUrl" id="orderAudio"></audio>
 						</div>
 					</div>
 <!--					<div style="text-align: right;"><span>完成时间：{{transformationTime(item.finishTime)}}</span></div>-->
 				</div>
 			</div>
 		</div>
+<!--		播放器-->
+		<audio id="orderAudio">
+			<source :src="palyUrl" type="audio/ogg">
+		</audio>
 <!--		提示框-->
 		<el-dialog
 		  :title="dialogMessage.title"
@@ -113,6 +205,10 @@
         		id:'',
         		playIcon:'iconfont icon-el-icon-karakal-slideBar-bofang',
         		playState:true,
+        		orderDetailMsg:{},
+        		detailVo:{},
+        		lastPlayer:'',
+        		palyUrl:''
         	}
         },
         created(){
@@ -126,23 +222,38 @@
 			} 
 //			通过url查询id
 			this.id = theRequest.id;
-			console.log(this.id);
         	this.getMerchantMessage();
+        	this.getOrderDetail();
         },
         methods:{
-     	//		获取商户信息
+     	//		获取更换记录
 			getMerchantMessage(){
 				var content = {
 					orderId: this.id 
 				}
 				this.$axios.get('/ucenter/admin/v1/order/replace/record',{params:content},this.getMyWeb.axios.aAjaxConfig).then((res)=>{
 					if(!res) return;
-					console.log(res);
 					if(res.data.state === "000000"){
 						this.getData = res.data.data;
 					}else{
 						this.errMessage = res.data.message
 //						this.$message.error(res.data.message);
+					}
+		      	}).catch((err)=>{
+		                    this.$message.error('接口请求出错');
+		                    console.error(err);
+		        })
+			},
+			getOrderDetail(){
+				var content = {
+					orderId: this.id 
+				}
+				this.$axios.get('/ucenter/admin/v1/order/detail',{params:content},this.getMyWeb.axios.aAjaxConfig).then((res)=>{
+					if(res.data.state === "000000"){
+						this.orderDetailMsg = res.data.data;
+						this.detailVo = res.data.data.detailVo
+					}else{
+						this.$message.error(res.data.message);
 					}
 		      	}).catch((err)=>{
 		                    this.$message.error('接口请求出错');
@@ -162,6 +273,7 @@
 				}
 				this.dialogVisible = true;
 			},
+//			弹框函数
 			dialogBtn(){
 				var src;
 				if(this.dialogMessage.name == 'refuse'){
@@ -193,17 +305,76 @@
                 return (new Date(date)).format("yyyy-MM-dd hh:mm");
 			},
 //			试听播放键
-			orderPlay(){
+			orderPlay(src,e){
+				this.palyUrl = src;
+				var e = e||event;
+				var nowPlay = e.target;
 				var aido = document.getElementById('orderAudio');
 				if(this.playState){
-					this.playIcon = 'iconfont icon-el-icon-karakal-slideBar-zantin';
+					if(this.lastPlayer){
+						this.lastPlayer.className = 'iconfont icon-el-icon-karakal-slideBar-bofang'
+					}
+					nowPlay.className = 'iconfont icon-el-icon-karakal-slideBar-zantin';
+						aido.load();
 						aido.play();
+						this.playState = false;
 				}else{
-					this.playIcon = 'iconfont icon-el-icon-karakal-slideBar-bofang';
+					if(nowPlay!==this.lastPlayer){
+						if(this.lastPlayer){
+						  this.lastPlayer.className = 'iconfont icon-el-icon-karakal-slideBar-bofang'
+					    }
+						nowPlay.className = 'iconfont icon-el-icon-karakal-slideBar-zantin';
+						aido.load();
+						aido.play();
+						this.playState = false;
+					}else{
+						nowPlay.className = 'iconfont icon-el-icon-karakal-slideBar-bofang';
 						aido.pause();
+						this.playState = true;
+					}
 				}
-				this.playState = !this.playState;
-			}
+				this.lastPlayer = nowPlay;
+			},
+//			状态转换
+			 status(data){
+			    var state;
+			    if(data === 1){
+			      state = '已取消'
+			    }else if(data === 2){
+			      state = '待支付'
+			    }else if(data === 3){
+			      state = '支付成功'
+			    }else if(data === 4){
+			      state = '支付失败'
+			    }else if(data === 5){
+			      state = '已确认'
+			    }else if(data === 6) {
+			      state = '退款中'
+			    }else if(data === 7) {
+			      state = '退款成功'
+			    }else if(data === 8) {
+			      state = '已发货'
+			    }else if(data === 9) {
+			      state = '待收货'
+			    }else if(data === 10) {
+			      state = '已收货'
+			    }else if(data === 11) {
+			      state = '已删除'
+			    }else if(data === 12) {
+			      state = '已关闭'
+			    }else if(data === 13) {
+			      state = '更换中'
+			    }else if(data === 14) {
+			      state = '拒绝更换'
+			    }else if(data === 15) {
+			      state = '同意更换'
+			    }else if(data === 16) {
+			      state = '已沟通'
+			    }else if(data === 17) {
+			      state = '更换完成'
+			    }
+			    return state;
+			  }
         }
 	}
 </script>
@@ -216,5 +387,9 @@
 		font-size: 13px;
 		border-radius:5px ;
 		cursor: pointer;
+	}
+	.orderDetailHead {
+		background: #f3f3f3;
+		padding: 10px 0;
 	}
 </style>

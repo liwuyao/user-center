@@ -435,6 +435,7 @@
 			examin(formName){
 				this.$refs[formName].validate((valid) => {
 					if(valid){
+						console.log(valid);
 						this.examineMessage.productId = this.id;
 						var content = this.examineMessage;
 						var send = this.Qs.stringify(content);

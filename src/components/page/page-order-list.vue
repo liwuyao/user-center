@@ -90,7 +90,7 @@
        				},
        				linkTo:[
 	       				{
-	       					name:'查看订单更换记录',
+	       					name:'查看订单详情',
 	       					src:'/lookOrderReplace',
 	       					iconClass:'table-icon iconfont icon-el-icon-karakal-chakan'
 	       				},

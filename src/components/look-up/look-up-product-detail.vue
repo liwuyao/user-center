@@ -214,7 +214,6 @@
                         </el-card>
                     </div>
                 </el-main>
-                <el-button @click="ceshi">22222</el-button>
             </el-container>
         </el-main>
         <!--		审核弹框-->
@@ -496,9 +495,6 @@
                 audio.load();
                 audio.play();
             },
-            ceshi(){
-            	console.log(this.goodsSku)
-            },
             downLoadMusic(url) {
                 var $eleForm = $("<form method='get'></form>");
 
@@ -596,23 +592,27 @@
 //          审核
 	        examin(formName){
 				this.$refs[formName].validate((valid) => {
-				this.examineMessage.productId = this.id;
-				var content = this.examineMessage;
-				var send = this.Qs.stringify(content);
-					this.$axios.put('/ucenter/admin/v1/product/audit?'+send,this.getMyWeb.axios.aAjaxConfig).then((res)=>{
-						if(res.data.state == '000000'){
-							this.$message({
-                                type: 'success',
-                                message: res.data.message
-                            });
-							this.getData();
-							this.dialogExamine = false;
-						}else{
-							this.$message.error(res.data.message);
-						}
-					}).catch((err)=>{
-				                    this.$message.error('接口请求出错');
-				    })
+					if(valid){
+						this.examineMessage.productId = this.id;
+					var content = this.examineMessage;
+					var send = this.Qs.stringify(content);
+						this.$axios.put('/ucenter/admin/v1/product/audit?'+send,this.getMyWeb.axios.aAjaxConfig).then((res)=>{
+							if(res.data.state == '000000'){
+								this.$message({
+	                                type: 'success',
+	                                message: res.data.message
+	                            });
+								this.getData();
+								this.dialogExamine = false;
+							}else{
+								this.$message.error(res.data.message);
+							}
+						}).catch((err)=>{
+					            this.$message.error('接口请求出错');
+					    })
+					}else{
+						this.$message.error('表单格式不对请重新填写');
+					}
 				});
 			},
        },
