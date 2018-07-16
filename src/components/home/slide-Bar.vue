@@ -256,6 +256,7 @@
 				      optionBoxStyle:'',
 				      iconStyle:'top:2px;right:7px',
 				      valueAddPadding:7,
+				      index:0,
 				      isLable:true,
 		        	}
 				}	
@@ -279,6 +280,7 @@
         					this.options.push(data)
         				}
         				this.switchKey(this.options[0].value);
+        				this.$store.state.queryClientKey = this.options[0].value
         		}
         	}).catch((err)=>{
 		        console.error(err);
@@ -288,6 +290,7 @@
 			sideBarOpen(){
 				let elm = document.querySelector('.slide-bar2-left');
 				if(!this.open){
+					this.selectConfig.index = this.$store.state.clientKeyIndex;
 					var timer = setInterval(()=>{
 						this.oldWidth += 10
 						elm.style.width= this.oldWidth +'px'
@@ -372,7 +375,20 @@
 				this.chooseNav = item;
 			},
 			selectRes(val){
-				this.switchKey(val)
+				if(this.selectConfig.isLable){
+					for(let i of this.options){
+						if(i.value === val){
+							this.$store.state.clientKeyIndex = this.options.indexOf(i)
+						}
+					}
+				}else{
+					for(let i of this.options){
+						if(i === val){
+							this.$store.state.clientKeyIndex = this.options.indexOf(i)
+						}
+					}
+				}
+				this.$store.commit('changeClientKey',val);
 			},
 			switchKey(data){
 				this.getMyWeb.queryClientKey = data;

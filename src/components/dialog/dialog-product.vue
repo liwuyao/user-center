@@ -202,7 +202,7 @@
   			  		</div>
   			  	</div>
 			    <div>
-			    	<p style="font-size: 12px;line-height: 15px;padding: 3px 0;color: gray;">拖拽属性值到想要位置（方式是插入，不是替换，原来1,2,3，拖拽1到3，顺序就是2,3,1）</p>
+			    	<p style="font-size: 12px;line-height: 15px;padding: 3px 0;color: gray;">拖拽属性值到想要位置（方式是插入，不是替换，原来1,2,3，拖拽1到3，顺序就是2,3,1，且此处删除会直接删除，无需通过保存）</p>
 			    	<el-input v-model="attributeMessage.attrValues" style="width: 74%;margin-top: 5px;" id="attrValueAdd"></el-input>
 			    	<div v-on:click="addAttribute()" v-on:mousedown="attrValueUpdate = true" class="attri-value-add">添加</div>
 			    </div>

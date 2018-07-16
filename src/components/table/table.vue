@@ -200,6 +200,11 @@
 		    	this.pageMessage.pageIndex = '1';
 		    	this.pageMessage.pageSize = '20';
 		    	this.getList(this.message.listUrl)
+		    },
+		    '$store.state.queryClientKey':function(){
+		    	this.pageMessage.pageIndex = '1';
+		    	this.pageMessage.pageSize = '20';
+		    	this.getList(this.message.listUrl)
 		    }
 		},
 	 methods: {

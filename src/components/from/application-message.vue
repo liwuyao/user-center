@@ -72,7 +72,7 @@
 					  	<div style="position: absolute;top: 85px;right: 120px;width: 235px;">
 							<el-upload
 								  class="avatar-uploader"
-								  action="http://192.168.1.220:9201/ucenter/upload/common/image"
+								  action="/ucenter/upload/common/image"
 								  name ="uploadFile"
 								  :data="updateMessage"
 								  :show-file-list="false"
@@ -200,7 +200,10 @@
     	},
     	 methods: {
 	      handleAvatarSuccess(res, file) {
-	        this.imageUrl = URL.createObjectURL(file.raw);
+//	        this.imageUrl = URL.createObjectURL(file.raw);
+			console.log(res)
+	        this.imageUrl = res.data.filePath
+	        console.log( this.imageUrl);
 	       	 this.$message({
 	          message: '头像上传成功',
 	          type: 'success'
@@ -284,8 +287,10 @@
 					    	     content.clientKey = this.ruleForm.clientKey;
 					    	     content.clientName = this.ruleForm.clientName;
 					    	     content.clientId = this.ruleForm.clientId;
+					    	     content.clientType = this.ruleForm.clientType;
+					    	     content.clientContent = this.ruleForm.clientContent;
+					    	     content.thumbnail = this.imageUrl
 					    	var send = "?"+this.Qs.stringify(content);
-					    	   	console.log(send);
 					    	this.$axios.put('/ucenter/admin/client/'+send,this.getMyWeb.axios.aAjaxConfig).then((res)=>{
 					    		if(res.data.state === "000000"){
 					    			this.ruleForm = res.data.data;
