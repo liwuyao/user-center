@@ -11,9 +11,6 @@
 				<div style="padding: 15px 0;margin-top: 10px;">
 					<h4>订单详情</h4>
 				</div>
-				<!--<div style="padding-bottom: 10px;">
-					<span>订单ID：{{this.id}}</span>
-				</div>-->
 <!--				订单详情-->
 				<div style="width: 900px;border: 1px solid gainsboro;">
 					<div class="orderDetailHead" style="padding-left: 15px;border-bottom: 1px solid gainsboro;font-size: 16px;font-weight: bolder;color: red;">
@@ -87,7 +84,7 @@
                         			{{detailVo.productId}}
                         		</div>
                         		<div style="width: 140px;text-align: center;">
-                        			{{detailVo.price/100}}元
+                        			{{transMuch(detailVo.price)}}元
                         		</div>
                         	</div>
                         	<p>
@@ -112,33 +109,33 @@
 							<span v-else-if="item.status == '1'">拒绝更换</span>
 							<span v-else-if="item.status == '2'">完成更换</span>
 							<span v-else-if="item.status == '3'">同意更换</span>
-							<span v-else-if="item.status == '1'">线下沟通</span>
+							<span v-else-if="item.status == '4'">线下沟通</span>
 						</span>
 						<span style="position: absolute;right: 0;padding-right: 15px;" >
 								处理时间：{{transformationTime(item.handleTime)}}
-							<span style="margin-left: 30px;">完成时间：{{transformationTime(item.finishTime)}}</span>
+							<span style="margin-left: 30px;" v-if="item.finishTime">完成时间：{{transformationTime(item.finishTime)}}</span>
 						</span>
 					</div>
 					<div style="padding: 15px;">
 						<div style="margin: 15px 0;">
-							<span>更换记录ID：1234567</span>
+							<span>更换记录ID：{{item.id}}</span>
 						</div>
 						<div style="display: flex;flex-direction:row;margin: 15px 0;">
 							<div>
-								<span>更换原因</span>
+								<span>更换原因：</span>
 							</div>
-							<div style="flex: 1;padding-left: 30px;">
+							<div style="flex: 1;">
 								<p>{{item.replaceReason}}</p>
 							</div>
 						</div>
 						<div style="display: flex;flex-direction:row;margin: 20px 0;">
 							<div>
-								<span>商家回复</span>
+								<span>商家回复：</span>
 							</div>
-							<div style="flex: 1;padding-left: 30px;">
+							<div style="flex: 1;">
 								<div>
 									<p>{{item.refuseReason}}</p>
-									<p style="color: gainsboro;">商家没做任何回复</p>
+									<p style="color: gainsboro;" v-if="!item.refuseReason">商家没做任何回复</p>
 								</div>
 								<div style="overflow: hidden;margin-top: 15px;">
 									<div style="background: red;float: right;" class="btn" v-on:click="handle({name:'refuse',id:item.id})">拒绝</div>
@@ -335,6 +332,11 @@
 				}
 				this.lastPlayer = nowPlay;
 			},
+//			转换钱
+			transMuch(num){
+			    let money = num / 100;
+			    return money.toFixed(2)
+			  },
 //			状态转换
 			 status(data){
 			    var state;

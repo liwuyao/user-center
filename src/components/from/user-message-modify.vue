@@ -74,7 +74,7 @@
 								<div style="position: absolute;top: -14px;right: 410px;width: 235px;">
 								  		<el-upload
 										  class="avatar-uploader"
-										  action="http://192.168.1.220:9201/ucenter/upload/common/image"
+										  action="/ucenter/upload/common/image"
 										  name ="uploadFile"
 										  :data="updateMessage"
 										  :show-file-list="false"
@@ -208,7 +208,7 @@
     	},
         methods: {
 		    handleAvatarSuccess(res, file) {
-		        this.imageUrl = URL.createObjectURL(file.raw);
+		        this.imageUrl = res.data.filePath;
 		        this.modifyMessage.avatar = this.imageUrl;
 		        this.$message({
 		          message: '头像上传成功',

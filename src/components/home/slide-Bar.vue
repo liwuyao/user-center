@@ -279,8 +279,8 @@
         					}
         					this.options.push(data)
         				}
-        				this.switchKey(this.options[0].value);
-        				this.$store.state.queryClientKey = this.options[0].value
+//      				this.switchKey(this.options[0].value);
+        				this.$store.state.queryClientKey = this.options[this.$store.state.clientKeyIndex].value
         		}
         	}).catch((err)=>{
 		        console.error(err);

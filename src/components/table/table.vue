@@ -98,6 +98,9 @@
 		        <span v-else-if="item.prop =='ctime'">
 		        	{{transformationTime(props.row[item.prop])}}
 		        </span>
+		        <span v-else-if="item.prop =='price'">
+		        	{{transMuch(props.row[item.prop])}}
+		        </span>
 		        <span v-else>{{ props.row[item.prop] }}</span>
 		      </template>
 		    </el-table-column>
@@ -343,7 +346,12 @@
 					var data = this.listData[0];
 				    this.$emit('tableRes',{productCategory:data});
 				}
-			}
+			},
+			//			转换钱
+			transMuch(num){
+			    let money = num / 100;
+			    return money.toFixed(2)
+			},
 	    },
 	}
 </script>

@@ -86,7 +86,7 @@
 							<div style="position: absolute;top: 85px;right: 120px;width: 235px;">
 								<el-upload
 								  class="avatar-uploader"
-								  action="http://192.168.1.220:9201/ucenter/upload/common/image"
+								  action="/ucenter/upload/common/image"
 								  name ="uploadFile"
 								  :data="updateMessage"
 								  :show-file-list="false"
@@ -169,6 +169,7 @@
 				  password:'',
 				  passwordConfirm:'',
 				  nickname:'',
+				  avatar:'',
 				  gender:'',
 				  career:'',
 				  company:'',
@@ -242,12 +243,11 @@
     	},
        	methods: {
 	      handleAvatarSuccess(res, file) {
-	        this.imageUrl = URL.createObjectURL(file.raw);
+	        this.imageUrl = res.data.filePath;
 	        this.$message({
 	          message: '头像上传成功',
 	          type: 'success'
 	        });
-	        console.log("ok");
 	      },
 	      beforeAvatarUpload(file) {
 	        const isJPG = file.type === 'image/jpeg';
@@ -288,6 +288,7 @@
 			          		    birthday = this.getMyWeb.timestampToTime(birthday);
 			          		    this.ruleForm.birthday = birthday;
 			          		}
+			          		this.ruleForm.avatar = this.imageUrl;
 			            	let content = this.ruleForm;
 			            	content.memberType = Number(content.memberType);
 			            	content.memberRole = Number(content.memberRole);

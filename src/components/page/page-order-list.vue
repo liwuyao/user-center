@@ -62,7 +62,7 @@
        				{
        					lable:'用户名',
        					width:'150',
-       					prop:'clientName'
+       					prop:'memberName'
        				},
        				{
        					lable:'订单ID',
@@ -73,11 +73,11 @@
        					width:'120',
        					prop:'price'
        				},
-       				{
-       					lable:'创建时间',
-       					width:'200',
-       					prop:'createTime'
-       				},
+//     				{
+//     					lable:'创建时间',
+//     					width:'200',
+//     					prop:'createTime'
+//     				},
        				{
        					lable:'订单状态',
        					width:'120',

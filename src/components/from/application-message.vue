@@ -163,7 +163,7 @@
 		          clientKey: [
 		            { required: true, message: '请输入clientKey', trigger: 'blur' },
 		            { min: 5, max: 50, message: '长度在 3 到 5 个字符', trigger: 'blur' },
-		            { validator: validatePass, trigger: 'blur' }
+//		            { validator: validatePass, trigger: 'blur' }
 		          ],
 		          clientContent: [
 		            { required: true, message: '请填写应用描述', trigger: 'blur' }
@@ -201,9 +201,7 @@
     	 methods: {
 	      handleAvatarSuccess(res, file) {
 //	        this.imageUrl = URL.createObjectURL(file.raw);
-			console.log(res)
 	        this.imageUrl = res.data.filePath
-	        console.log( this.imageUrl);
 	       	 this.$message({
 	          message: '头像上传成功',
 	          type: 'success'
@@ -296,7 +294,7 @@
 					    			this.ruleForm = res.data.data;
 									this.$router.go(-1)
 					    		}else{
-					    			this.$message.error(res.data.messag);
+					    			this.$message.error(res.data.message);
 					    		}
 					      	}).catch(function(err){
 					                    this.$message.error('接口请求出错');
@@ -319,7 +317,7 @@
 									this.resetWord = res.data.message;
 									this.dialogReset = false;
 								}else{
-									 this.$message.error(res.data.messag);
+									 this.$message.error(res.data.message);
 								}
 					      	}).catch((err)=>{
 					                    this.$message.error('接口请求出错');
