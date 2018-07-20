@@ -224,7 +224,6 @@
 //			删除
 			deleteMessage(){
 				var content;
-				console.log(this.id)
 				if(this.id){
 						if(this.config.urlSearch){
 							content  = '?'+this.config.urlSearch+'=' + this.id

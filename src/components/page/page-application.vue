@@ -148,7 +148,7 @@
 		       		type:"delete",
 		       		icon:"button-icon iconfont icon-el-icon-karakal-iconfontshanchu5",
 		       		formConfig:{
-		       			idNames:'clientId',
+		       			idName:'clientId',
 		       			urlSearch:'clientIds',
 		       			src:"/ucenter/admin/client",
 		       			name:"clientName",

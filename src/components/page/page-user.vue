@@ -150,7 +150,7 @@
 		       		type:"delete",
 		       		icon:"button-icon iconfont icon-el-icon-karakal-iconfontshanchu5",
 		       		formConfig:{
-		       			idNames:'memberId',
+		       			idName:'memberId',
 		       			urlSearch:'memberIds',
 		       			src:"/ucenter/admin/member",
 		       			name:"mobile",
